@@ -490,7 +490,6 @@ filterNoneBtn.addEventListener('click', ()=>{
   filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = false; });
 });
 filterApplyBtn.addEventListener('click', ()=>{
-//localStorage.setItem('filters_selected', JSON.stringify(Array.from(filtersSelected)));
   filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true');
   renderLinks(linksData, searchBox.value);
 });
