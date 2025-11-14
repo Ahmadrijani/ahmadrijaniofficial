@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pusat Link Favorit</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+<style id="base-style">
+  :root{
+    --bg:#05060a; --panel:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    --muted:#b7c1d6; --card-bg: rgba(255,255,255,0.03);
+    --accent:#4d90fe; --highlight:#ffd94d;
+    --glass: rgba(255,255,255,0.03);
+    --group-dark: rgba(255,255,255,0.01);
+    --group-light: rgba(255,255,255,0.02);
+    --settings-bg: rgba(0,0,0,0.92);
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:var(--bg);display:flex;flex-direction:column;}
+  .header{display:flex;align-items:center;gap:8px;padding:10px;background:var(--panel);border-bottom:1px solid rgba(255,255,255,0.03);flex-wrap:wrap;position:relative;backdrop-filter: blur(6px)}
+  .header h1{margin:0;flex:1;font-size:1.4rem}
+  .controls{display:flex;gap:6px;align-items:center}
+  .controls input,.controls button,.controls select{padding:7px 10px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;cursor:pointer;outline:none}
+  .controls input{min-width:160px}
+  .controls button i{margin-right:6px}
+  .container{padding:12px;display:grid;gap:12px;flex:1;overflow:auto}
+  .group-container{margin-bottom:12px;padding:10px;border-radius:10px}
+  .group-title{font-size:1.12rem;font-weight:700;margin:0 0 8px;color:var(--highlight);padding-bottom:4px}
+  .container > .group-container:nth-child(odd){ background: var(--group-dark) }
+  .container > .group-container:nth-child(even){ background: var(--group-light) }
+
+  /* GRID view: consistent tile aspect */
+  .grid-view .group-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .grid-view .link-card{background:var(--card-bg);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 22px rgba(2,6,23,0.6);transition:transform .12s;cursor:pointer;aspect-ratio:4/3;overflow:hidden}
+  .grid-view .link-icon{width:100%;height:55%;border-radius:8px;display:grid;place-items:center;font-size:1.6rem;color:var(--muted);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));object-fit:cover}
+  .grid-view .link-title{font-weight:700;margin:0;font-size:1rem}
+  .grid-view .link-desc{font-size:0.85rem;color:#b9c6dc;min-height:2.2rem;overflow:hidden}
+
+  /* CARD view slider */
+  .card-view .group-wrap{position:relative}
+  .card-view .group-items{display:flex;gap:12px;overflow-x:auto;padding:6px 40px;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+  .card-view .link-card{flex:0 0 220px;height:340px;min-width:220px;border-radius:14px;padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 10px 30px rgba(2,6,23,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));scroll-snap-align:center;transition:transform .12s}
+  .card-view .link-card:hover{transform:translateY(-6px)}
+  .card-view .link-icon{width:120px;height:120px;border-radius:16px;display:grid;place-items:center;font-size:2.2rem;color:var(--muted);background:var(--glass);margin-bottom:10px;object-fit:cover}
+  .card-view .link-title{font-weight:700;margin:6px 0 0;font-size:1rem}
+  .card-view .link-desc{font-size:0.85rem;color:#b9c6dc;min-height:2.4rem;overflow:hidden}
+  .card-view .link-actions{margin-top:auto;display:flex;gap:8px}
+
+  /* slider arrows */
+  .slider-btn{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:8px;border:none;background:rgba(0,0,0,0.6);color:#fff;display:grid;place-items:center;cursor:pointer;z-index:40}
+  .slider-left{left:8px}
+  .slider-right{right:8px}
+  .slider-btn:active{transform:translateY(-50%) scale(.98)}
+
+  /* LIST view */
+  .list-view .group-items{display:flex;flex-direction:column;gap:8px}
+  .flat-items{display:flex;flex-direction:column;gap:8px}
+  .item-row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.01)}
+  .item-left{display:flex;align-items:center;gap:12px}
+  .link-icon{width:44px;height:44px;min-width:44px;border-radius:8px;display:grid;place-items:center;font-size:1.25rem;color:var(--muted);background:rgba(255,255,255,0.02);object-fit:cover}
+  .link-title{font-weight:600;margin:0}
+  .link-desc{font-size:0.9rem;color:#b9c6dc}
+  .link-actions{display:flex;gap:8px;align-items:center;margin-left:12px}
+  .btn-icon{background:none;border:none;color:var(--muted);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px}
+  .btn-icon:hover{color:#fff;background:rgba(255,255,255,0.02);transform:scale(1.03)}
+  .favorite{color:#ffd700!important}
+  .highlight{border:2px solid var(--accent);border-radius:10px}
+
+  /* preview + popups */
+  .preview-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);justify-content:center;align-items:center;z-index:1200}
+  .preview-content{width:92%;max-width:900px;height:80%;background:var(--panel);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .preview-header{display:flex;justify-content:flex-end;gap:8px;padding:8px;background:#000}
+  .preview-iframe{flex:1;border:none}
+
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:0.95rem;opacity:0;transition:opacity .25s;z-index:1600}
+  .toast.show{opacity:1}
+
+  .original-link-small{padding:6px;text-align:center;font-size:0.85rem;color:#9aa6bf;background:transparent;border-top:1px solid rgba(255,255,255,0.02)}
+
+  .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1700;justify-content:center;align-items:center;flex-direction:column;gap:12px}
+  .loading-overlay.open{display:flex}
+  .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-size:0.95rem;color:#e6eef8}
+  @media (max-width:760px){ .header h1{font-size:1.12rem} .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px} }
+</style>
+
+<style id="settings-style">
+  .settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1500;justify-content:center;align-items:center}
+  .settings-overlay.open{display:flex}
+  .settings-menu{background:rgba(0,0,0,0.92);border-radius:12px;padding:16px;min-width:320px;max-width:92%;box-shadow:0 12px 40px rgba(2,6,23,0.7);display:flex;flex-direction:column;gap:10px;color:#e6eef8}
+  .settings-row{display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .settings-row label{font-size:0.95rem}
+  .stabilo{background:#ffd94d;color:#000;padding:0 6px;border-radius:4px;font-weight:700}
+  .editcss-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1800;justify-content:center;align-items:center}
+  .editcss-box{background:var(--panel);padding:12px;border-radius:10px;width:92%;max-width:920px;max-height:86vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
+  .editcss-textarea{width:100%;min-height:280px;background:#0b0c0f;color:#e6eef8;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:13px}
+  .debug-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1900;justify-content:center;align-items:center}
+  .debug-box{background:var(--panel);padding:12px;border-radius:10px;width:92%;max-width:920px;max-height:86vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
+  .debug-textarea{width:100%;min-height:120px;background:#0b0c0f;color:#e6eef8;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-word}
+  .reset-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);justify-content:center;align-items:center;z-index:1300}
+  .reset-box{background:var(--panel);padding:18px;border-radius:10px;width:92%;max-width:420px;position:relative}
+  .reset-close{position:absolute;right:10px;top:8px;background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer}
+</style>
+
+<style id="custom-css-placeholder"></style>
+</head>
+<body>
+  <div class="header">
+    <h1 id="header-title">Pusat Link Favorit</h1>
+    <div class="controls">
+      <input id="search-box" placeholder="search here">
+      <button id="btn-settings" title=""><i class="fa-solid fa-gear"></i> <span id="btn-settings-label"></span></button>
+      <button id="btn-debug" title=""><i class="fa-solid fa-bug"></i> <span id="btn-debug-label">Debug</span></button>
+    </div>
+  </div>
+
+  <div class="settings-overlay" id="settings-overlay" aria-hidden="true">
+    <div class="settings-menu" id="settings-menu" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="settings-title">Pengaturan</strong>
+        <button id="settings-close" class="btn-ghost" title="Tutup">✖</button>
+      </div>
+
+      <div class="settings-row"><label id="lbl-language"></label><select id="sel-language"><option value="id">Indonesia</option><option value="en">English</option></select></div>
+      <div class="settings-row"><label id="lbl-view"></label><select id="sel-view"><option value="list">List</option><option value="grid">Grid</option><option value="card">Card</option></select></div>
+
+      <div class="settings-row" style="align-items:center;gap:10px">
+        <div style="display:flex;flex-direction:column">
+          <label id="lbl-merge">Gabungkan Lokal & Global</label>
+          <small style="color:#9aa6bf" id="lbl-merge-desc">Jika dicentang, sumber tidak dipisah per grup</small>
+        </div>
+        <input type="checkbox" id="chk-merge" />
+      </div>
+
+      <div class="settings-row" style="align-items:center;gap:10px">
+        <div style="display:flex;flex-direction:column">
+          <label id="lbl-simple">Mode Sederhana</label>
+          <small style="color:#9aa6bf" id="lbl-simple-desc">Jika aktif, tampilan hanya menampilkan item (tanpa grup). Untuk kembali, buka Pengaturan.</small>
+        </div>
+        <input type="checkbox" id="chk-simple" />
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label>Edit CSS — untuk membuka ketik <span class="stabilo">EDITCSS</span> di bawah</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="open-edit-input" placeholder="Ketik EDITCSS untuk membuka" style="flex:1;padding:8px;border-radius:8px;border:none;background:#0b0c0f;color:#fff" />
+          <button id="open-edit-btn" class="btn-primary" disabled>Buka Edit CSS</button>
+        </div>
+      </div>
+
+      <div class="settings-row"><label id="lbl-reset"></label><button id="btn-reset" class="btn-ghost"></button></div>
+    </div>
+  </div>
+
+  <div class="editcss-popup" id="editcss-popup" aria-hidden="true">
+    <div class="editcss-box" role="dialog" aria-modal="true" aria-labelledby="editcss-title">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="editcss-title">Edit CSS (mengubah style utama)</strong>
+        <button id="editcss-close" class="btn-ghost">✖</button>
+      </div>
+      <small style="color:#9aa6bf" id="editcss-note">Perhatian: Edit CSS akan mengganti CSS utama (semua layout & style) KECUALI styling pengaturan/modal. Backup otomatis disimpan. Jika mau kembalikan, tekan Reset CSS.</small>
+      <textarea id="editcss-textarea" class="editcss-textarea" placeholder="/* tulis css untuk mengganti seluruh base-style di sini */"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="reset-css-btn" class="btn-ghost">Reset CSS ke Asli</button>
+        <button id="apply-css-btn" class="btn-primary">Terapkan CSS</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="debug-popup" id="debug-popup" aria-hidden="true">
+    <div class="debug-box" role="dialog" aria-modal="true" aria-labelledby="debug-title">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="debug-title">Debug - Pesan Kesalahan</strong>
+        <button id="debug-close" class="btn-ghost">✖</button>
+      </div>
+      <div id="debug-area" class="debug-textarea" style="white-space:pre-wrap;word-break:break-word">Tidak ada pesan kesalahan.</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="copy-debug-btn" class="btn-primary">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container" id="link-container"></main>
+
+  <div class="preview-popup" id="preview-popup">
+    <div class="preview-content">
+      <div class="preview-header">
+        <button class="btn-icon" id="btn-go" title=""><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+        <button class="btn-icon" id="btn-close" title=""><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <iframe id="preview-frame" class="preview-iframe" title="Pratinjau"></iframe>
+    </div>
+  </div>
+
+  <div class="reset-popup" id="reset-popup">
+    <div class="reset-box">
+      <button class="reset-close" id="reset-close">❌</button>
+      <p class="reset-instruction" id="reset-instruction">Ketik <span class="stabilo">RESET</span> untuk konfirmasi penghapusan data.</p>
+      <input id="reset-input" class="reset-input" placeholder="Ketik RESET untuk konfirmasi" />
+      <div style="height:8px"></div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button id="reset-cancel" class="btn-ghost">Batal</button>
+        <button id="reset-proceed" class="btn-primary">Lanjut</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="original-link-small" id="original-link-small"><a id="original-link-anchor" href="#" target="_blank" style="color:var(--accent);text-decoration:underline"></a></div>
+  <div class="loading-overlay" id="loading-overlay"><div class="spinner" aria-hidden="true"></div><div class="loading-text" id="loading-text">Memuat data...</div></div>
+
+<script>
+/* ----------------- KONFIGURASI PENTING -----------------
+   - SOURCE_URLS: array sumber JSON (bisa lebih dari 1)
+     contoh: ["links.json", "https://example.com/links2.json"]
+   - Setiap objek link di JSON idealnya berisi:
+     { "url":"https://...", "title_id":"...", "title_en":"...", "description_id":"...", "description_en":"...", "grup_id":"...", "grup_en":"...", "img":"https://... (opsional)", "icon":"fa-solid fa-link OR https://... (opsional)" }
+------------------------------------------------------- */
+const SOURCE_URLS = [
+  "links.json",
+  "https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/link_global.json"
+];
+
+/* ======== Bahasa & teks (lengkap untuk UI) ======== */
+const T = {
+  id:{
+    title:"Pusat Link Favorit",
+    settings:"Pengaturan",
+    lbl_language:"Bahasa",
+    lbl_view:"Tampilan",
+    lbl_reset:"Reset",
+    reset_button:"Reset Data",
+    reset_instruction:'Ketik <span class="stabilo">RESET</span> untuk menghapus semua data',
+    reset_input_placeholder:"Ketik RESET untuk konfirmasi",
+    preview_open:"Buka Link",
+    preview_close:"Tutup",
+    original_link_text:"Original Link",
+    lbl_merge:"Gabungkan Lokal & Global",
+    lbl_merge_desc:"Jika dicentang, sumber tidak dipisah per grup",
+    simple_label:"Mode Sederhana",
+    simple_desc:"Jika aktif, tampilan hanya menampilkan item (tanpa grup). Untuk kembali, buka Pengaturan.",
+    copy_link:"Salin",
+    open_link:"Buka",
+    preview:"Pratinjau",
+    css_apply_success:"CSS diterapkan",
+    css_reset_success:"CSS dikembalikan ke default",
+    no_errors:"Tidak ada pesan kesalahan.",
+    search_placeholder:"Cari link...",
+    btn_settings_label:"Pengaturan",
+    btn_debug_label:"Debug",
+    editcss_title:"Edit CSS (mengubah style utama)",
+    editcss_note:"Perhatian: Edit CSS akan mengganti CSS utama (semua layout & style) KECUALI styling pengaturan/modal. Backup otomatis disimpan. Jika mau kembalikan, tekan Reset CSS.",
+    loading_text:"Memuat data..."
+  },
+  en:{
+    title:"Favorite Links Hub",
+    settings:"Settings",
+    lbl_language:"Language",
+    lbl_view:"View",
+    lbl_reset:"Reset",
+    reset_button:"Reset Data",
+    reset_instruction:'Type <span class="stabilo">RESET</span> to clear all data',
+    reset_input_placeholder:"Type RESET to confirm",
+    preview_open:"Open Link",
+    preview_close:"Close",
+    original_link_text:"Original Link",
+    lbl_merge:"Merge Local & Global",
+    lbl_merge_desc:"If checked, sources won't be separated per group",
+    simple_label:"Simple Mode",
+    simple_desc:"If active, view shows items only (no groups). To restore, open Settings.",
+    copy_link:"Copy",
+    open_link:"Open",
+    preview:"Preview",
+    css_apply_success:"CSS applied",
+    css_reset_success:"CSS reset to default",
+    no_errors:"No errors.",
+    search_placeholder:"Search links...",
+    btn_settings_label:"Settings",
+    btn_debug_label:"Debug",
+    editcss_title:"Edit CSS (change main styling)",
+    editcss_note:"Warning: Edit CSS will replace main base-style (settings modal styling won't be changed). Backup saved automatically.",
+    loading_text:"Loading data..."
+  }
+};
+
+/* ======== State ======== */
+let favoriteLinks = JSON.parse(localStorage.getItem("favoriteLinks")||"[]");
+let currentLang = localStorage.getItem("lang") || ((navigator.language && navigator.language.startsWith("id")) ? "id" : "en");
+let viewMode = localStorage.getItem("viewMode") || "list";
+let mergeSources = (localStorage.getItem("merge_sources") === "1");
+const saved_simple = localStorage.getItem("simple_mode");
+let simpleMode = (saved_simple === null) ? true : (saved_simple === "1");
+
+let linksData = [];
+let lastErrorMessage = "";
+let lastLoadStatus = { local:false, global:false };
+let originalBaseCss = document.getElementById('base-style').textContent || "";
+let localLinkOverrides = JSON.parse(localStorage.getItem("local_link_overrides")||"{}");
+let storedCustomCss = localStorage.getItem("custom_css") || "";
+
+/* ======== DOM refs ======== */
+const headerTitle = document.getElementById("header-title");
+const btnSettings = document.getElementById("btn-settings");
+const settingsOverlay = document.getElementById("settings-overlay");
+const selLanguage = document.getElementById("sel-language");
+const selView = document.getElementById("sel-view");
+const btnReset = document.getElementById("btn-reset");
+const chkMerge = document.getElementById("chk-merge");
+const chkSimple = document.getElementById("chk-simple");
+const openEditInput = document.getElementById("open-edit-input");
+const openEditBtn = document.getElementById("open-edit-btn");
+
+const editcssPopup = document.getElementById("editcss-popup");
+const editcssTextarea = document.getElementById("editcss-textarea");
+const applyCssBtn = document.getElementById("apply-css-btn");
+const resetCssBtn = document.getElementById("reset-css-btn");
+const editcssClose = document.getElementById("editcss-close");
+
+const debugBtn = document.getElementById("btn-debug");
+const debugPopup = document.getElementById("debug-popup");
+const debugArea = document.getElementById("debug-area");
+const debugClose = document.getElementById("debug-close");
+const copyDebugBtn = document.getElementById("copy-debug-btn");
+
+const linkContainer = document.getElementById("link-container");
+const previewPopup = document.getElementById("preview-popup");
+const previewFrame = document.getElementById("preview-frame");
+const btnGo = document.getElementById("btn-go");
+const btnClose = document.getElementById("btn-close");
+const toast = document.getElementById("toast");
+const searchBox = document.getElementById("search-box");
+
+const loadingOverlay = document.getElementById("loading-overlay");
+const loadingText = document.getElementById("loading-text");
+const baseStyleEl = document.getElementById("base-style");
+
+/* ======== Helpers ======== */
+function t(k){ return (T[currentLang] && T[currentLang][k]) || k; }
+function showToast(msg, ms=3000){ toast.textContent = msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"), ms); }
+function isUrl(s){
+  if(!s) return false;
+  return /^(https?:\/\/|data:|\/)/i.test(s);
+}
+
+/* ======== Apply UI language & states ======== */
+function applyLanguageUI(){
+  headerTitle.textContent = t("title");
+  document.getElementById("lbl-language").textContent = t("lbl_language");
+  document.getElementById("lbl-view").textContent = t("lbl_view");
+  document.getElementById("lbl-reset").textContent = t("lbl_reset");
+  document.getElementById("btn-reset").textContent = t("reset_button");
+  document.getElementById("lbl-merge").textContent = t("lbl_merge");
+  document.getElementById("lbl-merge-desc").textContent = t("lbl_merge_desc");
+  document.getElementById("lbl-simple").textContent = t("simple_label");
+  document.getElementById("lbl-simple-desc").textContent = t("simple_desc");
+  document.getElementById("original-link-anchor").textContent = t("original_link_text");
+  document.getElementById("open-edit-input").placeholder = t("editcss_title");
+  document.getElementById("editcss-title").textContent = t("editcss_title");
+  document.getElementById("editcss-note").innerHTML = t("editcss_note");
+  searchBox.placeholder = t("search_placeholder");
+  document.getElementById("btn-settings-label").textContent = t("btn_settings_label");
+  document.getElementById("btn-debug-label").textContent = t("btn_debug_label");
+  loadingText.textContent = t("loading_text");
+}
+applyLanguageUI();
+
+/* ======== Apply saved custom CSS (if any) ======== */
+function applyCustomCssOnLoad(){
+  const css = localStorage.getItem("custom_css") || "";
+  if(css){
+    baseStyleEl.textContent = css;
+    editcssTextarea.value = css;
+  } else {
+    baseStyleEl.textContent = originalBaseCss;
+  }
+}
+applyCustomCssOnLoad();
+
+/* ======== Utility: apply local overrides to links (kept but editing removed) ======== */
+function applyLocalOverrides(arr){
+  return arr.map(l=>{
+    const key = l.url || (l.title_id || l.title_en || Math.random().toString(36).slice(2));
+    if(localLinkOverrides[key]){
+      return {...l, ...localLinkOverrides[key], type:'local'};
+    }
+    return l;
+  });
+}
+
+/* ======== Render helpers (icon handling) ======== */
+function createIconNode(link, cls='link-icon', sizeStyle=''){
+  const wrapper = document.createElement("div");
+  wrapper.className = cls;
+  if(sizeStyle) wrapper.style.cssText += sizeStyle;
+  // Priority: link.img (explicit image), link.icon if URL, else fontawesome icon class
+  if(link.img && isUrl(link.img)){
+    const img = document.createElement("img");
+    img.src = link.img;
+    img.alt = link.title_en || link.title_id || "";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "6px";
+    wrapper.appendChild(img);
+  } else if(link.icon && isUrl(link.icon)){
+    const img = document.createElement("img");
+    img.src = link.icon;
+    img.alt = link.title_en || link.title_id || "";
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100%";
+    img.style.objectFit = "contain";
+    img.style.borderRadius = "6px";
+    wrapper.appendChild(img);
+  } else {
+    // fallback to fontawesome or default link icon
+    const i = document.createElement("i");
+    i.className = link.icon || 'fa-solid fa-link';
+    wrapper.appendChild(i);
+  }
+  return wrapper;
+}
+
+/* ======== Render links (dengan dukungan multi-sumber & bilingual) ======== */
+function renderLinks(list, search=""){
+  linkContainer.innerHTML = "";
+  const q = (search||"").toLowerCase();
+
+  // Mode sederhana (flat)
+  if(simpleMode){
+    const items = applyLocalOverrides(list).filter(l=>{
+      const titleText = (currentLang==="id")? (l.title_id||l.title_en||"") : (l.title_en||l.title_id||"");
+      return !q || titleText.toLowerCase().includes(q) || (l.grup_id||"").toLowerCase().includes(q) || (l.grup_en||"").toLowerCase().includes(q);
+    });
+
+    const container = document.createElement("div"); container.className = "flat-items";
+    container.innerHTML = `<div style="padding:8px;color:#9aa6bf">${t("simple_desc")}</div>`;
+
+    if(favoriteLinks && favoriteLinks.length){
+      const favHeader = document.createElement("div"); favHeader.className = "group-container";
+      const fh = document.createElement("h2"); fh.className = "group-title"; fh.textContent = (currentLang==="id")? "Favorit" : "Favorites";
+      favHeader.appendChild(fh);
+      const favList = document.createElement("div"); favList.className = "group-items";
+      favoriteLinks.forEach(link=>{
+        const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
+        const titleText = `(${groupName}) ${titleTextRaw}`;
+        const row = document.createElement("div"); row.className = "item-row";
+        const left = document.createElement("div"); left.className = "item-left";
+        const icon = createIconNode(link);
+        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        left.appendChild(icon); left.appendChild(tEl);
+
+        const actions = document.createElement("div"); actions.className = "link-actions";
+        const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
+        eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
+        const open = document.createElement("button"); open.className="btn-icon"; open.title = t("open_link"); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+        open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
+        const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+        copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
+        const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
+        favBtn.classList.add("favorite");
+        favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+
+        actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn); actions.appendChild(favBtn);
+        row.appendChild(left); row.appendChild(actions);
+        row.addEventListener("click", ()=> window.location.href = link.url );
+        favList.appendChild(row);
+      });
+      favHeader.appendChild(favList);
+      container.appendChild(favHeader);
+    }
+
+    items.forEach(link=>{
+      const titleRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+      const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
+      const titleText = `(${groupName}) ${titleRaw}`;
+
+      const row = document.createElement("div"); row.className = "item-row";
+      const left = document.createElement("div"); left.className = "item-left";
+      const icon = createIconNode(link);
+      const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+      left.appendChild(icon); left.appendChild(tEl);
+
+      const actions = document.createElement("div"); actions.className = "link-actions";
+      const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
+      eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
+      const open = document.createElement("button"); open.className="btn-icon"; open.title = t("open_link"); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+      open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
+      const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+      copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
+      const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
+      if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
+      favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+
+      actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn); actions.appendChild(favBtn);
+      row.appendChild(left); row.appendChild(actions);
+      row.addEventListener("click", ()=> window.location.href = link.url );
+      container.appendChild(row);
+    });
+
+    linkContainer.appendChild(container);
+    return;
+  }
+
+  // Grouped view
+  let processed = applyLocalOverrides(list);
+  const groups = {};
+  processed.forEach(l=>{
+    const gid = l.grup_id || l.grup || "Tanpa Grup";
+    const key = mergeSources ? gid : ((l.type||"local")+"__"+gid);
+    if(!groups[key]) groups[key] = {links:[], name:{id:gid,en:l.grup_en||gid}, types: new Set()};
+    groups[key].links.push(l);
+    groups[key].types.add(l.type||"local");
+  });
+
+  if(favoriteLinks.length){
+    const favKey = "FAVORIT";
+    groups[favKey] = groups[favKey] || {links:[], name:{id:"Favorit",en:"Favorite"}, types: new Set()};
+    groups[favKey].links = favoriteLinks;
+    groups[favKey].types.add("favorite");
+  }
+
+  const keys = Object.keys(groups).sort((a,b)=> a==="FAVORIT"? -1 : b==="FAVORIT"? 1: 0);
+  const isSmall = window.innerWidth <= 760;
+  const effectiveView = isSmall ? "list" : viewMode;
+  linkContainer.className = "container " + (effectiveView==="grid"?"grid-view":effectiveView==="card"?"card-view":"list-view");
+
+  keys.forEach(k=>{
+    const g = groups[k];
+    if(!g) return;
+    const section = document.createElement("section"); section.className = "group-container";
+    const h = document.createElement("h2"); h.className = "group-title";
+    let gname = (currentLang==="id")? g.name.id : g.name.en || g.name.id;
+    if(!mergeSources && k!=="FAVORIT"){
+      const types = Array.from(g.types);
+      if(types.length===1 && types[0]!=="favorite"){
+        if(types[0]==="local") gname += " (Lokal)";
+        if(types[0]==="global") gname += " (Global)";
+      } else {
+        if(types.includes("local") && types.includes("global")) gname += " (Local+Global)";
+      }
+    }
+    h.textContent = gname;
+    section.appendChild(h);
+
+    if(effectiveView==="card"){
+      const wrap = document.createElement("div"); wrap.className="group-wrap";
+      const left = document.createElement("button"); left.className="slider-btn slider-left"; left.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+      const right = document.createElement("button"); right.className="slider-btn slider-right"; right.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+      const items = document.createElement("div"); items.className="group-items";
+      g.links.forEach(link=>{
+        const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        if(q && !(titleText.toLowerCase().includes(q) || (link.grup_id||"").toLowerCase().includes(q))) return;
+        const card = document.createElement("div"); card.className = "link-card card-item";
+        const icon = createIconNode(link, "link-icon", "");
+        const title = document.createElement("div"); title.className = "link-title"; title.textContent = titleText;
+        const desc = document.createElement("div"); desc.className = "link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+
+        const acts = document.createElement("div"); acts.className = "link-actions";
+        const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
+        eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
+        const open = document.createElement("button"); open.className="btn-icon"; open.title = t("open_link"); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+        open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
+        const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+        copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
+        const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
+        if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
+        favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+
+        acts.appendChild(eye); acts.appendChild(open); acts.appendChild(copyBtn); acts.appendChild(favBtn);
+        card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
+        card.addEventListener("click", ()=> window.location.href = link.url );
+        items.appendChild(card);
+      });
+
+      wrap.appendChild(left); wrap.appendChild(items); wrap.appendChild(right);
+      section.appendChild(wrap);
+      left.addEventListener("click", ()=> items.scrollBy({left: -Math.round(items.clientWidth * 0.7), behavior:'smooth'}));
+      right.addEventListener("click", ()=> items.scrollBy({left: Math.round(items.clientWidth * 0.7), behavior:'smooth'}));
+      setTimeout(()=>{ if(items.scrollWidth <= items.clientWidth + 4){ left.style.display='none'; right.style.display='none'; } else { left.style.display='grid'; right.style.display='grid'; } },80);
+
+    } else {
+      const items = document.createElement("div"); items.className="group-items";
+      g.links.forEach(link=>{
+        const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        if(q && !(titleText.toLowerCase().includes(q) || (link.grup_id||"").toLowerCase().includes(q))) return;
+        const card = document.createElement("div"); card.className = "link-card";
+        if(effectiveView==="grid"){
+          const icon = createIconNode(link, "link-icon", "");
+          const title = document.createElement("div"); title.className="link-title"; title.textContent = titleText;
+          const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+          const acts = document.createElement("div"); acts.className="link-actions";
+          const eye = document.createElement("button"); eye.className="btn-icon"; eye.title=t("preview"); eye.innerHTML='<i class="fa-solid fa-eye"></i>';
+          eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
+          const open = document.createElement("button"); open.className="btn-icon"; open.title=t("open_link"); open.innerHTML='<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+          open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
+          const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+          copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
+          const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
+          if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
+          favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+
+          acts.appendChild(eye); acts.appendChild(open); acts.appendChild(copyBtn); acts.appendChild(favBtn);
+          card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
+        } else {
+          const info = document.createElement("div"); info.className="link-info";
+          const icon = createIconNode(link);
+          const title = document.createElement("div"); title.className="link-title"; title.textContent = titleText;
+          const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+          info.appendChild(icon); info.appendChild(title); info.appendChild(desc);
+          const acts = document.createElement("div"); acts.className="link-actions";
+          const eye = document.createElement("button"); eye.className="btn-icon"; eye.title=t("preview"); eye.innerHTML='<i class="fa-solid fa-eye"></i>';
+          eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
+          const open = document.createElement("button"); open.className="btn-icon"; open.title=t("open_link"); open.innerHTML='<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+          open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
+          const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+          copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
+          const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
+          if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
+          favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+
+          acts.appendChild(eye); acts.appendChild(open); acts.appendChild(copyBtn); acts.appendChild(favBtn);
+          card.appendChild(info); card.appendChild(acts);
+        }
+        card.addEventListener("click", ()=> window.location.href = link.url );
+        items.appendChild(card);
+      });
+      section.appendChild(items);
+    }
+
+    linkContainer.appendChild(section);
+  });
+}
+
+/* ======== Preview popup ======== */
+function openPreview(url){ previewFrame.src = url; previewPopup.style.display = "flex"; btnGo.onclick = ()=> window.location.href = url; }
+btnClose.addEventListener("click", ()=>{ previewPopup.style.display = "none"; previewFrame.src = ""; });
+
+/* ======== Settings interactions ======== */
+btnSettings.addEventListener("click", ()=>{ settingsOverlay.classList.add("open"); });
+document.getElementById("settings-close").addEventListener("click", ()=> settingsOverlay.classList.remove("open"));
+settingsOverlay.addEventListener("click",(e)=>{ if(e.target === settingsOverlay) settingsOverlay.classList.remove("open"); });
+
+selLanguage.addEventListener("change", ()=>{ currentLang = selLanguage.value; localStorage.setItem("lang", currentLang); applyLanguageUI(); renderLinks(linksData, searchBox.value); });
+selView.addEventListener("change", ()=>{ viewMode = selView.value; localStorage.setItem("viewMode", viewMode); renderLinks(linksData, searchBox.value); });
+
+chkMerge.addEventListener("change", ()=>{ mergeSources = chkMerge.checked; localStorage.setItem("merge_sources", mergeSources ? "1" : "0"); renderLinks(linksData, searchBox.value); });
+chkSimple.addEventListener("change", ()=>{ simpleMode = chkSimple.checked; localStorage.setItem("simple_mode", simpleMode ? "1" : "0"); renderLinks(linksData, searchBox.value); });
+
+document.getElementById("btn-reset").addEventListener("click", ()=>{ settingsOverlay.classList.remove("open"); openResetPopup(); });
+
+/* Edit CSS gating */
+openEditInput.addEventListener("input", ()=> {
+  openEditBtn.disabled = openEditInput.value.trim().toUpperCase() !== "EDITCSS";
+});
+openEditBtn.addEventListener("click", ()=> {
+  editcssPopup.style.display = "flex";
+  editcssPopup.setAttribute("aria-hidden","false");
+  editcssTextarea.value = localStorage.getItem("custom_css") || originalBaseCss;
+});
+
+editcssClose.addEventListener("click", ()=> { editcssPopup.style.display = "none"; editcssPopup.setAttribute("aria-hidden","true"); });
+applyCssBtn.addEventListener("click", ()=> {
+  const css = editcssTextarea.value || "";
+  if(!localStorage.getItem("base_css_backup")) localStorage.setItem("base_css_backup", originalBaseCss);
+  baseStyleEl.textContent = css;
+  localStorage.setItem("custom_css", css);
+  showToast(t("css_apply_success"));
+});
+resetCssBtn.addEventListener("click", ()=> {
+  if(confirm((currentLang==="id")? "Kembalikan CSS ke keadaan asli?" : "Reset CSS to original?")){
+    localStorage.removeItem("custom_css");
+    const backup = localStorage.getItem("base_css_backup") || originalBaseCss;
+    baseStyleEl.textContent = backup;
+    editcssTextarea.value = backup;
+    showToast(t("css_reset_success"));
+  }
+});
+
+/* DEBUG (hanya pesan kesalahan) */
+debugBtn.addEventListener("click", ()=> {
+  const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors");
+  debugArea.textContent = msg;
+  debugPopup.style.display = "flex";
+});
+debugClose.addEventListener("click", ()=> debugPopup.style.display = "none");
+copyDebugBtn.addEventListener("click", ()=> {
+  const text = debugArea.textContent;
+  navigator.clipboard && navigator.clipboard.writeText(text).then(()=> showToast("Copied debug ✅"));
+});
+
+/* Reset flow (mesti ketik RESET) */
+const resetPopup = document.getElementById("reset-popup");
+const resetClose = document.getElementById("reset-close");
+const resetInput = document.getElementById("reset-input");
+const resetCancel = document.getElementById("reset-cancel");
+const resetProceed = document.getElementById("reset-proceed");
+resetClose && resetClose.addEventListener("click", ()=> resetPopup.style.display = "none");
+resetCancel && resetCancel.addEventListener("click", ()=> resetPopup.style.display = "none");
+function openResetPopup(){ resetInput.value=""; resetPopup.style.display="flex"; }
+resetProceed && resetProceed.addEventListener("click", ()=>{
+  const v = (resetInput.value||"").trim().toUpperCase();
+  if(v === "RESET"){
+    resetPopup.style.display = "none";
+    if(confirm((currentLang==="id")? "Yakin ingin menghapus semua data lokal (favorites, overrides, css, settings)? Tindakan ini tidak bisa dibatalkan." : "Are you sure to delete all local data? This cannot be undone.")){
+      localStorage.clear();
+      alert((currentLang==="id")? "Selesai. Semua data lokal dihapus. Halaman akan dimuat ulang." : "Done. All local data cleared. Page will reload.");
+      location.reload();
+    }
+  } else {
+    resetInput.style.boxShadow = "0 0 0 6px rgba(255,217,77,0.25)";
+    setTimeout(()=> resetInput.style.boxShadow = "none",900);
+    showToast((currentLang==="id")? "Ketik RESET untuk konfirmasi" : "Type RESET to confirm");
+  }
+});
+
+/* ======== Multi-source loader (menggunakan SOURCE_URLS) ======== */
+async function loadLinks(){
+  loadingOverlay.classList.add("open");
+  loadingText.textContent = t("loading_text");
+  const all = [];
+  lastErrorMessage = "";
+  let anySuccess = false;
+
+  for(const src of SOURCE_URLS){
+    try{
+      const url = src + "?_=" + Date.now();
+      const res = await fetch(url);
+      if(!res.ok) throw new Error("HTTP " + res.status + " for " + src);
+      const j = await res.json();
+      if(j.links && Array.isArray(j.links)){
+        // preserve optional type if provided, else mark 'global' for remote and 'local' for same-origin
+        const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
+        all.push(...j.links.map(x=>({...x, type: x.type || inferredType})));
+        anySuccess = true;
+      } else {
+        // if top-level is array not wrapped in {links:[]}
+        if(Array.isArray(j)){
+          const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
+          all.push(...j.map(x=>({...x, type: x.type || inferredType})));
+          anySuccess = true;
+        } else {
+          throw new Error("Invalid JSON structure");
+        }
+      }
+    } catch(e){
+      console.warn("fail loading", src, e);
+      lastErrorMessage += (currentLang==="id" ? `Gagal memuat: ${src}. ` : `Failed to load: ${src}. `) + (e && e.message ? `(${e.message}) ` : "");
+    }
+  }
+
+  if(!anySuccess && favoriteLinks.length) all.push(...favoriteLinks);
+
+  loadingOverlay.classList.remove("open");
+  showToast( (anySuccess) ? (currentLang==="id" ? "Sumber dimuat" : "Sources loaded") : (currentLang==="id" ? "Gagal memuat sumber" : "Failed to load sources"), 3500);
+  return all;
+}
+
+/* ======== Init & search ======== */
+function enforceSmallScreenBehavior(){
+  if(window.innerWidth <= 760){ selView.value = "list"; } else selView.value = viewMode;
+}
+window.addEventListener("resize", ()=> { enforceSmallScreenBehavior(); renderLinks(linksData, searchBox.value); });
+
+function init(){
+  selLanguage.value = currentLang; selView.value = viewMode; chkMerge.checked = mergeSources; chkSimple.checked = simpleMode;
+  applyLanguageUI();
+  applyCustomCssOnLoad();
+  enforceSmallScreenBehavior();
+  loadLinks().then(d=>{ linksData = d; renderLinks(linksData); }).catch(e=>{ console.error(e); showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data"); loadingOverlay.classList.remove("open"); });
+}
+init();
+
+searchBox.addEventListener("input", ()=> renderLinks(linksData, searchBox.value));
+
+document.addEventListener("click", (e)=>{
+  const dbg = document.getElementById("debug-popup");
+  if(dbg && dbg.style.display === "flex" && !dbg.contains(e.target) && !debugBtn.contains(e.target)) dbg.style.display='none';
+});
+</script>
+</body>
+</html>
