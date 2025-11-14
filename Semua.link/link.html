@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Pusat Link Favorit</title>
+<title>Pusat Link Favorit — Versi Diperbarui</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
 <style id="base-style">
   :root{
@@ -15,19 +14,52 @@
     --group-dark: rgba(255,255,255,0.01);
     --group-light: rgba(255,255,255,0.02);
     --settings-bg: rgba(0,0,0,0.92);
+    --radius:12px;
   }
   html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:var(--bg);display:flex;flex-direction:column;}
   .header{display:flex;align-items:center;gap:8px;padding:10px;background:var(--panel);border-bottom:1px solid rgba(255,255,255,0.03);flex-wrap:wrap;position:relative;backdrop-filter: blur(6px)}
-  .header h1{margin:0;flex:1;font-size:1.4rem}
-  .controls{display:flex;gap:6px;align-items:center}
-  .controls input,.controls button,.controls select{padding:7px 10px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;cursor:pointer;outline:none}
-  .controls input{min-width:160px}
-  .controls button i{margin-right:6px}
+  .header h1{margin:0;flex:1;font-size:1.2rem}
+  .controls{display:flex;gap:8px;align-items:center}
+
+  /* search with icon */
+  .search-wrapper{position:relative;display:flex;align-items:center}
+  .search-wrapper i{position:absolute;left:10px;font-size:0.95rem;color:#9aa6bf}
+  .controls .search-input{padding:8px 12px 8px 34px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;outline:none;min-width:200px}
+
+  /* filter button & dropdown */
+  .btn-filter{padding:8px 10px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;cursor:pointer}
+  .filter-panel{position:absolute;right:12px;top:56px;background:var(--settings-bg);padding:12px;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.7);min-width:260px;z-index:999;display:none}
+  .filter-panel.open{display:block}
+  .filter-panel h4{margin:0 0 8px 0;color:var(--highlight)}
+  .filter-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:6px}
+  .filter-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+  .btn-ghost{background:none;border:none;color:var(--muted);cursor:pointer;padding:6px 8px;border-radius:8px}
+  .btn-primary{background:var(--accent);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+  /* nice dropdown + labels */
+  .dropdown{position:relative}
+
   .container{padding:12px;display:grid;gap:12px;flex:1;overflow:auto}
   .group-container{margin-bottom:12px;padding:10px;border-radius:10px}
   .group-title{font-size:1.12rem;font-weight:700;margin:0 0 8px;color:var(--highlight);padding-bottom:4px}
   .container > .group-container:nth-child(odd){ background: var(--group-dark) }
   .container > .group-container:nth-child(even){ background: var(--group-light) }
+
+  /* switch style for settings toggles */
+  .switch{display:inline-flex;align-items:center;gap:8px}
+  .switch input{display:none}
+  .switch .track{width:44px;height:24px;background:rgba(255,255,255,0.08);border-radius:999px;position:relative;transition:all .18s}
+  .switch .thumb{position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transform:translateX(0);transition:transform .18s}
+  .switch input:checked + .track{background:linear-gradient(90deg,var(--accent),#7fb0ff)}
+  .switch input:checked + .track .thumb{transform:translateX(20px)}
+
+  /* small switch for filter items */
+  .switch-small{display:inline-flex;align-items:center;gap:8px}
+  .switch-small input{display:none}
+  .switch-small .track{width:36px;height:18px;background:rgba(255,255,255,0.06);border-radius:999px;position:relative}
+  .switch-small .thumb{position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;transform:translateX(0);transition:transform .14s}
+  .switch-small input:checked + .track{background:linear-gradient(90deg,var(--accent),#7fb0ff)}
+  .switch-small input:checked + .track .thumb{transform:translateX(18px)}
 
   /* GRID view: consistent tile aspect */
   .grid-view .group-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
@@ -82,7 +114,7 @@
   .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading-text{font-size:0.95rem;color:#e6eef8}
-  @media (max-width:760px){ .header h1{font-size:1.12rem} .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px} }
+  @media (max-width:760px){ .header h1{font-size:1.0rem} .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px} .filter-panel{right:6px;left:6px;top:68px} }
 </style>
 
 <style id="settings-style">
@@ -109,7 +141,22 @@
   <div class="header">
     <h1 id="header-title">Pusat Link Favorit</h1>
     <div class="controls">
-      <input id="search-box" placeholder="search here">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input id="search-box" class="search-input" placeholder="Cari link...">
+      </div>
+      <div class="dropdown">
+        <button id="btn-filter" class="btn-filter" title="Filter"><i class="fa-solid fa-filter"></i> Filter</button>
+        <div id="filter-panel" class="filter-panel" aria-hidden="true">
+          <h4 id="filter-title">Filter</h4>
+          <div class="filter-list" id="filter-list"></div>
+          <div class="filter-actions">
+            <button id="filter-all" class="btn-ghost">All</button>
+            <button id="filter-none" class="btn-ghost">None</button>
+            <button id="filter-apply" class="btn-primary">Apply</button>
+          </div>
+        </div>
+      </div>
       <button id="btn-settings" title=""><i class="fa-solid fa-gear"></i> <span id="btn-settings-label"></span></button>
       <button id="btn-debug" title=""><i class="fa-solid fa-bug"></i> <span id="btn-debug-label">Debug</span></button>
     </div>
@@ -130,7 +177,10 @@
           <label id="lbl-merge">Gabungkan Lokal & Global</label>
           <small style="color:#9aa6bf" id="lbl-merge-desc">Jika dicentang, sumber tidak dipisah per grup</small>
         </div>
-        <input type="checkbox" id="chk-merge" />
+        <label class="switch">
+          <input type="checkbox" id="chk-merge" />
+          <span class="track"><span class="thumb"></span></span>
+        </label>
       </div>
 
       <div class="settings-row" style="align-items:center;gap:10px">
@@ -138,7 +188,10 @@
           <label id="lbl-simple">Mode Sederhana</label>
           <small style="color:#9aa6bf" id="lbl-simple-desc">Jika aktif, tampilan hanya menampilkan item (tanpa grup). Untuk kembali, buka Pengaturan.</small>
         </div>
-        <input type="checkbox" id="chk-simple" />
+        <label class="switch">
+          <input type="checkbox" id="chk-simple" />
+          <span class="track"><span class="thumb"></span></span>
+        </label>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:8px">
@@ -211,18 +264,12 @@
   <div class="loading-overlay" id="loading-overlay"><div class="spinner" aria-hidden="true"></div><div class="loading-text" id="loading-text">Memuat data...</div></div>
 
 <script>
-/* ----------------- KONFIGURASI PENTING -----------------
-   - SOURCE_URLS: array sumber JSON (bisa lebih dari 1)
-     contoh: ["links.json", "https://example.com/links2.json"]
-   - Setiap objek link di JSON idealnya berisi:
-     { "url":"https://...", "title_id":"...", "title_en":"...", "description_id":"...", "description_en":"...", "grup_id":"...", "grup_en":"...", "img":"https://... (opsional)", "icon":"fa-solid fa-link OR https://... (opsional)" }
-------------------------------------------------------- */
+/* ================= KONFIGURASI & TEKS ================= */
 const SOURCE_URLS = [
   "links.json",
   "https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/link_global.json"
 ];
 
-/* ======== Bahasa & teks (lengkap untuk UI) ======== */
 const T = {
   id:{
     title:"Pusat Link Favorit",
@@ -251,7 +298,11 @@ const T = {
     btn_debug_label:"Debug",
     editcss_title:"Edit CSS (mengubah style utama)",
     editcss_note:"Perhatian: Edit CSS akan mengganti CSS utama (semua layout & style) KECUALI styling pengaturan/modal. Backup otomatis disimpan. Jika mau kembalikan, tekan Reset CSS.",
-    loading_text:"Memuat data..."
+    loading_text:"Memuat data...",
+    filter_title:"Filter",
+    filter_all:"All",
+    filter_none:"None",
+    filter_apply:"Apply"
   },
   en:{
     title:"Favorite Links Hub",
@@ -280,26 +331,28 @@ const T = {
     btn_debug_label:"Debug",
     editcss_title:"Edit CSS (change main styling)",
     editcss_note:"Warning: Edit CSS will replace main base-style (settings modal styling won't be changed). Backup saved automatically.",
-    loading_text:"Loading data..."
+    loading_text:"Loading data...",
+    filter_title:"Filter",
+    filter_all:"All",
+    filter_none:"None",
+    filter_apply:"Apply"
   }
 };
 
-/* ======== State ======== */
+/* ================= STATE ================= */
 let favoriteLinks = JSON.parse(localStorage.getItem("favoriteLinks")||"[]");
 let currentLang = localStorage.getItem("lang") || ((navigator.language && navigator.language.startsWith("id")) ? "id" : "en");
 let viewMode = localStorage.getItem("viewMode") || "list";
 let mergeSources = (localStorage.getItem("merge_sources") === "1");
-const saved_simple = localStorage.getItem("simple_mode");
-let simpleMode = (saved_simple === null) ? true : (saved_simple === "1");
-
+let simpleMode = (localStorage.getItem("simple_mode") === null) ? true : (localStorage.getItem("simple_mode") === "1");
 let linksData = [];
 let lastErrorMessage = "";
-let lastLoadStatus = { local:false, global:false };
 let originalBaseCss = document.getElementById('base-style').textContent || "";
 let localLinkOverrides = JSON.parse(localStorage.getItem("local_link_overrides")||"{}");
 let storedCustomCss = localStorage.getItem("custom_css") || "";
+let filtersSelected = new Set(JSON.parse(localStorage.getItem('filters_selected')||'[]'));
 
-/* ======== DOM refs ======== */
+/* ================= DOM ================= */
 const headerTitle = document.getElementById("header-title");
 const btnSettings = document.getElementById("btn-settings");
 const settingsOverlay = document.getElementById("settings-overlay");
@@ -310,19 +363,16 @@ const chkMerge = document.getElementById("chk-merge");
 const chkSimple = document.getElementById("chk-simple");
 const openEditInput = document.getElementById("open-edit-input");
 const openEditBtn = document.getElementById("open-edit-btn");
-
 const editcssPopup = document.getElementById("editcss-popup");
 const editcssTextarea = document.getElementById("editcss-textarea");
 const applyCssBtn = document.getElementById("apply-css-btn");
 const resetCssBtn = document.getElementById("reset-css-btn");
 const editcssClose = document.getElementById("editcss-close");
-
 const debugBtn = document.getElementById("btn-debug");
 const debugPopup = document.getElementById("debug-popup");
 const debugArea = document.getElementById("debug-area");
 const debugClose = document.getElementById("debug-close");
 const copyDebugBtn = document.getElementById("copy-debug-btn");
-
 const linkContainer = document.getElementById("link-container");
 const previewPopup = document.getElementById("preview-popup");
 const previewFrame = document.getElementById("preview-frame");
@@ -330,20 +380,22 @@ const btnGo = document.getElementById("btn-go");
 const btnClose = document.getElementById("btn-close");
 const toast = document.getElementById("toast");
 const searchBox = document.getElementById("search-box");
-
 const loadingOverlay = document.getElementById("loading-overlay");
 const loadingText = document.getElementById("loading-text");
 const baseStyleEl = document.getElementById("base-style");
+const filterPanel = document.getElementById('filter-panel');
+const btnFilter = document.getElementById('btn-filter');
+const filterList = document.getElementById('filter-list');
+const filterAllBtn = document.getElementById('filter-all');
+const filterNoneBtn = document.getElementById('filter-none');
+const filterApplyBtn = document.getElementById('filter-apply');
 
-/* ======== Helpers ======== */
+/* ================= HELPERS ================= */
 function t(k){ return (T[currentLang] && T[currentLang][k]) || k; }
 function showToast(msg, ms=3000){ toast.textContent = msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"), ms); }
-function isUrl(s){
-  if(!s) return false;
-  return /^(https?:\/\/|data:|\/)/i.test(s);
-}
+function isUrl(s){ if(!s) return false; return /^(https?:\/\/|data:|\/)/i.test(s); }
 
-/* ======== Apply UI language & states ======== */
+/* ================= UI LANGUAGE ================= */
 function applyLanguageUI(){
   headerTitle.textContent = t("title");
   document.getElementById("lbl-language").textContent = t("lbl_language");
@@ -362,22 +414,88 @@ function applyLanguageUI(){
   document.getElementById("btn-settings-label").textContent = t("btn_settings_label");
   document.getElementById("btn-debug-label").textContent = t("btn_debug_label");
   loadingText.textContent = t("loading_text");
+  document.getElementById('filter-title').textContent = t('filter_title');
+  filterAllBtn.textContent = t('filter_all');
+  filterNoneBtn.textContent = t('filter_none');
+  filterApplyBtn.textContent = t('filter_apply');
 }
 applyLanguageUI();
 
-/* ======== Apply saved custom CSS (if any) ======== */
+/* ================= CUSTOM CSS ON LOAD ================= */
 function applyCustomCssOnLoad(){
   const css = localStorage.getItem("custom_css") || "";
-  if(css){
-    baseStyleEl.textContent = css;
-    editcssTextarea.value = css;
-  } else {
-    baseStyleEl.textContent = originalBaseCss;
-  }
+  if(css){ baseStyleEl.textContent = css; editcssTextarea.value = css; } else { baseStyleEl.textContent = originalBaseCss; }
 }
 applyCustomCssOnLoad();
 
-/* ======== Utility: apply local overrides to links (kept but editing removed) ======== */
+/* ================= ICON RENDER ================= */
+function createIconNode(link, cls='link-icon', sizeStyle=''){
+  const wrapper = document.createElement("div");
+  wrapper.className = cls;
+  if(sizeStyle) wrapper.style.cssText += sizeStyle;
+  if(link.img && isUrl(link.img)){
+    const img = document.createElement("img"); img.src = link.img; img.alt = link.title_en || link.title_id || ""; img.style.width = "100%"; img.style.height = "100%"; img.style.objectFit = "cover"; img.style.borderRadius = "6px"; wrapper.appendChild(img);
+  } else if(link.icon && isUrl(link.icon)){
+    const img = document.createElement("img"); img.src = link.icon; img.alt = link.title_en || link.title_id || ""; img.style.maxWidth = "100%"; img.style.maxHeight = "100%"; img.style.objectFit = "contain"; img.style.borderRadius = "6px"; wrapper.appendChild(img);
+  } else {
+    const i = document.createElement("i"); i.className = link.icon || 'fa-solid fa-link'; wrapper.appendChild(i);
+  }
+  return wrapper;
+}
+
+/* ================= FILTER PANEL ================= */
+function populateFilterPanel(){
+  filterList.innerHTML = '';
+  const groups = new Map();
+  linksData.forEach(l=>{
+    const gid = (currentLang === 'id') ? (l.grup_id || l.grup || 'Tanpa Grup') : (l.grup_en || l.grup || 'No Group');
+    if(!groups.has(gid)) groups.set(gid, gid);
+  });
+  if(groups.size === 0){ const div = document.createElement('div'); div.style.color='#9aa6bf'; div.textContent = (currentLang==='id')? 'Tidak ada grup.' : 'No groups.'; filterList.appendChild(div); return; }
+
+  groups.forEach((gName)=>{
+    const id = 'filter_' + gName.replace(/[^a-z0-9]/gi,'_');
+    const row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.style.justifyContent='space-between';
+    const left = document.createElement('div'); left.style.display='flex'; left.style.alignItems='center'; left.style.gap='8px';
+    const label = document.createElement('label'); label.style.cursor='pointer'; label.textContent = gName;
+    const chkWrap = document.createElement('label'); chkWrap.className='switch-small';
+    const input = document.createElement('input'); input.type='checkbox'; input.dataset.group = gName; input.id = id; if(filtersSelected.has(gName)) input.checked = true;
+    const span = document.createElement('span'); span.className='track'; span.innerHTML = '<span class="thumb"></span>';
+    chkWrap.appendChild(input); chkWrap.appendChild(span);
+    left.appendChild(label);
+    row.appendChild(left);
+    row.appendChild(chkWrap);
+    filterList.appendChild(row);
+
+    label.addEventListener('click', ()=>{ input.checked = !input.checked; input.dispatchEvent(new Event('change')); });
+
+    input.addEventListener('change', ()=>{
+      if(input.checked) filtersSelected.add(input.dataset.group); else filtersSelected.delete(input.dataset.group);
+    });
+  });
+}
+
+btnFilter.addEventListener('click', (e)=>{
+  e.stopPropagation(); filterPanel.classList.toggle('open'); filterPanel.setAttribute('aria-hidden', filterPanel.classList.contains('open')? 'false' : 'true');
+});
+
+document.addEventListener('click', (e)=>{ if(!filterPanel.contains(e.target) && !btnFilter.contains(e.target)) { filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true'); }});
+
+filterAllBtn.addEventListener('click', ()=>{
+  filtersSelected.clear();
+  filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = true; filtersSelected.add(i.dataset.group); });
+});
+filterNoneBtn.addEventListener('click', ()=>{
+  filtersSelected.clear();
+  filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = false; });
+});
+filterApplyBtn.addEventListener('click', ()=>{
+  localStorage.setItem('filters_selected', JSON.stringify(Array.from(filtersSelected)));
+  filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true');
+  renderLinks(linksData, searchBox.value);
+});
+
+/* ================= RENDER LINKS (dengan filter) ================= */
 function applyLocalOverrides(arr){
   return arr.map(l=>{
     const key = l.url || (l.title_id || l.title_en || Math.random().toString(36).slice(2));
@@ -388,53 +506,20 @@ function applyLocalOverrides(arr){
   });
 }
 
-/* ======== Render helpers (icon handling) ======== */
-function createIconNode(link, cls='link-icon', sizeStyle=''){
-  const wrapper = document.createElement("div");
-  wrapper.className = cls;
-  if(sizeStyle) wrapper.style.cssText += sizeStyle;
-  // Priority: link.img (explicit image), link.icon if URL, else fontawesome icon class
-  if(link.img && isUrl(link.img)){
-    const img = document.createElement("img");
-    img.src = link.img;
-    img.alt = link.title_en || link.title_id || "";
-    img.style.width = "100%";
-    img.style.height = "100%";
-    img.style.objectFit = "cover";
-    img.style.borderRadius = "6px";
-    wrapper.appendChild(img);
-  } else if(link.icon && isUrl(link.icon)){
-    const img = document.createElement("img");
-    img.src = link.icon;
-    img.alt = link.title_en || link.title_id || "";
-    img.style.maxWidth = "100%";
-    img.style.maxHeight = "100%";
-    img.style.objectFit = "contain";
-    img.style.borderRadius = "6px";
-    wrapper.appendChild(img);
-  } else {
-    // fallback to fontawesome or default link icon
-    const i = document.createElement("i");
-    i.className = link.icon || 'fa-solid fa-link';
-    wrapper.appendChild(i);
-  }
-  return wrapper;
-}
-
-/* ======== Render links (dengan dukungan multi-sumber & bilingual) ======== */
 function renderLinks(list, search=""){
   linkContainer.innerHTML = "";
   const q = (search||"").toLowerCase();
+  const filtered = applyLocalOverrides(list).filter(l=>{
+    const titleText = (currentLang==="id")? (l.title_id||l.title_en||"") : (l.title_en||l.title_id||"");
+    const groupName = (currentLang==="id")? (l.grup_id || l.grup || "Tanpa Grup") : (l.grup_en || l.grup || "No Group");
+    if(q && !(titleText.toLowerCase().includes(q) || (l.grup_id||"").toLowerCase().includes(q))) return false;
+    if(filtersSelected.size>0 && !filtersSelected.has(groupName)) return false;
+    return true;
+  });
 
-  // Mode sederhana (flat)
   if(simpleMode){
-    const items = applyLocalOverrides(list).filter(l=>{
-      const titleText = (currentLang==="id")? (l.title_id||l.title_en||"") : (l.title_en||l.title_id||"");
-      return !q || titleText.toLowerCase().includes(q) || (l.grup_id||"").toLowerCase().includes(q) || (l.grup_en||"").toLowerCase().includes(q);
-    });
-
     const container = document.createElement("div"); container.className = "flat-items";
-    container.innerHTML = `<div style="padding:8px;color:#9aa6bf">${t("simple_desc")}</div>`;
+    container.innerHTML = `<div style="padding:8px;color:#9aa6bf">${t('simple_desc')}</div>`;
 
     if(favoriteLinks && favoriteLinks.length){
       const favHeader = document.createElement("div"); favHeader.className = "group-container";
@@ -442,6 +527,7 @@ function renderLinks(list, search=""){
       favHeader.appendChild(fh);
       const favList = document.createElement("div"); favList.className = "group-items";
       favoriteLinks.forEach(link=>{
+        if(filtersSelected.size>0){ const grp = (currentLang==="id")? (link.grup_id||link.grup||"Tanpa Grup") : (link.grup_en||link.grup||"No Group"); if(!filtersSelected.has(grp)) return; }
         const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
         const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
         const titleText = `(${groupName}) ${titleTextRaw}`;
@@ -471,7 +557,7 @@ function renderLinks(list, search=""){
       container.appendChild(favHeader);
     }
 
-    items.forEach(link=>{
+    filtered.forEach(link=>{
       const titleRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
       const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
       const titleText = `(${groupName}) ${titleRaw}`;
@@ -503,10 +589,9 @@ function renderLinks(list, search=""){
     return;
   }
 
-  // Grouped view
-  let processed = applyLocalOverrides(list);
+  /* Grouped view */
   const groups = {};
-  processed.forEach(l=>{
+  filtered.forEach(l=>{
     const gid = l.grup_id || l.grup || "Tanpa Grup";
     const key = mergeSources ? gid : ((l.type||"local")+"__"+gid);
     if(!groups[key]) groups[key] = {links:[], name:{id:gid,en:l.grup_en||gid}, types: new Set()};
@@ -517,7 +602,7 @@ function renderLinks(list, search=""){
   if(favoriteLinks.length){
     const favKey = "FAVORIT";
     groups[favKey] = groups[favKey] || {links:[], name:{id:"Favorit",en:"Favorite"}, types: new Set()};
-    groups[favKey].links = favoriteLinks;
+    groups[favKey].links = favoriteLinks.filter(f=>{ if(filtersSelected.size>0){ const grp = (currentLang==="id")? (f.grup_id||f.grup||"Tanpa Grup") : (f.grup_en||f.grup||"No Group"); return filtersSelected.size? filtersSelected.has(grp) : true; } return true; });
     groups[favKey].types.add("favorite");
   }
 
@@ -527,8 +612,7 @@ function renderLinks(list, search=""){
   linkContainer.className = "container " + (effectiveView==="grid"?"grid-view":effectiveView==="card"?"card-view":"list-view");
 
   keys.forEach(k=>{
-    const g = groups[k];
-    if(!g) return;
+    const g = groups[k]; if(!g) return;
     const section = document.createElement("section"); section.className = "group-container";
     const h = document.createElement("h2"); h.className = "group-title";
     let gname = (currentLang==="id")? g.name.id : g.name.en || g.name.id;
@@ -551,12 +635,10 @@ function renderLinks(list, search=""){
       const items = document.createElement("div"); items.className="group-items";
       g.links.forEach(link=>{
         const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        if(q && !(titleText.toLowerCase().includes(q) || (link.grup_id||"").toLowerCase().includes(q))) return;
         const card = document.createElement("div"); card.className = "link-card card-item";
         const icon = createIconNode(link, "link-icon", "");
         const title = document.createElement("div"); title.className = "link-title"; title.textContent = titleText;
         const desc = document.createElement("div"); desc.className = "link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
-
         const acts = document.createElement("div"); acts.className = "link-actions";
         const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
         eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
@@ -581,10 +663,9 @@ function renderLinks(list, search=""){
       setTimeout(()=>{ if(items.scrollWidth <= items.clientWidth + 4){ left.style.display='none'; right.style.display='none'; } else { left.style.display='grid'; right.style.display='grid'; } },80);
 
     } else {
-      const items = document.createElement("div"); items.className="group-items";
+      const items = document.createElement("div"); items.className = "group-items";
       g.links.forEach(link=>{
         const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        if(q && !(titleText.toLowerCase().includes(q) || (link.grup_id||"").toLowerCase().includes(q))) return;
         const card = document.createElement("div"); card.className = "link-card";
         if(effectiveView==="grid"){
           const icon = createIconNode(link, "link-icon", "");
@@ -633,16 +714,16 @@ function renderLinks(list, search=""){
   });
 }
 
-/* ======== Preview popup ======== */
+/* ================= PREVIEW ================= */
 function openPreview(url){ previewFrame.src = url; previewPopup.style.display = "flex"; btnGo.onclick = ()=> window.location.href = url; }
 btnClose.addEventListener("click", ()=>{ previewPopup.style.display = "none"; previewFrame.src = ""; });
 
-/* ======== Settings interactions ======== */
+/* ================= SETTINGS INTERACTIONS ================= */
 btnSettings.addEventListener("click", ()=>{ settingsOverlay.classList.add("open"); });
 document.getElementById("settings-close").addEventListener("click", ()=> settingsOverlay.classList.remove("open"));
 settingsOverlay.addEventListener("click",(e)=>{ if(e.target === settingsOverlay) settingsOverlay.classList.remove("open"); });
 
-selLanguage.addEventListener("change", ()=>{ currentLang = selLanguage.value; localStorage.setItem("lang", currentLang); applyLanguageUI(); renderLinks(linksData, searchBox.value); });
+selLanguage.addEventListener("change", ()=>{ currentLang = selLanguage.value; localStorage.setItem("lang", currentLang); applyLanguageUI(); renderLinks(linksData, searchBox.value); populateFilterPanel(); });
 selView.addEventListener("change", ()=>{ viewMode = selView.value; localStorage.setItem("viewMode", viewMode); renderLinks(linksData, searchBox.value); });
 
 chkMerge.addEventListener("change", ()=>{ mergeSources = chkMerge.checked; localStorage.setItem("merge_sources", mergeSources ? "1" : "0"); renderLinks(linksData, searchBox.value); });
@@ -678,7 +759,7 @@ resetCssBtn.addEventListener("click", ()=> {
   }
 });
 
-/* DEBUG (hanya pesan kesalahan) */
+/* DEBUG */
 debugBtn.addEventListener("click", ()=> {
   const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors");
   debugArea.textContent = msg;
@@ -690,7 +771,7 @@ copyDebugBtn.addEventListener("click", ()=> {
   navigator.clipboard && navigator.clipboard.writeText(text).then(()=> showToast("Copied debug ✅"));
 });
 
-/* Reset flow (mesti ketik RESET) */
+/* RESET */
 const resetPopup = document.getElementById("reset-popup");
 const resetClose = document.getElementById("reset-close");
 const resetInput = document.getElementById("reset-input");
@@ -715,7 +796,7 @@ resetProceed && resetProceed.addEventListener("click", ()=>{
   }
 });
 
-/* ======== Multi-source loader (menggunakan SOURCE_URLS) ======== */
+/* ================= MULTI-SOURCE LOADER ================= */
 async function loadLinks(){
   loadingOverlay.classList.add("open");
   loadingText.textContent = t("loading_text");
@@ -730,12 +811,10 @@ async function loadLinks(){
       if(!res.ok) throw new Error("HTTP " + res.status + " for " + src);
       const j = await res.json();
       if(j.links && Array.isArray(j.links)){
-        // preserve optional type if provided, else mark 'global' for remote and 'local' for same-origin
         const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
         all.push(...j.links.map(x=>({...x, type: x.type || inferredType})));
         anySuccess = true;
       } else {
-        // if top-level is array not wrapped in {links:[]}
         if(Array.isArray(j)){
           const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
           all.push(...j.map(x=>({...x, type: x.type || inferredType})));
@@ -757,7 +836,7 @@ async function loadLinks(){
   return all;
 }
 
-/* ======== Init & search ======== */
+/* ================= INIT & search ================= */
 function enforceSmallScreenBehavior(){
   if(window.innerWidth <= 760){ selView.value = "list"; } else selView.value = viewMode;
 }
@@ -768,7 +847,15 @@ function init(){
   applyLanguageUI();
   applyCustomCssOnLoad();
   enforceSmallScreenBehavior();
-  loadLinks().then(d=>{ linksData = d; renderLinks(linksData); }).catch(e=>{ console.error(e); showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data"); loadingOverlay.classList.remove("open"); });
+  loadLinks().then(d=>{
+    linksData = d || [];
+    populateFilterPanel();
+    renderLinks(linksData);
+  }).catch(e=>{
+    console.error(e);
+    showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data");
+    loadingOverlay.classList.remove("open");
+  });
 }
 init();
 
