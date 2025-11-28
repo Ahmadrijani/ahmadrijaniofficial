@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahmad Rijani</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+    --theme-color: #f44336; /* default merah, nanti diganti random */
+}
+body {
+    margin: 0;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    background: #d9d9d9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+header {
+    width: 95%;
+    max-width: 900px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+    gap: 10px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+#profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+#profile span {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+#aboutBtn {
+    border: none;
+    background: var(--theme-color);
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #fff;
+    position: relative;
+}
+#aboutMenu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    z-index: 100;
+    width: 220px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+#aboutMenu a, #aboutMenu label, #aboutMenu button {
+    display: block;
+    margin-bottom: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    background: #eee;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+#filterWrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0;
+    width: 95%;
+    max-width: 900px;
+    overflow: hidden;
+}
+#filterContainer {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    flex: 1;
+    scroll-behavior: smooth;
+}
+.filter-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #eee;
+    cursor: pointer;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+.filter-btn.active {
+    background-color: var(--theme-color);
+    color: #fff;
+}
+.scroll-btn, #searchBtn {
+    border: none;
+    background: #ddd;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+#searchInput {
+    display: none;
+    margin-left: 5px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    flex: 1;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    max-width: 900px;
+    width: 95%;
+    padding: 15px;
+}
+.link-box {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    padding: 10px;
+    transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    position: relative;
+    font-size: 0.85rem;
+}
+.link-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+.link-box img, .link-box i.icon-main {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 30px;
+}
+.link-box a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    display: block;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: clamp(0.7rem, 1rem, 0.9rem);
+}
+.pin-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #888;
+    transition: color 0.2s, transform 0.2s;
+}
+.pinned {
+    border: 2px solid var(--theme-color);
+    z-index: 100;
+}
+.pinned .pin-btn {
+    color: var(--theme-color);
+    transform: rotate(-20deg);
+}
+@media (max-width: 500px) {
+    .grid-container { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; padding: 8px; }
+    .link-box { padding: 8px; font-size: 0.75rem; }
+    .link-box img, .link-box i.icon-main { width: 25px; height: 25px; font-size: 25px; }
+    .pin-btn { font-size: 0.75rem; }
+}
+</style>
+</head>
+<body>
+<header>
+    <div id="profile">
+        <img id="profileImg" src="https://i.pinimg.com/736x/34/e4/e7/34e4e751e0dfbb4e3e222e33634d8cab.jpg" alt="Foto AHMAD RIJANI">
+        <span>AHMAD RIJANI</span>
+    </div>
+    <button id="aboutBtn"><i class="fas fa-info-circle"></i></button>
+    <div id="aboutMenu">
+        <a href="https://ahmadrijani.github.io/ALL_LINK/index.html" target="_blank">FULL MODE</a>
+        <a href="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html#" target="_blank">ORIGINAL</a>
+        <label><input type="checkbox" id="togglePhoto"> Tampilkan Foto</label>
+        <button id="pingJsonBtn">Ping JSON</button>
+        <div id="pingResults" style="max-height:200px; overflow:auto; margin-top:5px;"></div>
+    </div>
+</header>
+<div id="filterWrapper">
+    <button class="scroll-btn" id="scrollLeft"><i class="fas fa-angle-left"></i></button>
+    <div id="filterContainer"></div>
+    <button class="scroll-btn" id="scrollRight"><i class="fas fa-angle-right"></i></button>
+    <button id="searchBtn"><i class="fas fa-search"></i></button>
+    <input type="text" id="searchInput" placeholder="Cari link...">
+</div>
+<div class="grid-container" id="linkGrid"></div>
+
+<script>
+const colors = ["#f44336","#4caf50","#2196f3","#ffeb3b"];
+document.documentElement.style.setProperty('--theme-color', colors[Math.floor(Math.random()*colors.length)]);
+const localStorageKey = 'pinnedLinks';
+const photoKey = 'showProfilePhoto';
+let allLinks = [];
+
+function togglePhoto(checked) {
+    document.getElementById('profileImg').style.display = checked ? 'block' : 'none';
+    localStorage.setItem(photoKey, checked);
+}
+document.getElementById('togglePhoto').addEventListener('change', (e) => togglePhoto(e.target.checked));
+togglePhoto(localStorage.getItem(photoKey) !== "false"); // default true
+
+document.getElementById('aboutBtn').addEventListener('click', () => {
+    const menu = document.getElementById('aboutMenu');
+    menu.style.display = menu.style.display==='block' ? 'none' : 'block';
+});
+
+document.getElementById('scrollLeft').addEventListener('click', () => {
+    document.getElementById('filterContainer').scrollBy({ left: -100, behavior: 'smooth' });
+});
+document.getElementById('scrollRight').addEventListener('click', () => {
+    document.getElementById('filterContainer').scrollBy({ left: 100, behavior: 'smooth' });
+});
+document.getElementById('searchBtn').addEventListener('click', () => {
+    const si = document.getElementById('searchInput');
+    si.style.display = si.style.display==='block' ? 'none' : 'block';
+    if(si.style.display==='block') si.focus();
+});
+
+document.getElementById('pingJsonBtn').addEventListener('click', async ()=>{
+    const urls = [
+        'https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Semua.link/links.json',
+        'https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/link_global.json'
+    ];
+    let results = [];
+    for(let url of urls){
+        const res = await fetch(url);
+        const data = await res.json();
+        if(data.links) results = results.concat(data.links);
+    }
+    results = results.filter(l=>!/[<>]/.test(l.title_id));
+    const container = document.getElementById('pingResults');
+    container.innerHTML = results.map(l=>`<a href="${l.url}" target="_blank">${l.title_id}</a>`).join('<br>');
+});
+
+async function loadLinks(){
+    const urls = [
+        'https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Semua.link/links.json',
+        'https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/link_global.json'
+    ];
+    for(let url of urls){
+        const res = await fetch(url);
+        const data = await res.json();
+        if(data.links) allLinks = allLinks.concat(data.links);
+    }
+    allLinks = allLinks.filter(l=>!/[<>]/.test(l.title_id));
+    const pinnedLinks = JSON.parse(localStorage.getItem(localStorageKey))||[];
+    const container = document.getElementById('linkGrid');
+    const filterContainer = document.getElementById('filterContainer');
+    const groups = ['all', ...new Set(allLinks.map(l=>l.grup_id))];
+    filterContainer.innerHTML = groups.map(g=>`<button class="filter-btn" data-group="${g}">${g}</button>`).join('');
+    const filterButtons = filterContainer.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            filterButtons.forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            renderGrid(btn.dataset.group, document.getElementById('searchInput').value);
+        });
+    });
+    document.getElementById('searchInput').addEventListener('input', e=>{
+        const activeGroup = filterContainer.querySelector('.filter-btn.active')?.dataset.group || 'all';
+        renderGrid(activeGroup, e.target.value);
+    });
+    filterContainer.querySelector('[data-group="all"]').classList.add('active');
+
+    function renderGrid(filter='all', search=''){
+        container.innerHTML='';
+        search = search.toLowerCase();
+        const pinned = allLinks.filter(l=>pinnedLinks.includes(l.url) && (filter==='all'||l.grup_id===filter));
+        const normal = allLinks.filter(l=>!pinnedLinks.includes(l.url) && (filter==='all'||l.grup_id===filter));
+        const display = [...pinned,...normal].filter(l=>l.title_id.toLowerCase().includes(search));
+        display.forEach(link=>{
+            const box = document.createElement('div');
+            box.className='link-box';
+            if(pinnedLinks.includes(link.url)) box.classList.add('pinned');
+            let iconHTML='';
+            if(link.icon){
+                if(link.icon.startsWith('fa')) iconHTML=`<i class="${link.icon} icon-main"></i>`;
+                else iconHTML=`<img src="${link.icon}" alt="${link.title_id}">`;
+            } else iconHTML=`<i class="fas fa-link icon-main"></i>`;
+            box.innerHTML=`
+                ${iconHTML}
+                <a href="${link.url}" target="_blank">${link.title_id}</a>
+                <span class="pin-btn"><i class="fas fa-thumbtack"></i></span>
+            `;
+            const pinBtn = box.querySelector('.pin-btn');
+            const icon = pinBtn.querySelector('i');
+            if(pinnedLinks.includes(link.url)){
+                icon.classList.add('fa-solid');
+                icon.style.color='var(--theme-color)';
+            } else {
+                icon.classList.add('fa-regular');
+                icon.style.color='#888';
+            }
+            pinBtn.addEventListener('click', e=>{
+                e.stopPropagation();
+                if(pinnedLinks.includes(link.url)) pinnedLinks.splice(pinnedLinks.indexOf(link.url),1);
+                else pinnedLinks.push(link.url);
+                localStorage.setItem(localStorageKey, JSON.stringify(pinnedLinks));
+                renderGrid(filter, search);
+            });
+            container.appendChild(box);
+        });
+    }
+
+    renderGrid();
+}
+
+loadLinks();
+</script>
+</body>
+</html>
