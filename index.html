@@ -109,35 +109,6 @@ html,body{
   color:var(--muted);
 }
 
-.controls{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-top:6px;
-}
-
-button{
-  background:none;
-  border:1px solid rgba(15,23,42,0.06);
-  color:#0f172a;
-  padding:12px 20px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:16px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  transition:all .12s ease;
-}
-
-button.primary{
-  background:linear-gradient(180deg, var(--accent), #1f6fd8);
-  color:white;
-  border:none;
-}
-button:active{ transform:translateY(1px) scale(.998); }
-
 .bigX{
   width:140px;
   height:140px;
@@ -157,6 +128,12 @@ button:active{ transform:translateY(1px) scale(.998); }
   font-size:14px;
   color:var(--muted);
   margin-top:12px;
+}
+
+.device-info{
+  font-size:14px;
+  color:var(--muted);
+  margin-top:8px;
 }
 
 @media(max-width:480px){
@@ -186,6 +163,8 @@ button:active{ transform:translateY(1px) scale(.998); }
 
   <div class="bigX" id="batalVirtual">✖</div>
 
+  <div class="device-info" id="deviceInfo"></div>
+
 </div>
 
 <script>
@@ -195,6 +174,7 @@ button:active{ transform:translateY(1px) scale(.998); }
   const batalVirtual = document.getElementById('batalVirtual');
   const info = document.getElementById('info');
   const status = document.getElementById('status');
+  const deviceInfo = document.getElementById('deviceInfo');
 
   let batal = false;
   let mencobaLagi = false;
@@ -202,7 +182,7 @@ button:active{ transform:translateY(1px) scale(.998); }
   let retryRemaining = 60;
   let redirected = false;
 
-  spinner.textContent = retryRemaining; // angka statis di tengah spinner
+  spinner.textContent = retryRemaining;
 
   function startRetryCountdown(seconds = 60){
     mencobaLagi = true;
@@ -251,7 +231,15 @@ button:active{ transform:translateY(1px) scale(.998); }
   batalVirtual.addEventListener('click', cancelOrToggleRetry);
   window.addEventListener('keydown', (e)=>{ if(e.key==="Escape"){ cancelOrToggleRetry(); } });
 
-  setTimeout(()=>{ if(!batal && !redirected){ doRedirect(); } },500);
+  let isAndroid = /android/i.test(navigator.userAgent);
+  let timeout = isAndroid ? 900 : 600;
+  deviceInfo.textContent = "Perangkat Anda: " + (isAndroid ? "Android" : "PC / Desktop");
+
+  setTimeout(()=>{
+    if(!batal && !redirected){
+      doRedirect();
+    }
+  }, timeout);
 })();
 </script>
 </body>
