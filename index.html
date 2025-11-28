@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mengarahkan...</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
 :root{
   --bg:#e9ecef;
   --card:#ffffff;
   --muted:#6b7280;
-  --accent:#2b8cff;
+  --accent1:255,0,0;
+  --accent2:0,255,0;
+  --accent3:0,0,255;
   --error:#ef4444;
   --glass-border: rgba(0,0,0,0.06);
   --radius:14px;
@@ -44,21 +45,6 @@ html,body{
   text-align:center;
 }
 
-.top-banner{
-  width:100%;
-  font-size:14px;
-  color:var(--muted);
-  display:flex;
-  justify-content:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.top-banner a{
-  color:var(--accent);
-  font-weight:600;
-  text-decoration:none;
-}
-
 .error-title{
   font-size:24px;
   font-weight:bold;
@@ -78,22 +64,26 @@ html,body{
   width:100px;
   height:100px;
   border-radius:50%;
-  border:8px solid rgba(0,0,0,0.06);
-  border-top-color:var(--accent);
+  border:8px solid rgba(0,0,0,0.1);
+  border-top-color: rgb(var(--accent1));
+  border-right-color: rgb(var(--accent2));
+  border-bottom-color: rgb(var(--accent3));
   animation:spin 1s linear infinite;
   display:grid;
   place-items:center;
   font-weight:bold;
   font-size:22px;
-  color:var(--accent);
+  color:#000;
   position:absolute;
   pointer-events:none;
 }
 
 .spinner.error{
   border-top-color: var(--error);
-  color:var(--error);
+  border-right-color: var(--error);
+  border-bottom-color: var(--error);
   animation:none;
+  color:var(--error);
 }
 
 @keyframes spin{ to { transform: rotate(360deg); } }
@@ -106,144 +96,81 @@ html,body{
 
 .status{
   font-size:13px;
-  color:var(--muted);
+  color:#6b7280;
+  margin-top:6px;
 }
 
-.bigX{
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-size:48px;
-  color:#ef4444;
-  background:rgba(255,255,255,0.85);
-  border:2px solid rgba(0,0,0,0.06);
-  cursor:pointer;
-  margin-top:16px;
+button{
+  padding:10px 20px;
+  border-radius:12px;
+  border:none;
+  background:linear-gradient(180deg,#2b8cff,#1f6fd8);
+  color:white;
   font-weight:bold;
-}
-
-.address{
-  font-size:14px;
-  color:var(--muted);
+  cursor:pointer;
   margin-top:12px;
 }
 
 .device-info{
   font-size:14px;
-  color:var(--muted);
+  color:#6b7280;
   margin-top:8px;
 }
 
 @media(max-width:480px){
   .spinner{ width:80px; height:80px; font-size:18px; }
-  .bigX{ width:120px; height:120px; font-size:42px; }
   .card{ padding:20px; max-width:90%; }
+  button{ padding:8px 16px; font-size:16px; }
 }
 </style>
 </head>
 <body>
-<div class="card" role="dialog" aria-labelledby="info" aria-describedby="status">
-
+<div class="card">
   <div class="error-title">404 NOT FOUND</div>
-
-  <div class="top-banner">
-    <i class="fa-solid fa-location-arrow"></i>
-    Alamat lama sudah dipindahkan ke 
-    <a href="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" target="_blank">link baru</a>
-  </div>
 
   <div class="spinner-container">
     <div class="spinner" id="spinner">60</div>
   </div>
 
   <div class="info" id="info">Mengarahkan ke versi terbaru...</div>
-  <div class="status" id="status">Tekan <strong>ESC</strong> atau klik ❌ untuk membatalkan. Setelah dibatalkan, akan mencoba lagi dalam 60 detik.</div>
+  <div class="status" id="status">Jika tidak otomatis, tekan tombol manual di bawah.</div>
 
-  <div class="bigX" id="batalVirtual">✖</div>
+  <button id="manualBtn">Pindah Manual</button>
 
   <div class="device-info" id="deviceInfo"></div>
-
 </div>
 
 <script>
 (function(){
   const urlTujuan = "https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html";
   const spinner = document.getElementById('spinner');
-  const batalVirtual = document.getElementById('batalVirtual');
   const info = document.getElementById('info');
   const status = document.getElementById('status');
   const deviceInfo = document.getElementById('deviceInfo');
+  const manualBtn = document.getElementById('manualBtn');
 
   let batal = false;
-  let mencobaLagi = false;
-  let cooldownId = null;
-  let retryRemaining = 60;
   let redirected = false;
-
-  spinner.textContent = retryRemaining;
-
-  function startRetryCountdown(seconds = 60){
-    mencobaLagi = true;
-    retryRemaining = seconds;
-    spinner.classList.remove('error');
-    spinner.textContent = retryRemaining;
-    status.innerHTML = "Tekan <strong>ESC</strong> atau klik ❌ untuk membatalkan percobaan ulang.";
-
-    cooldownId = setInterval(()=>{
-      retryRemaining--;
-      spinner.textContent = retryRemaining;
-      if(retryRemaining <= 0){
-        clearInterval(cooldownId);
-        mencobaLagi = false;
-        batal = false;
-        info.textContent = "Mengarahkan ulang...";
-        status.innerHTML = "Tekan <strong>ESC</strong> untuk membatalkan.";
-        setTimeout(()=> { doRedirect(); }, 500);
-      }
-    },1000);
-  }
-
-  function cancelOrToggleRetry(){
-    if(!mencobaLagi){
-      batal = true;
-      info.textContent = "Pengalihan dibatalkan.";
-      status.textContent = "Mencoba lagi dalam 60 detik... Tekan ESC atau klik ❌ lagi untuk hentikan total.";
-      startRetryCountdown(60);
-    } else {
-      clearInterval(cooldownId);
-      mencobaLagi = false;
-      batal = true;
-      info.textContent = "ERROR";
-      status.textContent = "Percobaan ulang dibatalkan sepenuhnya.";
-      spinner.classList.add('error');
-      spinner.textContent = "ERR";
-    }
-  }
-
-  function doRedirect(){
-    if(redirected) return;
-    redirected = true;
-    window.location.replace(urlTujuan);
-  }
-
-  batalVirtual.addEventListener('click', cancelOrToggleRetry);
-  window.addEventListener('keydown', (e)=>{ if(e.key==="Escape"){ cancelOrToggleRetry(); } });
 
   let isAndroid = /android/i.test(navigator.userAgent);
   let timeout = isAndroid ? 900 : 600;
   deviceInfo.textContent = "Perangkat Anda: " + (isAndroid ? "Android" : "PC / Desktop");
 
+  manualBtn.addEventListener('click', ()=>{ window.location.href = urlTujuan; });
+
   history.pushState(null, document.title, location.href);
-  window.addEventListener('popstate', (e)=>{
-    cancelOrToggleRetry();
+  window.addEventListener('popstate', ()=>{
+    batal = true;
+    spinner.classList.add('error');
+    spinner.textContent = "ERR";
+    info.textContent = "ERROR";
+    status.textContent = "Pengalihan dibatalkan.";
     history.pushState(null, document.title, location.href);
   });
 
   setTimeout(()=>{
     if(!batal && !redirected){
-      doRedirect();
+      window.location.replace(urlTujuan);
     }
   }, timeout);
 })();
