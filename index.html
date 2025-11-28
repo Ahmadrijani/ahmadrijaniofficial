@@ -235,6 +235,12 @@ html,body{
   let timeout = isAndroid ? 900 : 600;
   deviceInfo.textContent = "Perangkat Anda: " + (isAndroid ? "Android" : "PC / Desktop");
 
+  history.pushState(null, document.title, location.href);
+  window.addEventListener('popstate', (e)=>{
+    cancelOrToggleRetry();
+    history.pushState(null, document.title, location.href);
+  });
+
   setTimeout(()=>{
     if(!batal && !redirected){
       doRedirect();
