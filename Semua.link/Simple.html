@@ -1,3 +1,466 @@
+<!-- Windows7-style Multi Window (Draggable, Minimize, Maximize, Duplicate up to 5) -->
+<div id="__ero4_win7_multi_container"></div>
+
+<script>
+(function(){
+  const HOST_ID = '__ero4_win7_multi_container';
+  if (!document.getElementById(HOST_ID)) return;
+  const host = document.getElementById(HOST_ID);
+  if (host.__ero4_init) return;
+  host.__ero4_init = true;
+
+  const shadow = host.attachShadow({ mode: 'open' });
+
+  // Styles (isolated inside Shadow DOM)
+  const style = document.createElement('style');
+  style.textContent = `
+    :host { all: initial; } /* reset agar tidak ikut style luar */
+    .stage {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2147483000;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .window {
+      position: fixed;
+      width: 520px;
+      max-width: calc(100vw - 20px);
+      background: linear-gradient(#f7f7f7, #eaeaea);
+      border: 1px solid #6b6b6b;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border-radius: 6px;
+      color: #111;
+      pointer-events: auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      min-height: 110px;
+    }
+    .titlebar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: linear-gradient(#0063b0, #004a8f);
+      color: white;
+      cursor: grab;
+      height: 34px;
+      box-sizing: border-box;
+    }
+    .titlebar:active { cursor: grabbing; }
+    .title {
+      font-weight: 600;
+      font-size: 13px;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      user-select: none;
+    }
+    .title .subtitle { font-weight: 400; font-size: 12px; opacity: .95; margin-left:6px; color: #dfeeff;}
+    .controls {
+      margin-left: auto;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .ctrl-btn {
+      width: 28px;
+      height: 24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:3px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.08); }
+    .body {
+      display: flex;
+      gap: 14px;
+      padding: 16px;
+      align-items: flex-start;
+      box-sizing: border-box;
+      background: linear-gradient(#ffffff,#f1f1f1);
+      flex: 1 1 auto;
+    }
+    .warn-icon { width: 48px; height: 48px; flex: 0 0 48px; }
+    .text { font-size: 14px; color: #111; line-height: 1.4; }
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 10px 12px;
+      background: linear-gradient(#f2f2f2,#e7e7e7);
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+    .btn {
+      min-width: 74px;
+      padding: 6px 10px;
+      border-radius: 3px;
+      border: 1px solid #7a7a7a;
+      background: linear-gradient(#f8f8f8,#e8e8e8);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn.primary {
+      background: linear-gradient(#2b7bd6, #0f5fb3);
+      color: #fff;
+      border: 1px solid #084b8f;
+      box-shadow: inset 0 -1px rgba(0,0,0,0.12);
+    }
+    .minimized .body, .minimized .footer { display: none; }
+    .minimized { width: 260px; min-height: 34px; }
+    .maximized {
+      left: 10px !important;
+      top: 10px !important;
+      width: calc(100vw - 20px) !important;
+      height: calc(100vh - 20px) !important;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    /* small helper for docked minimized tile */
+    .min-tile {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      display: flex;
+      gap: 6px;
+      z-index: 2147483500;
+      pointer-events: none;
+    }
+    .min-tile .tile {
+      pointer-events: auto;
+      background: linear-gradient(#f7f7f7,#eaeaea);
+      border:1px solid #888;
+      padding:6px 10px;
+      border-radius:4px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      cursor: pointer;
+      font-size:13px;
+      color:#111;
+    }
+    /* small responsive tweak */
+    @media (max-width: 520px) {
+      .window { width: calc(100vw - 20px); left: 10px; right: 10px; }
+    }
+  `;
+
+  // Stage container
+  const stage = document.createElement('div');
+  stage.className = 'stage';
+
+  // Minimized tiles container
+  const minTileContainer = document.createElement('div');
+  minTileContainer.className = 'min-tile';
+
+  shadow.appendChild(style);
+  shadow.appendChild(stage);
+  shadow.appendChild(minTileContainer);
+
+  // State
+  let zCounter = 2147483001;
+  let winCount = 0;
+  const MAX_WINDOWS = 500000000000000;
+  const windowsMap = new Map(); // id -> element + state
+
+  // Helper to create unique id
+  function uid() {
+    return 'ero4w_' + Math.random().toString(36).slice(2,9);
+  }
+
+  // Create a new window. options: { message, x, y }
+  function createWindow(options = {}) {
+    if (winCount >= MAX_WINDOWS) return null;
+    const id = uid();
+    winCount++;
+    const message = options.message || 'Nanti web ini akan jadi iframe di fitur pusat, jadi nantikan saja ada tombol untuk aktifkan ini di pusat, sementara seperti ini dulu.';
+    const win = document.createElement('div');
+    win.className = 'window';
+    win.setAttribute('data-win-id', id);
+    // default centered position
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const defaultWidth = 520;
+    const left = (vw - defaultWidth)/2 + (Math.random()*30 - 15); // slight jitter
+    const top = (vh - 240)/2 + (Math.random()*30 - 15);
+    win.style.left = (options.x || Math.max(10, Math.round(left))) + 'px';
+    win.style.top  = (options.y || Math.max(10, Math.round(top))) + 'px';
+
+    win.innerHTML = `
+      <div class="titlebar" tabindex="0" role="toolbar">
+        <div class="title">PERINGATAN<span class="subtitle"></span></div>
+        <div class="controls">
+          <button class="ctrl-btn" title="Minimize" data-action="minimize">—</button>
+          <button class="ctrl-btn" title="Maximize" data-action="maximize">▢</button>
+          <button class="ctrl-btn" title="Close" data-action="close">✕</button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="warn-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="32,6 60,58 4,58" fill="#f4c542" stroke="#b8860b" stroke-width="2"/>
+            <rect x="30" y="22" width="4" height="18" fill="#8b5e00"/>
+            <rect x="30" y="44" width="4" height="6" fill="#8b5e00"/>
+          </svg>
+        </div>
+        <div class="text">${escapeHtml(message)}</div>
+      </div>
+      <div class="footer">
+        <button class="btn" data-action="batal">Batal</button>
+        <button class="btn" id="btn-no-${id}" data-action="no">No</button>
+        <button class="btn primary" data-action="ok">OK</button>
+      </div>
+    `;
+
+    stage.appendChild(win);
+
+    // store state
+    const state = {
+      id, el: win, isMinimized: false, isMaximized: false,
+      prevPos: null // for maximize restore
+    };
+    windowsMap.set(id, state);
+
+    // event wiring
+    const titlebar = win.querySelector('.titlebar');
+    const btns = win.querySelectorAll('[data-action]');
+    const btnNo = win.querySelector(`#btn-no-${id}`);
+
+    // Bring to front on mousedown
+    win.addEventListener('pointerdown', ()=> bringToFront(id));
+
+    // Controls click
+    btns.forEach(b => {
+      b.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const action = b.getAttribute('data-action');
+        if (action === 'minimize') toggleMinimize(id);
+        if (action === 'maximize') toggleMaximize(id);
+        if (action === 'close') closeWindow(id);
+        if (action === 'batal') closeWindow(id);
+        if (action === 'ok') closeWindow(id);
+        if (action === 'no') handleNo(id);
+      });
+    });
+
+    // Titlebar double-click toggles maximize
+    titlebar.addEventListener('dblclick', ()=> toggleMaximize(id));
+
+    // Dragging
+    makeDraggable(win, titlebar, id);
+
+    // Keyboard: Esc closes active window
+    titlebar.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape' || e.key === 'Esc') closeWindow(id);
+      if (e.key === 'ArrowUp' && e.altKey) toggleMaximize(id);
+      if (e.key === 'ArrowDown' && e.altKey) toggleMinimize(id);
+    });
+
+    // Update No buttons state across all windows after creation
+    refreshNoButtons();
+
+    bringToFront(id);
+    return id;
+  }
+
+  function bringToFront(id) {
+    const st = windowsMap.get(id);
+    if (!st) return;
+    zCounter++;
+    st.el.style.zIndex = zCounter;
+  }
+
+  function closeWindow(id) {
+    const st = windowsMap.get(id);
+    if (!st) return;
+    // remove element
+    try { st.el.remove(); } catch(e){}
+    windowsMap.delete(id);
+    winCount = Math.max(0, winCount - 1);
+    // remove any minimized tile for this id
+    const tile = minTileContainer.querySelector(`[data-tile-for="${id}"]`);
+    if (tile) tile.remove();
+    refreshNoButtons();
+  }
+
+  function toggleMinimize(id) {
+    const st = windowsMap.get(id);
+    if (!st) return;
+    const el = st.el;
+    if (st.isMinimized) {
+      // restore
+      el.classList.remove('minimized');
+      st.isMinimized = false;
+      // remove tile
+      const tile = minTileContainer.querySelector(`[data-tile-for="${id}"]`);
+      if (tile) tile.remove();
+    } else {
+      // minimize to small title-only appearance
+      el.classList.add('minimized');
+      st.isMinimized = true;
+      // create a tile to restore
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.setAttribute('data-tile-for', id);
+      tile.textContent = 'PERINGATAN';
+
+
+      tile.addEventListener('click', ()=>{
+        toggleMinimize(id);
+        bringToFront(id);
+      });
+      minTileContainer.appendChild(tile);
+    }
+  }
+
+  function toggleMaximize(id) {
+    const st = windowsMap.get(id);
+    if (!st) return;
+    const el = st.el;
+    if (st.isMaximized) {
+      // restore
+      el.classList.remove('maximized');
+      st.isMaximized = false;
+      if (st.prevPos) {
+        el.style.left = st.prevPos.left;
+        el.style.top  = st.prevPos.top;
+        if (st.prevPos.width) el.style.width = st.prevPos.width;
+        if (st.prevPos.height) el.style.height = st.prevPos.height;
+      }
+      st.prevPos = null;
+    } else {
+      // save pos
+      st.prevPos = {
+        left: el.style.left,
+        top: el.style.top,
+        width: el.style.width,
+        height: el.style.height
+      };
+      // maximize
+      el.classList.add('maximized');
+      st.isMaximized = true;
+      // ensure full viewport coverage handled by CSS .maximized
+    }
+    bringToFront(id);
+  }
+
+  function handleNo(id) {
+    // duplicate window (create one new window)
+    if (winCount >= MAX_WINDOWS) {
+      // disable No buttons and optionally flash existing windows
+      refreshNoButtons();
+      return;
+    }
+    // create new window slightly offset from source
+    const st = windowsMap.get(id);
+    let x = null, y = null;
+    if (st && st.el) {
+      const r = st.el.getBoundingClientRect();
+      x = Math.round(r.left + 24);
+      y = Math.round(r.top + 24);
+    }
+    createWindow({ message: st ? st.el.querySelector('.text').textContent : undefined, x, y });
+  }
+
+  function refreshNoButtons() {
+    // enable/disable No buttons based on current count
+    const disable = winCount >= MAX_WINDOWS;
+    windowsMap.forEach((st, id)=>{
+      const btn = st.el.querySelector(`#btn-no-${id}`);
+      if (btn) {
+        btn.disabled = disable;
+        btn.style.opacity = disable ? '0.5' : '1';
+        btn.title = disable ? `Maksimal ${MAX_WINDOWS} jendela` : 'Duplicate window';
+      }
+    });
+  }
+
+  // Draggable helper using Pointer Events
+  function makeDraggable(winEl, handleEl, id) {
+    let dragging = false;
+    let startX=0, startY=0, startLeft=0, startTop=0;
+
+    handleEl.addEventListener('pointerdown', (e)=>{
+      // only left button or touch
+      if (e.button !== 0 && e.pointerType !== 'touch') return;
+      dragging = true;
+      handleEl.setPointerCapture(e.pointerId);
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = winEl.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop  = rect.top;
+      // if maximized, restore before drag
+      const st = windowsMap.get(id);
+      if (st && st.isMaximized) {
+        toggleMaximize(id);
+        // update startLeft/startTop after restore
+        const r2 = winEl.getBoundingClientRect();
+        startLeft = r2.left;
+        startTop  = r2.top;
+      }
+      bringToFront(id);
+      e.preventDefault();
+    });
+
+    handleEl.addEventListener('pointermove', (e)=>{
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      let newLeft = Math.round(startLeft + dx);
+      let newTop  = Math.round(startTop + dy);
+      // clamp within viewport
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      const rect = winEl.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      newLeft = Math.min(Math.max(newLeft, 8 - w + 60), vw - 8); // allow partial offscreen small
+      newTop  = Math.min(Math.max(newTop, 8), vh - 8);
+      winEl.style.left = newLeft + 'px';
+      winEl.style.top  = newTop + 'px';
+    });
+
+    handleEl.addEventListener('pointerup', (e)=>{
+      if (!dragging) return;
+      dragging = false;
+      try { handleEl.releasePointerCapture(e.pointerId); } catch(e){}
+    });
+
+    // Also allow dragging by clicking title text area (children)
+    handleEl.addEventListener('pointercancel', ()=> { dragging = false; });
+  }
+
+  // Utility to escape HTML
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // Public API (namespaced)
+  window.__ero4_createWin7Window = function(opts) { return createWindow(opts); };
+  window.__ero4_closeAllWin7 = function() {
+    Array.from(windowsMap.keys()).forEach(id => closeWindow(id));
+  };
+  window.__ero4_getWindowCount = function() { return winCount; };
+
+  // auto-create initial window centered
+  setTimeout(()=> { createWindow({}); }, 300);
+
+})();
+</script>
 <!DOCTYPE html>
 <html lang="id">
 <head>
