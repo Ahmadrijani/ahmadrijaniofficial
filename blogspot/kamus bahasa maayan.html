@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamus Ma'anyan - Indonesia</title>
+<style>
+  body {
+    background-color: #888;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    padding: 15px;
+    text-align: center;
+    background-color: #111;
+  }
+  header img {
+    max-width: 150px;
+    border-radius: 8px;
+  }
+  header h1 {
+    margin: 10px 0 5px 0;
+    font-size: 1.5rem;
+  }
+  header p {
+    font-size: 0.8rem;
+    color: #ccc;
+  }
+  .peringatan, .active-filter {
+    text-align: center;
+    font-weight: bold;
+  }
+  .peringatan a {
+    color: #80c0ff;
+    text-decoration: none;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #555;
+  }
+  .controls input {
+    padding: 15px 20px;
+    border-radius: 4px;
+    border: none;
+    width: 60%;
+    font-size: 1.2rem;
+    color: #fff;
+    background-color: #333;
+  }
+  .controls button {
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .controls button:hover {
+    background-color: #666;
+  }
+  .active-filter {
+    margin-top: 5px;
+    font-size: 1rem;
+    color: #ffcc33;
+  }
+  table {
+    width: 95%;
+    margin: 10px auto 30px auto;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background-color: #333;
+  }
+  th, td {
+    padding: 8px 10px;
+    border: 1px solid #555;
+    word-wrap: break-word;
+  }
+  th {
+    background-color: #222;
+  }
+  tr:nth-child(even) {
+    background-color: #444;
+  }
+  tr:hover {
+    background-color: #555;
+  }
+  .highlight {
+    background-color: #ffcc33;
+    color: #000;
+  }
+  .sumber-gambar {
+    text-align: center;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    color: #ccc;
+  }
+  /* Popup */
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #222;
+    border: 1px solid #555;
+    padding: 10px 20px;
+    border-radius: 6px;
+    z-index: 1000;
+    color: #fff;
+    font-size: 0.9rem;
+    display: none;
+    max-width: 250px;
+    text-align: center;
+  }
+  .popup button {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    color: #ff8080;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="https://cdn.rri.co.id/berita/Purwokerto/o/1717732305024-bahasa_asing/fonog9feimzxr61.jpeg" alt="Bahasa Ma'anyan">
+  <p class="sumber-gambar">Sumber gambar: <a href="https://cdn.rri.co.id/berita/Purwokerto/o/1717732305024-bahasa_asing/fonog9feimzxr61.jpeg" target="_blank">RRI</a></p>
+  <h1>Kamus Ma'anyan - Bahasa Indonesia</h1>
+</header>
+
+<div class="popup" id="popup">
+  <button onclick="closePopup()">X</button>
+  <p>Web ini dibuat oleh <a href="https://ahmadrijaniofficial.blogspot.com/" target="_blank">ahmadrijaniofficial.blogspot.com</a></p>
+  <p>Data mungkin ada kesalahan arti. Gunakan dengan hati-hati.</p>
+</div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="Cari kata Ma'anyan atau Indonesia...">
+  <div id="az-buttons"></div>
+  <button id="show-all">Tampilkan Semua</button>
+</div>
+
+<p class="active-filter" id="active-filter">Filter aktif: Semua</p>
+
+<table id="kamus">
+  <thead>
+    <tr>
+      <th>Kata Ma'anyan</th>
+      <th>Arti (Bahasa Indonesia)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+function showPopup() {
+  const popup = document.getElementById('popup');
+  popup.style.display = 'block';
+  setTimeout(() => popup.style.display = 'none', 2000);
+}
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+}
+
+async function loadKamus() {
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/blogspot/bahasamaayan.json');
+    if(!res.ok) throw new Error('Gagal ambil data');
+    const data = await res.json();
+    return data;
+  } catch(e) {
+    document.querySelector('#kamus tbody').innerHTML = '<tr><td colspan="2" style="text-align:center;color:#ff8080;">Data gagal diambil. Periksa koneksi internet Anda.</td></tr>';
+    return {};
+  }
+}
+
+function renderTable(data, highlight='') {
+  const tbody = document.querySelector('#kamus tbody');
+  tbody.innerHTML = '';
+  Object.keys(data).sort().forEach(key => {
+    let arti = data[key];
+    let row = document.createElement('tr');
+    let keyHtml = highlightMatch(key, highlight);
+    let artiHtml = highlightMatch(arti, highlight);
+    row.innerHTML = `<td>${keyHtml}</td><td>${artiHtml}</td>`;
+    tbody.appendChild(row);
+  });
+}
+
+function highlightMatch(text, query) {
+  if(!query) return text;
+  const regex = new RegExp(`(${query})`, 'gi');
+  return text.replace(regex, '<span class="highlight">$1</span>');
+}
+
+function filterTable(data, query) {
+  const filtered = {};
+  Object.keys(data).forEach(key => {
+    if(key.toLowerCase().includes(query.toLowerCase()) || data[key].toLowerCase().includes(query.toLowerCase())) {
+      filtered[key] = data[key];
+    }
+  });
+  renderTable(filtered, query);
+  updateActiveFilter(query ? query : 'Semua');
+}
+
+function createAZButtons(data) {
+  const azContainer = document.getElementById('az-buttons');
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  letters.forEach(letter => {
+    const btn = document.createElement('button');
+    btn.textContent = letter;
+    btn.addEventListener('click', () => {
+      const filtered = Object.keys(data)
+        .filter(k => k[0].toUpperCase() === letter)
+        .sort()
+        .reduce((obj, key) => { obj[key] = data[key]; return obj; }, {});
+      renderTable(filtered);
+      updateActiveFilter(letter);
+    });
+    azContainer.appendChild(btn);
+  });
+}
+
+function updateActiveFilter(text) {
+  document.getElementById('active-filter').textContent = 'Filter aktif: ' + text;
+}
+
+(async () => {
+  showPopup();
+  const data = await loadKamus();
+  renderTable(data);
+  createAZButtons(data);
+
+  document.getElementById('search').addEventListener('input', (e) => {
+    filterTable(data, e.target.value);
+  });
+
+  document.getElementById('show-all').addEventListener('click', () => {
+    renderTable(data);
+    updateActiveFilter('Semua');
+    document.getElementById('search').value = '';
+  });
+})();
+</script>
+
+</body>
+</html>
