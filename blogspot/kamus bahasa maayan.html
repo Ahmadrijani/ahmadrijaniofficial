@@ -102,12 +102,12 @@
     margin-top: 5px;
     color: #ccc;
   }
-  /* Popup */
-  .popup {
+  /* Popup bawah */
+  .popup-bottom {
     position: fixed;
-    top: 50%;
+    bottom: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     background-color: #222;
     border: 1px solid #555;
     padding: 10px 20px;
@@ -115,19 +115,20 @@
     z-index: 1000;
     color: #fff;
     font-size: 0.9rem;
-    display: none;
-    max-width: 250px;
     text-align: center;
+    display: none;
+    max-width: 300px;
   }
-  .popup button {
-    position: absolute;
-    top: 2px;
-    right: 5px;
-    background: transparent;
+  .popup-bottom button {
+    margin-left: 10px;
+    background: #444;
     border: none;
     color: #ff8080;
     font-weight: bold;
     cursor: pointer;
+    border-radius: 3px;
+    padding: 3px 5px;
+    font-size: 0.8rem;
   }
 </style>
 </head>
@@ -138,12 +139,6 @@
   <p class="sumber-gambar">Sumber gambar: <a href="https://cdn.rri.co.id/berita/Purwokerto/o/1717732305024-bahasa_asing/fonog9feimzxr61.jpeg" target="_blank">RRI</a></p>
   <h1>Kamus Ma'anyan - Bahasa Indonesia</h1>
 </header>
-
-<div class="popup" id="popup">
-  <button onclick="closePopup()">X</button>
-  <p>Web ini dibuat oleh <a href="https://ahmadrijaniofficial.blogspot.com/" target="_blank">ahmadrijaniofficial.blogspot.com</a></p>
-  <p>Data mungkin ada kesalahan arti. Gunakan dengan hati-hati.</p>
-</div>
 
 <div class="controls">
   <input type="text" id="search" placeholder="Cari kata Ma'anyan atau Indonesia...">
@@ -163,14 +158,31 @@
   <tbody></tbody>
 </table>
 
+<div class="popup-bottom" id="popup-bottom">
+  <p>Web ini dibuat oleh <a href="https://ahmadrijaniofficial.blogspot.com/" target="_blank">ahmadrijaniofficial.blogspot.com</a></p>
+  <p>Data mungkin ada kesalahan arti. Gunakan dengan hati-hati.</p>
+  <button onclick="closePopup()">X</button>
+  <button onclick="disablePopup()">Jangan tampilkan 7 hari</button>
+</div>
+
 <script>
-function showPopup() {
-  const popup = document.getElementById('popup');
-  popup.style.display = 'block';
-  setTimeout(() => popup.style.display = 'none', 2000);
-}
 function closePopup() {
-  document.getElementById('popup').style.display = 'none';
+  document.getElementById('popup-bottom').style.display = 'none';
+}
+function disablePopup() {
+  localStorage.setItem('popupDisabled', Date.now());
+  closePopup();
+}
+
+function showPopup() {
+  const popupDisabled = localStorage.getItem('popupDisabled');
+  if(popupDisabled) {
+    const diff = Date.now() - popupDisabled;
+    if(diff < 7*24*60*60*1000) return; // 7 hari
+  }
+  const popup = document.getElementById('popup-bottom');
+  popup.style.display = 'block';
+  setTimeout(() => { popup.style.display = 'none'; }, 3000);
 }
 
 async function loadKamus() {
