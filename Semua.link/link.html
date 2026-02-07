@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Pusat Link Favorit — Versi Diperbarui</title>
+<title>AHMAD RIJANI Links</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
 <link rel="icon" href="https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/image/Kuning%20minum.png" type="image/png">
 <style id="base-style">
@@ -28,13 +28,13 @@
   .controls .search-input{padding:8px 12px 8px 34px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;outline:none;min-width:200px}
 
   /* filter button & dropdown */
-  .btn-filter{padding:8px 10px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;cursor:pointer}
+  .btn-filter{padding:8px 10px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer}
   .filter-panel{position:absolute;right:12px;top:56px;background:var(--settings-bg);padding:12px;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.7);min-width:260px;z-index:999;display:none}
   .filter-panel.open{display:block}
   .filter-panel h4{margin:0 0 8px 0;color:var(--highlight)}
   .filter-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:6px}
   .filter-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
-  .btn-ghost{background:none;border:none;color:var(--muted);cursor:pointer;padding:6px 8px;border-radius:8px}
+  .btn-ghost{background:none;border:none;color:var(--accent);cursor:pointer;padding:6px 8px;border-radius:8px}
   .btn-primary{background:var(--accent);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
 
   /* nice dropdown + labels */
@@ -97,6 +97,7 @@
   .btn-icon{background:none;border:none;color:var(--muted);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px}
   .btn-icon:hover{color:#fff;background:rgba(255,255,255,0.02);transform:scale(1.03)}
   .favorite{color:#ffd700!important}
+  .pinned{color:var(--highlight)!important}
   .highlight{border:2px solid var(--accent);border-radius:10px}
 
   /* preview + popups */
@@ -115,7 +116,26 @@
   .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading-text{font-size:0.95rem;color:#e6eef8}
-  @media (max-width:760px){ .header h1{font-size:1.0rem} .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px} .filter-panel{right:6px;left:6px;top:68px} }
+
+  /* modal styles for granular save/load/reset */
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1800;justify-content:center;align-items:center}
+  .modal.open{display:flex}
+  .modal-box{background:var(--panel);padding:12px;border-radius:10px;width:92%;max-width:520px;max-height:82vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,0.7)}
+  .modal-row{display:flex;align-items:center;justify-content:space-between;padding:6px 4px}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+  .modal .modal-title{font-weight:700;margin-bottom:8px;color:var(--highlight)}
+
+  /* settings collapse & scrollbar improvements */
+  .settings-menu{max-height:80vh;overflow:auto}
+  .settings-menu.collapsed{width:420px;max-height:60vh}
+  .settings-menu::-webkit-scrollbar, .modal-box::-webkit-scrollbar, .editcss-box::-webkit-scrollbar{width:10px}
+  .settings-menu::-webkit-scrollbar-thumb, .modal-box::-webkit-scrollbar-thumb, .editcss-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px}
+  @media (max-width:760px){
+    .header h1{font-size:1.0rem}
+    .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px}
+    .filter-panel{right:6px;left:6px;top:68px}
+    .settings-menu{width:94%;max-height:70vh}
+  }
 </style>
 
 <style id="settings-style">
@@ -134,13 +154,21 @@
   .reset-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);justify-content:center;align-items:center;z-index:1300}
   .reset-box{background:var(--panel);padding:18px;border-radius:10px;width:92%;max-width:420px;position:relative}
   .reset-close{position:absolute;right:10px;top:8px;background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer}
+
+  /* settings tabs */
+  .settings-tabs{display:flex;gap:8px}
+  .settings-tab{background:transparent;border:none;color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
+  .settings-tab.active{color:#000;background:var(--highlight);font-weight:700}
+  .settings-panel{display:none;flex-direction:column;gap:10px}
+  .settings-panel.open{display:flex}
+  .exp-row{display:flex;gap:8px;align-items:center}
 </style>
 
 <style id="custom-css-placeholder"></style>
 </head>
 <body>
   <div class="header">
-    <h1 id="header-title">Pusat Link Favorit</h1>
+    <h1 id="header-title">Kumin Links</h1>
     <div class="controls">
       <div class="search-wrapper">
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -158,55 +186,123 @@
           </div>
         </div>
       </div>
-      <button id="btn-settings" title=""><i class="fa-solid fa-gear"></i> <span id="btn-settings-label"></span></button>
-      <button id="btn-debug" title=""><i class="fa-solid fa-bug"></i> <span id="btn-debug-label">Debug</span></button>
+      <button id="btn-settings" title="Pengaturan"><i class="fa-solid fa-gear"></i> <span id="btn-settings-label">Pengaturan</span></button>
     </div>
   </div>
 
   <div class="settings-overlay" id="settings-overlay" aria-hidden="true">
     <div class="settings-menu" id="settings-menu" role="dialog" aria-modal="true" aria-labelledby="settings-title">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong id="settings-title">Pengaturan</strong>
-        <button id="settings-close" class="btn-ghost" title="Tutup">✖</button>
-      </div>
-
-      <div class="settings-row"><label id="lbl-language"></label><select id="sel-language"><option value="id">Indonesia</option><option value="en">English</option></select></div>
-      <div class="settings-row"><label id="lbl-view"></label><select id="sel-view"><option value="list">List</option><option value="grid">Grid</option><option value="card">Card</option></select></div>
-
-      <div class="settings-row" style="align-items:center;gap:10px">
-        <div style="display:flex;flex-direction:column">
-          <label id="lbl-merge">Gabungkan Lokal & Global</label>
-          <small style="color:#9aa6bf" id="lbl-merge-desc">Jika dicentang, sumber tidak dipisah per grup</small>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="chk-merge" />
-          <span class="track"><span class="thumb"></span></span>
-        </label>
-      </div>
-
-      <div class="settings-row" style="align-items:center;gap:10px">
-        <div style="display:flex;flex-direction:column">
-          <label id="lbl-simple">Mode Sederhana</label>
-          <small style="color:#9aa6bf" id="lbl-simple-desc">Jika aktif, tampilan hanya menampilkan item (tanpa grup). Untuk kembali, buka Pengaturan.</small>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="chk-simple" />
-          <span class="track"><span class="thumb"></span></span>
-        </label>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <label>Edit CSS — untuk membuka ketik <span class="stabilo">EDITCSS</span> di bawah</label>
+        <strong id="settings-title">Kumin Links - Pengaturan</strong>
         <div style="display:flex;gap:8px;align-items:center">
-          <input id="open-edit-input" placeholder="Ketik EDITCSS untuk membuka" style="flex:1;padding:8px;border-radius:8px;border:none;background:#0b0c0f;color:#fff" />
-          <button id="open-edit-btn" class="btn-primary" disabled>Buka Edit CSS</button>
+          <button id="settings-toggle-collapse" class="btn-ghost" title="Toggle collapse"><i class="fa-solid fa-compress"></i></button>
+          <button id="settings-close" class="btn-ghost" title="Tutup">✖</button>
         </div>
       </div>
 
-      <div class="settings-row"><label id="lbl-reset"></label><button id="btn-reset" class="btn-ghost"></button></div>
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="general">General</button>
+        <button class="settings-tab" data-tab="experimental">Experimental</button>
+      </div>
+
+      <div id="panel-general" class="settings-panel open">
+        <div class="settings-row"><label id="lbl-language"></label><select id="sel-language"><option value="id">Indonesia</option><option value="en">English</option></select></div>
+        <div class="settings-row"><label id="lbl-view"></label><select id="sel-view"><option value="list">List</option><option value="grid">Grid</option><option value="card">Card</option></select></div>
+
+        <div class="settings-row" style="align-items:center;gap:10px">
+          <div style="display:flex;flex-direction:column">
+            <label id="lbl-merge">Gabungkan Lokal & Global</label>
+            <small style="color:#9aa6bf" id="lbl-merge-desc">Jika dicentang, sumber tidak dipisah per grup</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chk-merge" />
+            <span class="track"><span class="thumb"></span></span>
+          </label>
+        </div>
+
+        <div class="settings-row" style="align-items:center;gap:10px">
+          <div style="display:flex;flex-direction:column">
+            <label id="lbl-simple">Mode Sederhana</label>
+            <small style="color:#9aa6bf" id="lbl-simple-desc">Jika aktif, tampilan hanya menampilkan item (tanpa grup). Untuk kembali, buka Pengaturan.</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chk-simple" />
+            <span class="track"><span class="thumb"></span></span>
+          </label>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label>Mode tombol (Pin atau Star)</label>
+          <div style="display:flex;gap:12px;align-items:center">
+            <label id="label-pinmode-star"><input type="radio" name="pinMode" value="star" id="pinmode-star"> Star (favorit)</label>
+            <label id="label-pinmode-pin"><input type="radio" name="pinMode" value="pin" id="pinmode-pin"> Pin (taruh ke atas)</label>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="panel-experimental" class="settings-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center"><strong>Experimental</strong><small style="color:#9aa6bf">(Untuk eksperimen — gunakan hati-hati)</small></div>
+
+        <div class="exp-row"><button id="btn-debug" class="btn-ghost">Debug</button><button id="copy-debug-btn_exp" class="btn-ghost" style="display:none">Copy</button></div>
+
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label>Edit CSS — untuk membuka ketik <span class="stabilo">EDITCSS</span> di bawah</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="open-edit-input" placeholder="Ketik EDITCSS untuk membuka" style="flex:1;padding:8px;border-radius:8px;border:none;background:#0b0c0f;color:#fff" />
+            <button id="open-edit-btn" class="btn-primary" disabled>Buka Edit CSS</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+          <div>
+            <label id="lbl-reset"></label>
+            <div style="color:#9aa6bf;font-size:0.9rem">Reset CSS & data lokal tersedia di sini</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="reset-css-btn" class="btn-ghost">Reset CSS</button>
+            <button id="btn-reset" class="btn-ghost">Reset Data</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label>Load / Save local data</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="file" id="load-file-input" accept="application/json" />
+            <button id="load-file-btn" class="btn-primary">Load</button>
+            <button id="save-local-btn" class="btn-ghost">Save Local</button>
+          </div>
+          <small style="color:#9aa6bf">Load akan menimpa kunci yang ada (favorites, overrides, css, pinned). File harus format backup yang dibuat "Save Local".</small>
+        </div>
+
+        <!-- NEW: Extra sources & granular save/load/reset (inserted per request) -->
+        <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.03);padding-top:8px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>Sources (Tambah / Kelola)</strong>
+            <small style="color:#9aa6bf">Sumber tambahan yang kamu tambahkan dapat dihapus; sumber bawaan tidak dapat dihapus.</small>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="new-source-input" placeholder="Masukkan URL atau ketik INLINE: lalu paste JSON" style="flex:1;padding:8px;border-radius:8px;border:none;background:#0b0c0f;color:#fff" />
+            <button id="add-source-btn" class="btn-primary">Tambah</button>
+          </div>
+          <div id="extra-sources-list" style="max-height:180px;overflow:auto;border-radius:8px;padding:8px;background:rgba(255,255,255,0.02)"></div>
+
+    
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <button id="save-choose-btn" class="btn-primary">Save (Download)</button>
+              <button id="open-load-modal-btn" class="btn-ghost">Load File (Pilihan)</button>
+              <button id="open-reset-modal-btn" class="btn-ghost">Reset Pilihan</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
+  <!-- Edit CSS modal -->
   <div class="editcss-popup" id="editcss-popup" aria-hidden="true">
     <div class="editcss-box" role="dialog" aria-modal="true" aria-labelledby="editcss-title">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -216,12 +312,13 @@
       <small style="color:#9aa6bf" id="editcss-note">Perhatian: Edit CSS akan mengganti CSS utama (semua layout & style) KECUALI styling pengaturan/modal. Backup otomatis disimpan. Jika mau kembalikan, tekan Reset CSS.</small>
       <textarea id="editcss-textarea" class="editcss-textarea" placeholder="/* tulis css untuk mengganti seluruh base-style di sini */"></textarea>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button id="reset-css-btn" class="btn-ghost">Reset CSS ke Asli</button>
+        <button id="reset-css-btn_confirm" class="btn-ghost">Reset CSS ke Asli</button>
         <button id="apply-css-btn" class="btn-primary">Terapkan CSS</button>
       </div>
     </div>
   </div>
 
+  <!-- Debug -->
   <div class="debug-popup" id="debug-popup" aria-hidden="true">
     <div class="debug-box" role="dialog" aria-modal="true" aria-labelledby="debug-title">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -231,6 +328,72 @@
       <div id="debug-area" class="debug-textarea" style="white-space:pre-wrap;word-break:break-word">Tidak ada pesan kesalahan.</div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button id="copy-debug-btn" class="btn-primary">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Granular Save Modal -->
+  <div class="modal" id="save-modal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
+      <div class="modal-title" id="save-modal-title">Save — Pilih yang ingin disimpan</div>
+      <div id="save-modal-list">
+        <div class="modal-row"><label><input type="checkbox" data-key="favoriteLinks" checked> Favorites</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="local_link_overrides" checked> Overrides</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="custom_css" checked> Custom CSS</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="pinned_items" checked> Pinned</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="extra_sources"> Extra Sources</label></div>
+      </div>
+      <div class="modal-actions">
+        <button id="save-modal-cancel" class="btn-ghost">Batal</button>
+        <button id="save-modal-ok" class="btn-primary">Save (Download)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Granular Load Modal -->
+  <div class="modal" id="load-modal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="load-modal-title">
+      <div class="modal-title" id="load-modal-title">Load — Pilih file & apa yang ingin dimuat (akan menimpa)</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input type="file" id="load-modal-file" accept="application/json" style="flex:1"/>
+      </div>
+      <div id="load-modal-list">
+        <div class="modal-row"><label><input type="checkbox" data-key="favoriteLinks"> Favorites</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="local_link_overrides"> Overrides</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="custom_css"> Custom CSS</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="pinned_items"> Pinned</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="extra_sources"> Extra Sources</label></div>
+      </div>
+      <div class="modal-actions">
+        <button id="load-modal-cancel" class="btn-ghost">Batal</button>
+        <button id="load-modal-ok" class="btn-primary">Load (Terapkan)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Granular Reset Modal -->
+  <div class="modal" id="reset-modal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
+      <div class="modal-title" id="reset-modal-title">Reset — Pilih yang ingin di-reset (ketik RESET untuk konfirmasi)</div>
+      <div id="reset-modal-list">
+        <div class="modal-row"><label><input type="checkbox" data-key="favoriteLinks"> Favorites</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="local_link_overrides"> Overrides</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="custom_css"> Custom CSS</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="pinned_items"> Pinned</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="extra_sources"> Extra Sources</label></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <input id="reset-modal-confirm" placeholder="Ketik RESET untuk konfirmasi" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:#0b0c0f;color:#fff" />
+      </div>
+      <div class="modal-actions">
+        <button id="reset-modal-cancel" class="btn-ghost">Batal</button>
+        <button id="reset-modal-ok" class="btn-primary" disabled>Reset (Hapus)</button>
       </div>
     </div>
   </div>
@@ -271,9 +434,10 @@ const SOURCE_URLS = [
   "https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/link_global.json"
 ];
 
+const EXTRA_SOURCES_KEY = 'extra_sources'; // key for storing user-added sources
 const T = {
   id:{
-    title:"Pusat Link Favorit",
+    title:"Kumin Links",
     settings:"Pengaturan",
     lbl_language:"Bahasa",
     lbl_view:"Tampilan",
@@ -306,14 +470,13 @@ const T = {
     filter_apply:"Apply"
   },
   en:{
-    title:"Favorite Links Hub",
+    title:"Kumin Links",
     settings:"Settings",
     lbl_language:"Language",
     lbl_view:"View",
     lbl_reset:"Reset",
     reset_button:"Reset Data",
     reset_instruction:'Type <span class="stabilo">RESET</span> to clear all data',
-    reset_input_placeholder:"Type RESET to confirm",
     preview_open:"Open Link",
     preview_close:"Close",
     original_link_text:"Original Link",
@@ -352,11 +515,16 @@ let originalBaseCss = document.getElementById('base-style').textContent || "";
 let localLinkOverrides = JSON.parse(localStorage.getItem("local_link_overrides")||"{}");
 let storedCustomCss = localStorage.getItem("custom_css") || "";
 let filtersSelected = new Set(JSON.parse(localStorage.getItem('filters_selected')||'[]'));
+let pinMode = localStorage.getItem('pin_mode') || 'star'; // 'star' or 'pin'
+let pinnedItems = new Set(JSON.parse(localStorage.getItem('pinned_items')||'[]'));
+let extraSources = JSON.parse(localStorage.getItem(EXTRA_SOURCES_KEY) || '[]'); // user-added sources
 
 /* ================= DOM ================= */
 const headerTitle = document.getElementById("header-title");
 const btnSettings = document.getElementById("btn-settings");
 const settingsOverlay = document.getElementById("settings-overlay");
+const settingsMenu = document.getElementById("settings-menu");
+const settingsToggleCollapse = document.getElementById("settings-toggle-collapse");
 const selLanguage = document.getElementById("sel-language");
 const selView = document.getElementById("sel-view");
 const btnReset = document.getElementById("btn-reset");
@@ -367,6 +535,7 @@ const openEditBtn = document.getElementById("open-edit-btn");
 const editcssPopup = document.getElementById("editcss-popup");
 const editcssTextarea = document.getElementById("editcss-textarea");
 const applyCssBtn = document.getElementById("apply-css-btn");
+const resetCssBtn_confirm = document.getElementById("reset-css-btn_confirm");
 const resetCssBtn = document.getElementById("reset-css-btn");
 const editcssClose = document.getElementById("editcss-close");
 const debugBtn = document.getElementById("btn-debug");
@@ -390,6 +559,37 @@ const filterList = document.getElementById('filter-list');
 const filterAllBtn = document.getElementById('filter-all');
 const filterNoneBtn = document.getElementById('filter-none');
 const filterApplyBtn = document.getElementById('filter-apply');
+const settingsTabs = document.querySelectorAll('.settings-tab');
+const panelGeneral = document.getElementById('panel-general');
+const panelExperimental = document.getElementById('panel-experimental');
+const pinmodeStar = document.getElementById('pinmode-star');
+const pinmodePin = document.getElementById('pinmode-pin');
+const loadFileInput = document.getElementById('load-file-input');
+const loadFileBtn = document.getElementById('load-file-btn');
+const saveLocalBtn = document.getElementById('save-local-btn');
+
+/* NEW controls */
+const newSourceInput = document.getElementById('new-source-input');
+const addSourceBtn = document.getElementById('add-source-btn');
+const extraSourcesListEl = document.getElementById('extra-sources-list');
+const saveChooseBtn = document.getElementById('save-choose-btn');
+const openLoadModalBtn = document.getElementById('open-load-modal-btn');
+const openResetModalBtn = document.getElementById('open-reset-modal-btn');
+
+const saveModal = document.getElementById('save-modal');
+const saveModalOk = document.getElementById('save-modal-ok');
+const saveModalCancel = document.getElementById('save-modal-cancel');
+const saveModalList = document.getElementById('save-modal-list');
+
+const loadModal = document.getElementById('load-modal');
+const loadModalFile = document.getElementById('load-modal-file');
+const loadModalOk = document.getElementById('load-modal-ok');
+const loadModalCancel = document.getElementById('load-modal-cancel');
+
+const resetModal = document.getElementById('reset-modal');
+const resetModalOk = document.getElementById('reset-modal-ok');
+const resetModalCancel = document.getElementById('reset-modal-cancel');
+const resetModalConfirm = document.getElementById('reset-modal-confirm');
 
 /* ================= HELPERS ================= */
 function t(k){ return (T[currentLang] && T[currentLang][k]) || k; }
@@ -413,7 +613,6 @@ function applyLanguageUI(){
   document.getElementById("editcss-note").innerHTML = t("editcss_note");
   searchBox.placeholder = t("search_placeholder");
   document.getElementById("btn-settings-label").textContent = t("btn_settings_label");
-  document.getElementById("btn-debug-label").textContent = t("btn_debug_label");
   loadingText.textContent = t("loading_text");
   document.getElementById('filter-title').textContent = t('filter_title');
   filterAllBtn.textContent = t('filter_all');
@@ -470,32 +669,92 @@ function populateFilterPanel(){
 
     label.addEventListener('click', ()=>{ input.checked = !input.checked; input.dispatchEvent(new Event('change')); });
 
-    input.addEventListener('change', ()=>{
-      if(input.checked) filtersSelected.add(input.dataset.group); else filtersSelected.delete(input.dataset.group);
-    });
+    input.addEventListener('change', ()=>{ if(input.checked) filtersSelected.add(input.dataset.group); else filtersSelected.delete(input.dataset.group); });
   });
 }
 
-btnFilter.addEventListener('click', (e)=>{
-  e.stopPropagation(); filterPanel.classList.toggle('open'); filterPanel.setAttribute('aria-hidden', filterPanel.classList.contains('open')? 'false' : 'true');
-});
+btnFilter.addEventListener('click', (e)=>{ e.stopPropagation(); filterPanel.classList.toggle('open'); filterPanel.setAttribute('aria-hidden', filterPanel.classList.contains('open')? 'false' : 'true'); });
 
 document.addEventListener('click', (e)=>{ if(!filterPanel.contains(e.target) && !btnFilter.contains(e.target)) { filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true'); }});
 
-filterAllBtn.addEventListener('click', ()=>{
-  filtersSelected.clear();
-  filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = true; filtersSelected.add(i.dataset.group); });
-});
-filterNoneBtn.addEventListener('click', ()=>{
-  filtersSelected.clear();
-  filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = false; });
-});
-filterApplyBtn.addEventListener('click', ()=>{
-  filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true');
-  renderLinks(linksData, searchBox.value);
+filterAllBtn.addEventListener('click', ()=>{ filtersSelected.clear(); filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = true; filtersSelected.add(i.dataset.group); }); });
+filterNoneBtn.addEventListener('click', ()=>{ filtersSelected.clear(); filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = false; }); });
+filterApplyBtn.addEventListener('click', ()=>{ filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true'); renderLinks(linksData, searchBox.value); });
+
+/* ================= EXTRA SOURCES (user-added) ================= */
+function saveExtraSources(){ localStorage.setItem(EXTRA_SOURCES_KEY, JSON.stringify(extraSources)); }
+function renderExtraSourcesList(){
+  const box = extraSourcesListEl;
+  if(!box) return;
+  box.innerHTML = '';
+  // built-in sources (read-only)
+  SOURCE_URLS.forEach((s)=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.padding='6px';
+    const left = document.createElement('div'); left.style.color='#9aa6bf'; left.textContent = s;
+    const right = document.createElement('div'); right.style.opacity = '0.6'; right.textContent = 'built-in';
+    row.appendChild(left); row.appendChild(right);
+    box.appendChild(row);
+  });
+  // user-added
+  extraSources.forEach((es, i)=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.padding='6px';
+    const left = document.createElement('div'); left.style.color='#e6eef8'; left.textContent = (es.type==='inline' ? '[INLINE JSON]' : es.value);
+    const right = document.createElement('div');
+    const del = document.createElement('button'); del.className='btn-ghost'; del.textContent='Hapus'; del.addEventListener('click', ()=> {
+      extraSources.splice(i,1); saveExtraSources(); renderExtraSourcesList(); showToast('Sumber dihapus'); loadAndRenderSources();
+    });
+    right.appendChild(del);
+    row.appendChild(left); row.appendChild(right);
+    box.appendChild(row);
+  });
+}
+addSourceBtn.addEventListener('click', ()=>{
+  const val = (newSourceInput.value||'').trim();
+  if(!val){ showToast('Isi URL atau INLINE JSON dulu'); return; }
+  if(val.toUpperCase().startsWith('INLINE:')){
+    const jsonText = val.slice(7);
+    try{
+      const parsed = JSON.parse(jsonText);
+      extraSources.push({id: 'es-'+Date.now(), type:'inline', value: JSON.stringify(parsed), removable:true});
+      saveExtraSources(); renderExtraSourcesList(); newSourceInput.value=''; showToast('INLINE JSON ditambahkan'); loadAndRenderSources(); return;
+    } catch(e){ showToast('INLINE JSON tidak valid'); return; }
+  }
+  // URL
+  extraSources.push({id: 'es-'+Date.now(), type:'url', value: val, removable:true});
+  saveExtraSources(); renderExtraSourcesList(); newSourceInput.value=''; showToast('Sumber URL ditambahkan'); loadAndRenderSources();
 });
 
-/* ================= RENDER LINKS (dengan filter) ================= */
+/* ================= PIN/STAR ACTION CREATOR ================= */
+function togglePin(url){ if(pinnedItems.has(url)) pinnedItems.delete(url); else pinnedItems.add(url); localStorage.setItem('pinned_items', JSON.stringify(Array.from(pinnedItems))); }
+
+function createActionButtons(link){
+  const actions = document.createElement('div'); actions.className = 'link-actions';
+  const eye = document.createElement('button'); eye.className='btn-icon'; eye.title = t('preview'); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
+  eye.addEventListener('click',(e)=>{ e.stopPropagation(); openPreview(link.url); });
+  const open = document.createElement('button'); open.className='btn-icon'; open.title = t('open_link'); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+  open.addEventListener('click',(e)=>{ e.stopPropagation(); window.location.href = link.url; });
+  const copyBtn = document.createElement('button'); copyBtn.className='btn-icon'; copyBtn.title = t('copy_link'); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+  copyBtn.addEventListener('click',(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t('copy_link')+" ✅")); });
+
+  actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn);
+
+  const modeBtn = document.createElement('button'); modeBtn.className='btn-icon';
+  if(pinMode === 'pin'){
+    modeBtn.innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+    if(pinnedItems.has(link.url)) modeBtn.classList.add('pinned');
+    modeBtn.addEventListener('click',(e)=>{ e.stopPropagation(); togglePin(link.url); renderLinks(linksData, searchBox.value); });
+    actions.appendChild(modeBtn);
+  } else {
+    modeBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
+    if(favoriteLinks.some(f=>f.url===link.url)) modeBtn.classList.add('favorite');
+    modeBtn.addEventListener('click',(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); } else { favoriteLinks.push({...link}); } localStorage.setItem('favoriteLinks', JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+    actions.appendChild(modeBtn);
+  }
+
+  return actions;
+}
+
+/* ================= RENDER LINKS (dengan filter + pinned top) ================= */
 function applyLocalOverrides(arr){
   return arr.map(l=>{
     const key = l.url || (l.title_id || l.title_en || Math.random().toString(36).slice(2));
@@ -517,11 +776,45 @@ function renderLinks(list, search=""){
     return true;
   });
 
+  // pinned behavior: collect pinned items from full dataset (not only filtered), to always show pinned at top
+  const pinnedList = [];
+  if(pinMode === 'pin' && pinnedItems.size){
+    const allApplied = applyLocalOverrides(list);
+    const seen = new Set();
+    allApplied.forEach(l => {
+      if(pinnedItems.has(l.url) && !seen.has(l.url)){
+        pinnedList.push(l);
+        seen.add(l.url);
+      }
+    });
+  }
+
   if(simpleMode){
     const container = document.createElement("div"); container.className = "flat-items";
     container.innerHTML = `<div style="padding:8px;color:#9aa6bf">${t('simple_desc')}</div>`;
 
-    if(favoriteLinks && favoriteLinks.length){
+    if(pinnedList.length){
+      const pinHeader = document.createElement("div"); pinHeader.className = "group-container";
+      const ph = document.createElement("h2"); ph.className = "group-title"; ph.textContent = (currentLang==="id")? "Pin" : "Pinned";
+      pinHeader.appendChild(ph);
+      const pinItems = document.createElement("div"); pinItems.className = "group-items";
+      pinnedList.forEach(link=>{
+        const row = document.createElement("div"); row.className = "item-row";
+        const left = document.createElement("div"); left.className = "item-left";
+        const icon = createIconNode(link);
+        const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleTextRaw}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        left.appendChild(icon); left.appendChild(tEl);
+        const actions = createActionButtons(link);
+        row.appendChild(left); row.appendChild(actions);
+        row.addEventListener("click", ()=> window.location.href = link.url );
+        pinItems.appendChild(row);
+      });
+      pinHeader.appendChild(pinItems);
+      container.appendChild(pinHeader);
+    }
+
+    if(favoriteLinks && favoriteLinks.length && pinMode !== 'pin'){
       const favHeader = document.createElement("div"); favHeader.className = "group-container";
       const fh = document.createElement("h2"); fh.className = "group-title"; fh.textContent = (currentLang==="id")? "Favorit" : "Favorites";
       favHeader.appendChild(fh);
@@ -536,19 +829,7 @@ function renderLinks(list, search=""){
         const icon = createIconNode(link);
         const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
         left.appendChild(icon); left.appendChild(tEl);
-
-        const actions = document.createElement("div"); actions.className = "link-actions";
-        const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
-        eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
-        const open = document.createElement("button"); open.className="btn-icon"; open.title = t("open_link"); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-        open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-        const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-        copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
-        const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
-        favBtn.classList.add("favorite");
-        favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
-
-        actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn); actions.appendChild(favBtn);
+        const actions = createActionButtons(link);
         row.appendChild(left); row.appendChild(actions);
         row.addEventListener("click", ()=> window.location.href = link.url );
         favList.appendChild(row);
@@ -558,6 +839,7 @@ function renderLinks(list, search=""){
     }
 
     filtered.forEach(link=>{
+      if(pinnedList.some(p=>p.url===link.url)) return; // avoid duplicate
       const titleRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
       const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
       const titleText = `(${groupName}) ${titleRaw}`;
@@ -568,18 +850,7 @@ function renderLinks(list, search=""){
       const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
       left.appendChild(icon); left.appendChild(tEl);
 
-      const actions = document.createElement("div"); actions.className = "link-actions";
-      const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
-      eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
-      const open = document.createElement("button"); open.className="btn-icon"; open.title = t("open_link"); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-      open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-      const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-      copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
-      const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
-      if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
-      favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
-
-      actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn); actions.appendChild(favBtn);
+      const actions = createActionButtons(link);
       row.appendChild(left); row.appendChild(actions);
       row.addEventListener("click", ()=> window.location.href = link.url );
       container.appendChild(row);
@@ -591,42 +862,71 @@ function renderLinks(list, search=""){
 
   /* Grouped view */
   const groups = {};
-  filtered.forEach(l=>{
+  const allFiltered = applyLocalOverrides(list);
+  allFiltered.forEach(l=>{
+    if(pinMode==='pin' && pinnedItems.has(l.url)) return; // pinned are shown separately
     const gid = l.grup_id || l.grup || "Tanpa Grup";
     const key = mergeSources ? gid : ((l.type||"local")+"__"+gid);
     if(!groups[key]) groups[key] = {links:[], name:{id:gid,en:l.grup_en||gid}, types: new Set()};
+    const titleText = (currentLang==="id")? (l.title_id||l.title_en||"") : (l.title_en||l.title_id||"");
+    const groupName = (currentLang==="id")? (l.grup_id || l.grup || "Tanpa Grup") : (l.grup_en || l.grup || "No Group");
+    if(searchBox.value && !(titleText.toLowerCase().includes(searchBox.value.toLowerCase()) || (l.grup_id||"").toLowerCase().includes(searchBox.value.toLowerCase()))) return;
+    if(filtersSelected.size>0 && !filtersSelected.has(groupName)) return;
     groups[key].links.push(l);
     groups[key].types.add(l.type||"local");
   });
-
-  if(favoriteLinks.length){
-    const favKey = "FAVORIT";
-    groups[favKey] = groups[favKey] || {links:[], name:{id:"Favorit",en:"Favorite"}, types: new Set()};
-    groups[favKey].links = favoriteLinks.filter(f=>{ if(filtersSelected.size>0){ const grp = (currentLang==="id")? (f.grup_id||f.grup||"Tanpa Grup") : (f.grup_en||f.grup||"No Group"); return filtersSelected.size? filtersSelected.has(grp) : true; } return true; });
-    groups[favKey].types.add("favorite");
-  }
 
   const keys = Object.keys(groups).sort((a,b)=> a==="FAVORIT"? -1 : b==="FAVORIT"? 1: 0);
   const isSmall = window.innerWidth <= 760;
   const effectiveView = isSmall ? "list" : viewMode;
   linkContainer.className = "container " + (effectiveView==="grid"?"grid-view":effectiveView==="card"?"card-view":"list-view");
 
+  // pinned group first (if any)
+  if(pinnedList.length){
+    const section = document.createElement("section"); section.className = "group-container";
+    const h = document.createElement("h2"); h.className = "group-title"; h.textContent = (currentLang==="id")? "Pin" : "Pinned";
+    section.appendChild(h);
+    const items = document.createElement("div"); items.className = "group-items";
+    pinnedList.forEach(link=>{
+      const card = document.createElement("div"); card.className = "link-card";
+      if(effectiveView==="grid"){
+        const icon = createIconNode(link, "link-icon", "");
+        const title = document.createElement("div"); title.className="link-title"; title.textContent = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+        const acts = createActionButtons(link);
+        card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
+      } else {
+        const info = document.createElement("div"); info.className="link-info";
+        const icon = createIconNode(link);
+        const title = document.createElement("div"); title.className="link-title"; title.textContent = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+        info.appendChild(icon); info.appendChild(title); info.appendChild(desc);
+        const acts = createActionButtons(link);
+        card.appendChild(info); card.appendChild(acts);
+      }
+      card.addEventListener("click", ()=> window.location.href = link.url );
+      items.appendChild(card);
+    });
+    section.appendChild(items);
+    linkContainer.appendChild(section);
+  }
+
   keys.forEach(k=>{
     const g = groups[k]; if(!g) return;
     const section = document.createElement("section"); section.className = "group-container";
     const h = document.createElement("h2"); h.className = "group-title";
     let gname = (currentLang==="id")? g.name.id : g.name.en || g.name.id;
-    if(!mergeSources && k!=="FAVORIT"){
+    if(!mergeSources && k!="FAVORIT"){
       const types = Array.from(g.types);
-      if(types.length===1 && types[0]!=="favorite"){
+      if(types.length===1 && types[0]!="favorite"){
         if(types[0]==="local") gname += " (Lokal)";
         if(types[0]==="global") gname += " (Global)";
       } else {
         if(types.includes("local") && types.includes("global")) gname += " (Local+Global)";
       }
     }
-    h.textContent = gname;
     section.appendChild(h);
+    h.textContent = gname;
 
     if(effectiveView==="card"){
       const wrap = document.createElement("div"); wrap.className="group-wrap";
@@ -639,18 +939,7 @@ function renderLinks(list, search=""){
         const icon = createIconNode(link, "link-icon", "");
         const title = document.createElement("div"); title.className = "link-title"; title.textContent = titleText;
         const desc = document.createElement("div"); desc.className = "link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
-        const acts = document.createElement("div"); acts.className = "link-actions";
-        const eye = document.createElement("button"); eye.className="btn-icon"; eye.title = t("preview"); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
-        eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
-        const open = document.createElement("button"); open.className="btn-icon"; open.title = t("open_link"); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-        open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-        const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-        copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
-        const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
-        if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
-        favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
-
-        acts.appendChild(eye); acts.appendChild(open); acts.appendChild(copyBtn); acts.appendChild(favBtn);
+        const acts = createActionButtons(link);
         card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
         card.addEventListener("click", ()=> window.location.href = link.url );
         items.appendChild(card);
@@ -671,18 +960,7 @@ function renderLinks(list, search=""){
           const icon = createIconNode(link, "link-icon", "");
           const title = document.createElement("div"); title.className="link-title"; title.textContent = titleText;
           const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
-          const acts = document.createElement("div"); acts.className="link-actions";
-          const eye = document.createElement("button"); eye.className="btn-icon"; eye.title=t("preview"); eye.innerHTML='<i class="fa-solid fa-eye"></i>';
-          eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
-          const open = document.createElement("button"); open.className="btn-icon"; open.title=t("open_link"); open.innerHTML='<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-          open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-          const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-          copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
-          const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
-          if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
-          favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
-
-          acts.appendChild(eye); acts.appendChild(open); acts.appendChild(copyBtn); acts.appendChild(favBtn);
+          const acts = createActionButtons(link);
           card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
         } else {
           const info = document.createElement("div"); info.className="link-info";
@@ -690,18 +968,7 @@ function renderLinks(list, search=""){
           const title = document.createElement("div"); title.className="link-title"; title.textContent = titleText;
           const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
           info.appendChild(icon); info.appendChild(title); info.appendChild(desc);
-          const acts = document.createElement("div"); acts.className="link-actions";
-          const eye = document.createElement("button"); eye.className="btn-icon"; eye.title=t("preview"); eye.innerHTML='<i class="fa-solid fa-eye"></i>';
-          eye.addEventListener("click",(e)=>{ e.stopPropagation(); openPreview(link.url); });
-          const open = document.createElement("button"); open.className="btn-icon"; open.title=t("open_link"); open.innerHTML='<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-          open.addEventListener("click",(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-          const copyBtn = document.createElement("button"); copyBtn.className="btn-icon"; copyBtn.title = t("copy_link"); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-          copyBtn.addEventListener("click",(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t("copy_link")+" ✅")); });
-          const favBtn = document.createElement("button"); favBtn.className="btn-icon"; favBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
-          if(favoriteLinks.some(f=>f.url===link.url)) favBtn.classList.add("favorite");
-          favBtn.addEventListener("click",(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); favBtn.classList.remove("favorite"); } else { favoriteLinks.push({...link}); favBtn.classList.add("favorite"); } localStorage.setItem("favoriteLinks", JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
-
-          acts.appendChild(eye); acts.appendChild(open); acts.appendChild(copyBtn); acts.appendChild(favBtn);
+          const acts = createActionButtons(link);
           card.appendChild(info); card.appendChild(acts);
         }
         card.addEventListener("click", ()=> window.location.href = link.url );
@@ -723,55 +990,38 @@ btnSettings.addEventListener("click", ()=>{ settingsOverlay.classList.add("open"
 document.getElementById("settings-close").addEventListener("click", ()=> settingsOverlay.classList.remove("open"));
 settingsOverlay.addEventListener("click",(e)=>{ if(e.target === settingsOverlay) settingsOverlay.classList.remove("open"); });
 
+settingsToggleCollapse.addEventListener('click', ()=>{ settingsMenu.classList.toggle('collapsed'); });
+
+settingsTabs.forEach(bt=> bt.addEventListener('click', ()=>{ settingsTabs.forEach(x=>x.classList.remove('active')); bt.classList.add('active'); const tab = bt.dataset.tab; panelGeneral.classList.toggle('open', tab==='general'); panelExperimental.classList.toggle('open', tab==='experimental'); }));
+
 selLanguage.addEventListener("change", ()=>{ currentLang = selLanguage.value; localStorage.setItem("lang", currentLang); applyLanguageUI(); renderLinks(linksData, searchBox.value); populateFilterPanel(); });
 selView.addEventListener("change", ()=>{ viewMode = selView.value; localStorage.setItem("viewMode", viewMode); renderLinks(linksData, searchBox.value); });
 
 chkMerge.addEventListener("change", ()=>{ mergeSources = chkMerge.checked; localStorage.setItem("merge_sources", mergeSources ? "1" : "0"); renderLinks(linksData, searchBox.value); });
 chkSimple.addEventListener("change", ()=>{ simpleMode = chkSimple.checked; localStorage.setItem("simple_mode", simpleMode ? "1" : "0"); renderLinks(linksData, searchBox.value); });
 
-document.getElementById("btn-reset").addEventListener("click", ()=>{ settingsOverlay.classList.remove("open"); openResetPopup(); });
+pinmodeStar.addEventListener('change', ()=>{ if(pinmodeStar.checked){ pinMode='star'; localStorage.setItem('pin_mode','star'); // ensure star UI visible
+  document.getElementById('label-pinmode-star').style.display='inline-flex'; renderLinks(linksData, searchBox.value); }});
+pinmodePin.addEventListener('change', ()=>{ if(pinmodePin.checked){ pinMode='pin'; localStorage.setItem('pin_mode','pin'); // when pin mode active, favorites UI still exists but star actions hidden in list
+  document.getElementById('label-pinmode-star').style.display='inline-flex'; renderLinks(linksData, searchBox.value); }});
+
+btnReset.addEventListener("click", ()=>{ settingsOverlay.classList.remove("open"); openResetPopup(); });
 
 /* Edit CSS gating */
-openEditInput.addEventListener("input", ()=> {
-  openEditBtn.disabled = openEditInput.value.trim().toUpperCase() !== "EDITCSS";
-});
-openEditBtn.addEventListener("click", ()=> {
-  editcssPopup.style.display = "flex";
-  editcssPopup.setAttribute("aria-hidden","false");
-  editcssTextarea.value = localStorage.getItem("custom_css") || originalBaseCss;
-});
+openEditInput.addEventListener("input", ()=> { openEditBtn.disabled = openEditInput.value.trim().toUpperCase() !== "EDITCSS"; });
+openEditBtn.addEventListener("click", ()=> { editcssPopup.style.display = "flex"; editcssPopup.setAttribute("aria-hidden","false"); editcssTextarea.value = localStorage.getItem("custom_css") || originalBaseCss; });
 
 editcssClose.addEventListener("click", ()=> { editcssPopup.style.display = "none"; editcssPopup.setAttribute("aria-hidden","true"); });
-applyCssBtn.addEventListener("click", ()=> {
-  const css = editcssTextarea.value || "";
-  if(!localStorage.getItem("base_css_backup")) localStorage.setItem("base_css_backup", originalBaseCss);
-  baseStyleEl.textContent = css;
-  localStorage.setItem("custom_css", css);
-  showToast(t("css_apply_success"));
-});
-resetCssBtn.addEventListener("click", ()=> {
-  if(confirm((currentLang==="id")? "Kembalikan CSS ke keadaan asli?" : "Reset CSS to original?")){
-    localStorage.removeItem("custom_css");
-    const backup = localStorage.getItem("base_css_backup") || originalBaseCss;
-    baseStyleEl.textContent = backup;
-    editcssTextarea.value = backup;
-    showToast(t("css_reset_success"));
-  }
-});
+applyCssBtn.addEventListener("click", ()=> { const css = editcssTextarea.value || ""; if(!localStorage.getItem("base_css_backup")) localStorage.setItem("base_css_backup", originalBaseCss); baseStyleEl.textContent = css; localStorage.setItem("custom_css", css); showToast(t("css_apply_success")); });
+resetCssBtn_confirm.addEventListener('click', ()=>{ if(confirm((currentLang==="id")? "Kembalikan CSS ke keadaan asli?" : "Reset CSS to original?")){ localStorage.removeItem("custom_css"); const backup = localStorage.getItem("base_css_backup") || originalBaseCss; baseStyleEl.textContent = backup; editcssTextarea.value = backup; showToast(t("css_reset_success")); }});
+resetCssBtn.addEventListener('click', ()=>{ if(confirm((currentLang==="id")? "Kembalikan CSS ke keadaan asli?" : "Reset CSS to original?")){ localStorage.removeItem('custom_css'); location.reload(); }});
 
 /* DEBUG */
-debugBtn.addEventListener("click", ()=> {
-  const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors");
-  debugArea.textContent = msg;
-  debugPopup.style.display = "flex";
-});
+debugBtn.addEventListener("click", ()=> { const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors"); debugArea.textContent = msg; debugPopup.style.display = "flex"; });
 debugClose.addEventListener("click", ()=> debugPopup.style.display = "none");
-copyDebugBtn.addEventListener("click", ()=> {
-  const text = debugArea.textContent;
-  navigator.clipboard && navigator.clipboard.writeText(text).then(()=> showToast("Copied debug ✅"));
-});
+copyDebugBtn.addEventListener("click", ()=> { const text = debugArea.textContent; navigator.clipboard && navigator.clipboard.writeText(text).then(()=> showToast("Copied debug ✅")); });
 
-/* RESET */
+/* RESET (legacy) */
 const resetPopup = document.getElementById("reset-popup");
 const resetClose = document.getElementById("reset-close");
 const resetInput = document.getElementById("reset-input");
@@ -779,43 +1029,45 @@ const resetCancel = document.getElementById("reset-cancel");
 const resetProceed = document.getElementById("reset-proceed");
 resetClose && resetClose.addEventListener("click", ()=> resetPopup.style.display = "none");
 resetCancel && resetCancel.addEventListener("click", ()=> resetPopup.style.display = "none");
-function openResetPopup(){ resetInput.value=""; resetPopup.style.display="flex"; }
-resetProceed && resetProceed.addEventListener("click", ()=>{
-  const v = (resetInput.value||"").trim().toUpperCase();
-  if(v === "RESET"){
-    resetPopup.style.display = "none";
-    if(confirm((currentLang==="id")? "Yakin ingin menghapus semua data lokal (favorites, overrides, css, settings)? Tindakan ini tidak bisa dibatalkan." : "Are you sure to delete all local data? This cannot be undone.")){
-      localStorage.clear();
-      alert((currentLang==="id")? "Selesai. Semua data lokal dihapus. Halaman akan dimuat ulang." : "Done. All local data cleared. Page will reload.");
-      location.reload();
-    }
-  } else {
-    resetInput.style.boxShadow = "0 0 0 6px rgba(255,217,77,0.25)";
-    setTimeout(()=> resetInput.style.boxShadow = "none",900);
-    showToast((currentLang==="id")? "Ketik RESET untuk konfirmasi" : "Type RESET to confirm");
-  }
-});
+function openResetPopup(){ resetInput.value=""; resetPopup.style.display = "flex"; }
+resetProceed && resetProceed.addEventListener("click", ()=>{ const v = (resetInput.value||"").trim().toUpperCase(); if(v === "RESET"){ resetPopup.style.display = "none"; if(confirm((currentLang==="id")? "Yakin ingin menghapus semua data lokal (favorites, overrides, css, settings)? Tindakan ini tidak bisa dibatalkan." : "Are you sure to delete all local data? This cannot be undone.")){ localStorage.clear(); alert((currentLang==="id")? "Selesai. Semua data lokal dihapus. Halaman akan dimuat ulang." : "Done. All local data cleared. Page will reload."); location.reload(); } } else { resetInput.style.boxShadow = "0 0 0 6px rgba(255,217,77,0.25)"; setTimeout(()=> resetInput.style.boxShadow = "none",900); showToast((currentLang==="id")? "Ketik RESET untuk konfirmasi" : "Type RESET to confirm"); }});
 
-/* ================= MULTI-SOURCE LOADER ================= */
-async function loadLinks(){
+/* ================= MULTI-SOURCE LOADER (menggabungkan EXTRA_SOURCES) ================= */
+function getAllSourcesArray(){
+  const arr = [...SOURCE_URLS];
+  extraSources.forEach(es=>{
+    if(es.type === 'inline') arr.push('inline:' + es.value);
+    else arr.push(es.value);
+  });
+  return arr;
+}
+
+async function loadAndRenderSources(){
   loadingOverlay.classList.add("open");
   loadingText.textContent = t("loading_text");
   const all = [];
   lastErrorMessage = "";
   let anySuccess = false;
 
-  for(const src of SOURCE_URLS){
+  const srcs = getAllSourcesArray();
+  for(const src of srcs){
     try{
-      const url = src + "?_=" + Date.now();
-      const res = await fetch(url);
-      if(!res.ok) throw new Error("HTTP " + res.status + " for " + src);
-      const j = await res.json();
-      if(j.links && Array.isArray(j.links)){
-        const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
-        all.push(...j.links.map(x=>({...x, type: x.type || inferredType})));
-        anySuccess = true;
+      if(src.startsWith('inline:')){
+        const jsonText = src.slice(7);
+        const j = JSON.parse(jsonText);
+        if(j.links && Array.isArray(j.links)){ all.push(...j.links.map(x=>({...x, type:x.type||'inline'}))); anySuccess = true; }
+        else if(Array.isArray(j)){ all.push(...j.map(x=>({...x, type: 'inline'}))); anySuccess = true; }
+        else throw new Error("Inline JSON tidak berisi array atau object.links");
       } else {
-        if(Array.isArray(j)){
+        const url = src + "?_=" + Date.now();
+        const res = await fetch(url);
+        if(!res.ok) throw new Error("HTTP " + res.status + " for " + src);
+        const j = await res.json();
+        if(j.links && Array.isArray(j.links)){
+          const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
+          all.push(...j.links.map(x=>({...x, type: x.type || inferredType})));
+          anySuccess = true;
+        } else if(Array.isArray(j)){
           const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
           all.push(...j.map(x=>({...x, type: x.type || inferredType})));
           anySuccess = true;
@@ -833,13 +1085,139 @@ async function loadLinks(){
 
   loadingOverlay.classList.remove("open");
   showToast( (anySuccess) ? (currentLang==="id" ? "Sumber dimuat" : "Sources loaded") : (currentLang==="id" ? "Gagal memuat sumber" : "Failed to load sources"), 3500);
-  return all;
+
+  linksData = all;
+  populateFilterPanel();
+  renderLinks(linksData);
 }
 
+/* ================= LOAD / SAVE LOCAL DATA (legacy full backup) ================= */
+saveLocalBtn.addEventListener('click', ()=>{
+  // original "Save Local" behavior -> full backup
+  const backup = {
+    favoriteLinks: JSON.parse(localStorage.getItem('favoriteLinks')||'[]'),
+    local_link_overrides: JSON.parse(localStorage.getItem('local_link_overrides')||'{}'),
+    custom_css: localStorage.getItem('custom_css') || '',
+    pinned_items: JSON.parse(localStorage.getItem('pinned_items')||'[]'),
+    filters_selected: JSON.parse(localStorage.getItem('filters_selected')||'[]'),
+    lang: localStorage.getItem('lang')||'',
+    viewMode: localStorage.getItem('viewMode')||'',
+    merge_sources: localStorage.getItem('merge_sources')||'',
+    simple_mode: localStorage.getItem('simple_mode')||'',
+    pin_mode: localStorage.getItem('pin_mode')||'',
+    extra_sources: extraSources
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `kumin-links-backup-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+
+loadFileBtn.addEventListener('click', ()=>{
+  const f = loadFileInput.files[0];
+  if(!f){ showToast('Pilih file JSON terlebih dahulu'); return; }
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const obj = JSON.parse(ev.target.result);
+      const allowed = ['favoriteLinks','local_link_overrides','custom_css','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','extra_sources'];
+      allowed.forEach(k=>{ if(obj[k]!==undefined) {
+        if(k==='extra_sources') { extraSources = obj[k]; saveExtraSources(); }
+        else localStorage.setItem(k, JSON.stringify(obj[k]).replace(/^"|"$/g,'')); 
+      } });
+      showToast('Data dimuat. Memuat ulang...');
+      setTimeout(()=> location.reload(),800);
+    } catch(e){ showToast('File tidak valid'); }
+  };
+  reader.readAsText(f);
+});
+
+/* ================= GRANULAR SAVE / LOAD / RESET (modal-driven) ================= */
+/* Save modal */
+document.getElementById('save-choose-btn') && document.getElementById('save-choose-btn').addEventListener('click', ()=> { saveModal.classList.add('open'); });
+saveModalCancel.addEventListener('click', ()=> { saveModal.classList.remove('open'); });
+saveModalOk.addEventListener('click', ()=>{
+  const checks = Array.from(saveModalList.querySelectorAll('input[type=checkbox]:checked')).map(i=>i.dataset.key);
+  if(checks.length === 0){ showToast('Pilih minimal 1 item untuk disimpan'); return; }
+  const backup = {};
+  if(checks.includes('favoriteLinks')) backup.favoriteLinks = JSON.parse(localStorage.getItem('favoriteLinks')||'[]');
+  if(checks.includes('local_link_overrides')) backup.local_link_overrides = JSON.parse(localStorage.getItem('local_link_overrides')||'{}');
+  if(checks.includes('custom_css')) backup.custom_css = localStorage.getItem('custom_css') || '';
+  if(checks.includes('pinned_items')) backup.pinned_items = JSON.parse(localStorage.getItem('pinned_items')||'[]');
+  if(checks.includes('filters_selected')) backup.filters_selected = JSON.parse(localStorage.getItem('filters_selected')||'[]');
+  if(checks.includes('settings')) {
+    backup.lang = localStorage.getItem('lang')||'';
+    backup.viewMode = localStorage.getItem('viewMode')||'';
+    backup.merge_sources = localStorage.getItem('merge_sources')||'';
+    backup.simple_mode = localStorage.getItem('simple_mode')||'';
+    backup.pin_mode = localStorage.getItem('pin_mode')||'';
+  }
+  if(checks.includes('extra_sources')) backup.extra_sources = extraSources;
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `kumin-links-choices-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  saveModal.classList.remove('open');
+});
+
+/* Open custom load modal */
+openLoadModalBtn.addEventListener('click', ()=> { loadModal.classList.add('open'); });
+loadModalCancel.addEventListener('click', ()=> { loadModal.classList.remove('open'); });
+loadModalOk.addEventListener('click', ()=>{
+  const f = loadModalFile.files[0];
+  if(!f){ showToast('Pilih file JSON terlebih dahulu'); return; }
+  const toLoad = Array.from(document.querySelectorAll('#load-modal-list input[type=checkbox]:checked')).map(i=>i.dataset.key);
+  if(toLoad.length === 0){ showToast('Pilih minimal 1 item untuk dimuat'); return; }
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const obj = JSON.parse(ev.target.result);
+      // apply only selected keys
+      if(toLoad.includes('favoriteLinks') && obj.favoriteLinks !== undefined) localStorage.setItem('favoriteLinks', JSON.stringify(obj.favoriteLinks));
+      if(toLoad.includes('local_link_overrides') && obj.local_link_overrides !== undefined) localStorage.setItem('local_link_overrides', JSON.stringify(obj.local_link_overrides));
+      if(toLoad.includes('custom_css') && obj.custom_css !== undefined) localStorage.setItem('custom_css', obj.custom_css);
+      if(toLoad.includes('pinned_items') && obj.pinned_items !== undefined) localStorage.setItem('pinned_items', JSON.stringify(obj.pinned_items));
+      if(toLoad.includes('filters_selected') && obj.filters_selected !== undefined) localStorage.setItem('filters_selected', JSON.stringify(obj.filters_selected));
+      if(toLoad.includes('settings')){
+        if(obj.lang !== undefined) localStorage.setItem('lang', obj.lang);
+        if(obj.viewMode !== undefined) localStorage.setItem('viewMode', obj.viewMode);
+        if(obj.merge_sources !== undefined) localStorage.setItem('merge_sources', obj.merge_sources);
+        if(obj.simple_mode !== undefined) localStorage.setItem('simple_mode', obj.simple_mode);
+        if(obj.pin_mode !== undefined) localStorage.setItem('pin_mode', obj.pin_mode);
+      }
+      if(toLoad.includes('extra_sources') && obj.extra_sources !== undefined){ extraSources = obj.extra_sources; saveExtraSources(); }
+      showToast('File dimuat. Memuat ulang...');
+      setTimeout(()=> location.reload(),800);
+    } catch(e){ showToast('File tidak valid'); }
+  };
+  reader.readAsText(f);
+});
+
+/* Open reset modal */
+openResetModalBtn.addEventListener('click', ()=> { resetModal.classList.add('open'); resetModalConfirm.value=''; resetModalOk.disabled = true; });
+resetModalCancel.addEventListener('click', ()=> { resetModal.classList.remove('open'); });
+resetModalConfirm.addEventListener('input', ()=> {
+  resetModalOk.disabled = (resetModalConfirm.value.trim().toUpperCase() !== 'RESET');
+});
+resetModalOk.addEventListener('click', ()=>{
+  if(resetModalConfirm.value.trim().toUpperCase() !== 'RESET') return;
+  const toReset = Array.from(document.querySelectorAll('#reset-modal-list input[type=checkbox]:checked')).map(i=>i.dataset.key);
+  if(toReset.length === 0){ showToast('Pilih minimal 1 item untuk di-reset'); return; }
+  toReset.forEach(k=>{
+    if(k === 'favoriteLinks') localStorage.removeItem('favoriteLinks');
+    if(k === 'local_link_overrides') localStorage.removeItem('local_link_overrides');
+    if(k === 'custom_css') localStorage.removeItem('custom_css');
+    if(k === 'pinned_items') localStorage.removeItem('pinned_items');
+    if(k === 'filters_selected') localStorage.removeItem('filters_selected');
+    if(k === 'settings'){ localStorage.removeItem('lang'); localStorage.removeItem('viewMode'); localStorage.removeItem('merge_sources'); localStorage.removeItem('simple_mode'); localStorage.removeItem('pin_mode'); }
+    if(k === 'extra_sources'){ extraSources = []; saveExtraSources(); }
+  });
+  resetModal.classList.remove('open');
+  showToast('Reset selesai. Memuat ulang...');
+  setTimeout(()=> location.reload(),700);
+});
+
 /* ================= INIT & search ================= */
-function enforceSmallScreenBehavior(){
-  if(window.innerWidth <= 760){ selView.value = "list"; } else selView.value = viewMode;
-}
+function enforceSmallScreenBehavior(){ if(window.innerWidth <= 760){ selView.value = "list"; } else selView.value = viewMode; }
 window.addEventListener("resize", ()=> { enforceSmallScreenBehavior(); renderLinks(linksData, searchBox.value); });
 
 function init(){
@@ -847,24 +1225,17 @@ function init(){
   applyLanguageUI();
   applyCustomCssOnLoad();
   enforceSmallScreenBehavior();
-  loadLinks().then(d=>{
-    linksData = d || [];
-    populateFilterPanel();
-    renderLinks(linksData);
-  }).catch(e=>{
-    console.error(e);
-    showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data");
-    loadingOverlay.classList.remove("open");
-  });
+  if(pinMode === 'pin') pinmodePin.checked = true; else pinmodeStar.checked = true;
+
+  renderExtraSourcesList();
+  // hide star actions in lists when pinMode is 'pin' is handled inside createActionButtons
+  loadAndRenderSources().then(()=>{ /* done */ }).catch(e=>{ console.error(e); showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data"); loadingOverlay.classList.remove("open"); });
 }
 init();
 
 searchBox.addEventListener("input", ()=> renderLinks(linksData, searchBox.value));
 
-document.addEventListener("click", (e)=>{
-  const dbg = document.getElementById("debug-popup");
-  if(dbg && dbg.style.display === "flex" && !dbg.contains(e.target) && !debugBtn.contains(e.target)) dbg.style.display='none';
-});
+document.addEventListener("click", (e)=>{ const dbg = document.getElementById("debug-popup"); if(dbg && dbg.style.display === "flex" && !dbg.contains(e.target) && !debugBtn.contains(e.target)) dbg.style.display='none'; });
 </script>
 </body>
 </html>
