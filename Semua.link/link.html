@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AHMAD RIJANI</title>
+<title>Kumin Links</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
 <link rel="icon" href="https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/image/Kuning%20minum.png" type="image/png">
 <style id="base-style">
@@ -27,22 +27,49 @@
   .search-wrapper i{position:absolute;left:10px;font-size:0.95rem;color:#9aa6bf}
   .controls .search-input{padding:8px 12px 8px 34px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;outline:none;min-width:200px}
 
-  /* filter button & dropdown */
+  /* filter button & centered popup */
   .btn-filter{padding:8px 10px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer}
-  .filter-panel{position:absolute;right:12px;top:56px;background:var(--settings-bg);padding:12px;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.7);min-width:260px;z-index:999;display:none}
+  .filter-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:998}
+  .filter-panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--settings-bg);padding:18px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.7);min-width:340px;z-index:999;display:none}
   .filter-panel.open{display:block}
   .filter-panel h4{margin:0 0 8px 0;color:var(--highlight)}
-  .filter-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:6px}
+  .filter-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px}
   .filter-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
   .btn-ghost{background:none;border:none;color:var(--accent);cursor:pointer;padding:6px 8px;border-radius:8px}
   .btn-primary{background:var(--accent);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
 
-  /* nice dropdown + labels */
+  /* settings button styling (requested) */
+  .btn-settings{padding:8px 10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#7fb0ff);color:#fff;cursor:pointer;display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(77,144,254,0.12);transition:transform .12s,box-shadow .12s;font-weight:600}
+  .btn-settings:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(77,144,254,0.18)}
+  .btn-settings i{margin-right:6px;font-size:0.95rem}
+
+  /* dropdown/select styling */
+  select, .dropdown select, .settings-menu select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+    color: #e6eef8;
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    min-width: 160px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 24 24' fill='none' stroke='%23b7c1d6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px 8px;
+  }
   .dropdown{position:relative}
+  /* small caret offset fix for mobile */
+  @media (max-width:760px){
+    select, .dropdown select { background-position: right 14px center; min-width: 140px; }
+  }
 
   .container{padding:12px;display:grid;gap:12px;flex:1;overflow:auto}
   .group-container{margin-bottom:12px;padding:10px;border-radius:10px}
-  .group-title{font-size:1.12rem;font-weight:700;margin:0 0 8px;color:var(--highlight);padding-bottom:4px}
+  .group-title{font-size:1.12rem;font-weight:700;margin:0 0 8px 0;color:var(--highlight);padding-bottom:4px}
   .container > .group-container:nth-child(odd){ background: var(--group-dark) }
   .container > .group-container:nth-child(even){ background: var(--group-light) }
 
@@ -62,14 +89,7 @@
   .switch-small input:checked + .track{background:linear-gradient(90deg,var(--accent),#7fb0ff)}
   .switch-small input:checked + .track .thumb{transform:translateX(18px)}
 
-  /* GRID view: consistent tile aspect */
-  .grid-view .group-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-  .grid-view .link-card{background:var(--card-bg);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 22px rgba(2,6,23,0.6);transition:transform .12s;cursor:pointer;aspect-ratio:4/3;overflow:hidden}
-  .grid-view .link-icon{width:100%;height:55%;border-radius:8px;display:grid;place-items:center;font-size:1.6rem;color:var(--muted);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));object-fit:cover}
-  .grid-view .link-title{font-weight:700;margin:0;font-size:1rem}
-  .grid-view .link-desc{font-size:0.85rem;color:#b9c6dc;min-height:2.2rem;overflow:hidden}
-
-  /* CARD view slider */
+  /* CARD view slider (card retained; grid removed as requested) */
   .card-view .group-wrap{position:relative}
   .card-view .group-items{display:flex;gap:12px;overflow-x:auto;padding:6px 40px;scroll-snap-type:x mandatory;scroll-behavior:smooth}
   .card-view .link-card{flex:0 0 220px;height:340px;min-width:220px;border-radius:14px;padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 10px 30px rgba(2,6,23,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));scroll-snap-align:center;transition:transform .12s}
@@ -88,12 +108,14 @@
   /* LIST view */
   .list-view .group-items{display:flex;flex-direction:column;gap:8px}
   .flat-items{display:flex;flex-direction:column;gap:8px}
+  /* item row layout: left area grows, actions pinned right */
   .item-row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.01)}
-  .item-left{display:flex;align-items:center;gap:12px}
+  .item-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
   .link-icon{width:44px;height:44px;min-width:44px;border-radius:8px;display:grid;place-items:center;font-size:1.25rem;color:var(--muted);background:rgba(255,255,255,0.02);object-fit:cover}
-  .link-title{font-weight:600;margin:0}
-  .link-desc{font-size:0.9rem;color:#b9c6dc}
-  .link-actions{display:flex;gap:8px;align-items:center;margin-left:12px}
+  .link-title{font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .link-desc{font-size:0.9rem;color:#b9c6dc;opacity:0.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40ch}
+  /* ensure actions are always on the right and do not wrap */
+  .link-actions{display:flex;gap:8px;align-items:center;margin-left:12px;flex-shrink:0}
   .btn-icon{background:none;border:none;color:var(--muted);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px}
   .btn-icon:hover{color:#fff;background:rgba(255,255,255,0.02);transform:scale(1.03)}
   .favorite{color:#ffd700!important}
@@ -111,6 +133,7 @@
 
   .original-link-small{padding:6px;text-align:center;font-size:0.85rem;color:#9aa6bf;background:transparent;border-top:1px solid rgba(255,255,255,0.02)}
 
+/* loading */
   .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1700;justify-content:center;align-items:center;flex-direction:column;gap:12px}
   .loading-overlay.open{display:flex}
   .spinner{width:64px;height:64px;border-radius:50%;border:6px solid rgba(255,255,255,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite;}
@@ -133,8 +156,9 @@
   @media (max-width:760px){
     .header h1{font-size:1.0rem}
     .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px}
-    .filter-panel{right:6px;left:6px;top:68px}
+    .filter-panel{left:50%;top:50%;transform:translate(-50%,-50%);min-width:90%}
     .settings-menu{width:94%;max-height:70vh}
+    .link-desc{max-width:28ch}
   }
 </style>
 
@@ -156,7 +180,7 @@
   .reset-close{position:absolute;right:10px;top:8px;background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer}
 
   /* settings tabs */
-  .settings-tabs{display:flex;gap:8px}
+  .settings-tabs{display:flex;gap:8px;flex-wrap:wrap}
   .settings-tab{background:transparent;border:none;color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
   .settings-tab.active{color:#000;background:var(--highlight);font-weight:700}
   .settings-panel{display:none;flex-direction:column;gap:10px}
@@ -176,17 +200,20 @@
       </div>
       <div class="dropdown">
         <button id="btn-filter" class="btn-filter" title="Filter"><i class="fa-solid fa-filter"></i> Filter</button>
-        <div id="filter-panel" class="filter-panel" aria-hidden="true">
-          <h4 id="filter-title">Filter</h4>
-          <div class="filter-list" id="filter-list"></div>
-          <div class="filter-actions">
-            <button id="filter-all" class="btn-ghost">All</button>
-            <button id="filter-none" class="btn-ghost">None</button>
-            <button id="filter-apply" class="btn-primary">Apply</button>
-          </div>
-        </div>
       </div>
-      <button id="btn-settings" title="Pengaturan"><i class="fa-solid fa-gear"></i> <span id="btn-settings-label">Pengaturan</span></button>
+      <button id="btn-settings" class="btn-settings" title="Pengaturan"><i class="fa-solid fa-gear"></i> <span id="btn-settings-label">Pengaturan</span></button>
+    </div>
+  </div>
+
+  <!-- filter backdrop + centered panel -->
+  <div id="filter-backdrop" class="filter-backdrop" aria-hidden="true"></div>
+  <div id="filter-panel" class="filter-panel" aria-hidden="true" role="dialog" aria-modal="true">
+    <h4 id="filter-title">Filter</h4>
+    <div class="filter-list" id="filter-list"></div>
+    <div class="filter-actions">
+      <button id="filter-all" class="btn-ghost">All</button>
+      <button id="filter-none" class="btn-ghost">None</button>
+      <button id="filter-apply" class="btn-primary">Apply</button>
     </div>
   </div>
 
@@ -200,14 +227,18 @@
         </div>
       </div>
 
+      <!-- added two more tabs: Links & Data -->
       <div class="settings-tabs">
         <button class="settings-tab active" data-tab="general">General</button>
+        <button class="settings-tab" data-tab="links">Links</button>
+        <button class="settings-tab" data-tab="data">Data</button>
         <button class="settings-tab" data-tab="experimental">Experimental</button>
       </div>
 
+      <!-- GENERAL -->
       <div id="panel-general" class="settings-panel open">
         <div class="settings-row"><label id="lbl-language"></label><select id="sel-language"><option value="id">Indonesia</option><option value="en">English</option></select></div>
-        <div class="settings-row"><label id="lbl-view"></label><select id="sel-view"><option value="list">List</option><option value="grid">Grid</option><option value="card">Card</option></select></div>
+        <div class="settings-row"><label id="lbl-view"></label><select id="sel-view"><option value="list">List</option><option value="card">Card</option></select></div>
 
         <div class="settings-row" style="align-items:center;gap:10px">
           <div style="display:flex;flex-direction:column">
@@ -239,8 +270,55 @@
           </div>
         </div>
 
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <label>Urutkan link</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="sel-sort">
+              <option value="title_asc">Judul A → Z</option>
+              <option value="title_desc">Judul Z → A</option>
+              <option value="date_new_old">Tanggal: Baru → Lama</option>
+              <option value="date_old_new">Tanggal: Lama → Baru</option>
+            </select>
+            <small style="color:#9aa6bf">Pilihan ini akan disimpan di pengaturan.</small>
+          </div>
+        </div>
+
       </div>
 
+      <!-- LINKS tab: space to show link-specific options -->
+      <div id="panel-links" class="settings-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Links</strong><small style="color:#9aa6bf">(Pengaturan terkait tampilan & grup)</small>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label><input type="checkbox" id="chk-show-group-count"> Tampilkan jumlah item per grup</label>
+          <label><input type="checkbox" id="chk-compact-list"> Compact list (jarak antar item lebih kecil)</label>
+          <label><input type="checkbox" id="chk-merge-duplicates"> Gabungkan links yang sama? (merge duplicate links)</label>
+          <small style="color:#9aa6bf">Jika aktif, link dengan URL yang sama akan digabung (hanya satu entri per URL dalam daftar utama).</small>
+        </div>
+      </div>
+
+      <!-- DATA tab: move load/save/reset UI into a dedicated place -->
+      <div id="panel-data" class="settings-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Data</strong>
+          <small style="color:#9aa6bf">Reset / Load / Save — granular</small>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="file" id="data-load-file" accept="application/json" />
+          <button id="data-load-btn" class="btn-primary">Load</button>
+          <button id="data-save-btn" class="btn-ghost">Save</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+          <button id="data-reset-btn" class="btn-ghost">Reset Pilihan</button>
+          <button id="data-open-save-choices" class="btn-primary">Pilih Item Save</button>
+        </div>
+
+        <div style="margin-top:10px;color:#9aa6bf">Catatan: Pengaturan (termasuk urutkan) akan disimpan jika memilih 'Settings' saat save.</div>
+      </div>
+
+      <!-- EXPERIMENTAL -->
       <div id="panel-experimental" class="settings-panel">
         <div style="display:flex;justify-content:space-between;align-items:center"><strong>Experimental</strong><small style="color:#9aa6bf">(Untuk eksperimen — gunakan hati-hati)</small></div>
 
@@ -275,7 +353,6 @@
           <small style="color:#9aa6bf">Load akan menimpa kunci yang ada (favorites, overrides, css, pinned). File harus format backup yang dibuat "Save Local".</small>
         </div>
 
-        <!-- NEW: Extra sources & granular save/load/reset (inserted per request) -->
         <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.03);padding-top:8px;display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <strong>Sources (Tambah / Kelola)</strong>
@@ -288,17 +365,45 @@
           </div>
           <div id="extra-sources-list" style="max-height:180px;overflow:auto;border-radius:8px;padding:8px;background:rgba(255,255,255,0.02)"></div>
 
-    
-            <div style="display:flex;gap:8px;justify-content:flex-end">
-              <button id="save-choose-btn" class="btn-primary">Save (Download)</button>
-              <button id="open-load-modal-btn" class="btn-ghost">Load File (Pilihan)</button>
-              <button id="open-reset-modal-btn" class="btn-ghost">Reset Pilihan</button>
-            </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button id="save-choose-btn" class="btn-primary">Save (Download)</button>
+            <button id="open-load-modal-btn" class="btn-ghost">Load File (Pilihan)</button>
+            <button id="open-reset-modal-btn" class="btn-ghost">Reset Pilihan</button>
           </div>
-        </div>
 
+          <!-- Experimental - Offline -->
+          <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.03);padding-top:8px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>Experimental: Offline</strong>
+              <label class="switch"><input type="checkbox" id="chk-offline-mode"><span class="track"><span class="thumb"></span></span></label>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="btn-offline-download" class="btn-primary">Download Data untuk Offline</button>
+              <div id="offline-status" style="color:#9aa6bf">Tidak ada bundle offline.</div>
+            </div>
+            <small style="color:#9aa6bf">Jika aktif, situs akan memakai data offline (jika tersedia). Gunakan tombol download untuk menyimpan bundle saat online.</small>
+          </div>
+
+        </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- offline-warning modal -->
+  <div class="modal" id="offline-warning-modal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="offline-warning-title">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="offline-warning-title">Mode Offline Aktif</strong>
+        <button id="offline-warning-close" class="btn-ghost">✖</button>
+      </div>
+      <div style="margin-top:8px;color:#e6eef8">
+        Anda sedang menggunakan mode offline, tetapi koneksi internet tersedia. Ingin mematikan mode offline untuk mengecek & mengunduh data terbaru?
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button id="offline-warning-keep" class="btn-ghost">Tetap Offline</button>
+        <button id="offline-warning-turnoff" class="btn-primary">Matikan Offline & Cek</button>
+      </div>
     </div>
   </div>
 
@@ -342,7 +447,7 @@
         <div class="modal-row"><label><input type="checkbox" data-key="custom_css" checked> Custom CSS</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="pinned_items" checked> Pinned</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
-        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings (incl. urutkan)</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="extra_sources"> Extra Sources</label></div>
       </div>
       <div class="modal-actions">
@@ -365,7 +470,7 @@
         <div class="modal-row"><label><input type="checkbox" data-key="custom_css"> Custom CSS</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="pinned_items"> Pinned</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
-        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings (incl. urutkan)</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="extra_sources"> Extra Sources</label></div>
       </div>
       <div class="modal-actions">
@@ -424,17 +529,18 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="original-link-small" id="original-link-small"><a id="original-link-anchor" href="#" target="_blank" style="color:var(--accent);text-decoration:underline"></a></div>
+  <div class="original-link-small" id="original-link-small"><a id="original-link-anchor" href="https://kuningminum.github.io/Kumin/Global%20Links.html" target="_blank" style="color:var(--accent);text-decoration:underline"></a></div>
   <div class="loading-overlay" id="loading-overlay"><div class="spinner" aria-hidden="true"></div><div class="loading-text" id="loading-text">Memuat data...</div></div>
 
 <script>
 /* ================= KONFIGURASI & TEKS ================= */
 const SOURCE_URLS = [
   "links.json",
-  "https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/link_global.json"
+  "https://kuningminum.github.io/Kumin/link_global.json"
 ];
 
 const EXTRA_SOURCES_KEY = 'extra_sources'; // key for storing user-added sources
+const OFFLINE_BUNDLE_KEY = 'offline_bundle'; // saved offline bundle
 const T = {
   id:{
     title:"Kumin Links",
@@ -444,7 +550,6 @@ const T = {
     lbl_reset:"Reset",
     reset_button:"Reset Data",
     reset_instruction:'Ketik <span class="stabilo">RESET</span> untuk menghapus semua data',
-    reset_input_placeholder:"Ketik RESET untuk konfirmasi",
     preview_open:"Buka Link",
     preview_close:"Tutup",
     original_link_text:"Original Link",
@@ -504,6 +609,7 @@ const T = {
 };
 
 /* ================= STATE ================= */
+/* default favorites/pinned/extra state */
 let favoriteLinks = JSON.parse(localStorage.getItem("favoriteLinks")||"[]");
 let currentLang = localStorage.getItem("lang") || ((navigator.language && navigator.language.startsWith("id")) ? "id" : "en");
 let viewMode = localStorage.getItem("viewMode") || "list";
@@ -518,6 +624,18 @@ let filtersSelected = new Set(JSON.parse(localStorage.getItem('filters_selected'
 let pinMode = localStorage.getItem('pin_mode') || 'star'; // 'star' or 'pin'
 let pinnedItems = new Set(JSON.parse(localStorage.getItem('pinned_items')||'[]'));
 let extraSources = JSON.parse(localStorage.getItem(EXTRA_SOURCES_KEY) || '[]'); // user-added sources
+
+// new: sort preference
+let sortMode = localStorage.getItem('sort_mode') || 'title_asc';
+
+// links tab settings
+// default merge duplicate links to true as requested
+let mergeDuplicateLinks = (localStorage.getItem('merge_duplicate_links') === null) ? true : (localStorage.getItem('merge_duplicate_links') === '1');
+let showGroupCount = (localStorage.getItem('show_group_count') === '1');
+let compactList = (localStorage.getItem('compact_list') === '1');
+
+// experimental offline
+let experimentalOffline = (localStorage.getItem('experimental_offline_mode') === '1');
 
 /* ================= DOM ================= */
 const headerTitle = document.getElementById("header-title");
@@ -554,6 +672,7 @@ const loadingOverlay = document.getElementById("loading-overlay");
 const loadingText = document.getElementById("loading-text");
 const baseStyleEl = document.getElementById("base-style");
 const filterPanel = document.getElementById('filter-panel');
+const filterBackdrop = document.getElementById('filter-backdrop');
 const btnFilter = document.getElementById('btn-filter');
 const filterList = document.getElementById('filter-list');
 const filterAllBtn = document.getElementById('filter-all');
@@ -561,6 +680,8 @@ const filterNoneBtn = document.getElementById('filter-none');
 const filterApplyBtn = document.getElementById('filter-apply');
 const settingsTabs = document.querySelectorAll('.settings-tab');
 const panelGeneral = document.getElementById('panel-general');
+const panelLinks = document.getElementById('panel-links');
+const panelData = document.getElementById('panel-data');
 const panelExperimental = document.getElementById('panel-experimental');
 const pinmodeStar = document.getElementById('pinmode-star');
 const pinmodePin = document.getElementById('pinmode-pin');
@@ -591,6 +712,34 @@ const resetModalOk = document.getElementById('reset-modal-ok');
 const resetModalCancel = document.getElementById('reset-modal-cancel');
 const resetModalConfirm = document.getElementById('reset-modal-confirm');
 
+const originalLinkAnchor = document.getElementById('original-link-anchor');
+
+// new panel-data controls
+const dataLoadFile = document.getElementById('data-load-file');
+const dataLoadBtn = document.getElementById('data-load-btn');
+const dataSaveBtn = document.getElementById('data-save-btn');
+const dataResetBtn = document.getElementById('data-reset-btn');
+const dataOpenSaveChoices = document.getElementById('data-open-save-choices');
+
+// general-sorting select
+const selSort = document.getElementById('sel-sort');
+
+// links tab controls
+const chkShowGroupCount = document.getElementById('chk-show-group-count');
+const chkCompactList = document.getElementById('chk-compact-list');
+const chkMergeDuplicates = document.getElementById('chk-merge-duplicates');
+
+// experimental offline
+const chkOfflineMode = document.getElementById('chk-offline-mode');
+const btnOfflineDownload = document.getElementById('btn-offline-download');
+const offlineStatusEl = document.getElementById('offline-status');
+
+// offline warning modal elements
+const offlineWarningModal = document.getElementById('offline-warning-modal');
+const offlineWarningTurnOffBtn = document.getElementById('offline-warning-turnoff');
+const offlineWarningKeepBtn = document.getElementById('offline-warning-keep');
+const offlineWarningCloseBtn = document.getElementById('offline-warning-close');
+
 /* ================= HELPERS ================= */
 function t(k){ return (T[currentLang] && T[currentLang][k]) || k; }
 function showToast(msg, ms=3000){ toast.textContent = msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"), ms); }
@@ -607,7 +756,7 @@ function applyLanguageUI(){
   document.getElementById("lbl-merge-desc").textContent = t("lbl_merge_desc");
   document.getElementById("lbl-simple").textContent = t("simple_label");
   document.getElementById("lbl-simple-desc").textContent = t("simple_desc");
-  document.getElementById("original-link-anchor").textContent = t("original_link_text");
+  originalLinkAnchor.textContent = t("original_link_text");
   document.getElementById("open-edit-input").placeholder = t("editcss_title");
   document.getElementById("editcss-title").textContent = t("editcss_title");
   document.getElementById("editcss-note").innerHTML = t("editcss_note");
@@ -673,13 +822,37 @@ function populateFilterPanel(){
   });
 }
 
-btnFilter.addEventListener('click', (e)=>{ e.stopPropagation(); filterPanel.classList.toggle('open'); filterPanel.setAttribute('aria-hidden', filterPanel.classList.contains('open')? 'false' : 'true'); });
+/* filter open/close: synchronized with backdrop for true centered modal behavior */
+function openFilterPanel(){
+  filterPanel.classList.add('open');
+  filterBackdrop.style.display = 'block';
+  filterPanel.setAttribute('aria-hidden','false');
+  filterBackdrop.setAttribute('aria-hidden','false');
+}
+function closeFilterPanel(){
+  filterPanel.classList.remove('open');
+  filterBackdrop.style.display = 'none';
+  filterPanel.setAttribute('aria-hidden','true');
+  filterBackdrop.setAttribute('aria-hidden','true');
+}
 
-document.addEventListener('click', (e)=>{ if(!filterPanel.contains(e.target) && !btnFilter.contains(e.target)) { filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true'); }});
+btnFilter.addEventListener('click', (e)=>{ e.stopPropagation(); if(filterPanel.classList.contains('open')) closeFilterPanel(); else { populateFilterPanel(); openFilterPanel(); } });
+
+filterBackdrop.addEventListener('click', ()=>{
+  closeFilterPanel();
+});
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){
+    if(filterPanel.classList.contains('open')) closeFilterPanel();
+    if(settingsOverlay.classList.contains('open')) settingsOverlay.classList.remove('open');
+    if(editcssPopup.style.display === 'flex') { editcssPopup.style.display = 'none'; editcssPopup.setAttribute('aria-hidden','true'); }
+  }
+});
 
 filterAllBtn.addEventListener('click', ()=>{ filtersSelected.clear(); filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = true; filtersSelected.add(i.dataset.group); }); });
 filterNoneBtn.addEventListener('click', ()=>{ filtersSelected.clear(); filterList.querySelectorAll('input[type=checkbox]').forEach(i=>{ i.checked = false; }); });
-filterApplyBtn.addEventListener('click', ()=>{ filterPanel.classList.remove('open'); filterPanel.setAttribute('aria-hidden','true'); renderLinks(linksData, searchBox.value); });
+filterApplyBtn.addEventListener('click', ()=>{ closeFilterPanel(); renderLinks(linksData, searchBox.value); });
 
 /* ================= EXTRA SOURCES (user-added) ================= */
 function saveExtraSources(){ localStorage.setItem(EXTRA_SOURCES_KEY, JSON.stringify(extraSources)); }
@@ -727,6 +900,7 @@ addSourceBtn.addEventListener('click', ()=>{
 /* ================= PIN/STAR ACTION CREATOR ================= */
 function togglePin(url){ if(pinnedItems.has(url)) pinnedItems.delete(url); else pinnedItems.add(url); localStorage.setItem('pinned_items', JSON.stringify(Array.from(pinnedItems))); }
 
+/* createActionButtons returns the actions container; in list mode these are appended as the right-aligned actions */
 function createActionButtons(link){
   const actions = document.createElement('div'); actions.className = 'link-actions';
   const eye = document.createElement('button'); eye.className='btn-icon'; eye.title = t('preview'); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
@@ -738,7 +912,7 @@ function createActionButtons(link){
 
   actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn);
 
-  const modeBtn = document.createElement('button'); modeBtn.className='btn-icon';
+  const modeBtn = document.createElement('button'); modeBtn.className = 'btn-icon';
   if(pinMode === 'pin'){
     modeBtn.innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
     if(pinnedItems.has(link.url)) modeBtn.classList.add('pinned');
@@ -747,14 +921,86 @@ function createActionButtons(link){
   } else {
     modeBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
     if(favoriteLinks.some(f=>f.url===link.url)) modeBtn.classList.add('favorite');
-    modeBtn.addEventListener('click',(e)=>{ e.stopPropagation(); const found = favoriteLinks.find(f=>f.url===link.url); if(found){ favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); } else { favoriteLinks.push({...link}); } localStorage.setItem('favoriteLinks', JSON.stringify(favoriteLinks)); renderLinks(linksData, searchBox.value); });
+    modeBtn.addEventListener('click',(e)=>{ 
+      e.stopPropagation(); 
+      const found = favoriteLinks.find(f=>f.url===link.url); 
+      if(found){ 
+        favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); 
+      } else { 
+        // store the full link object so the "Star" group can show it
+        favoriteLinks.push({...link}); 
+      } 
+      localStorage.setItem('favoriteLinks', JSON.stringify(favoriteLinks)); 
+      renderLinks(linksData, searchBox.value); 
+    });
     actions.appendChild(modeBtn);
   }
 
   return actions;
 }
 
-/* ================= RENDER LINKS (dengan filter + pinned top) ================= */
+/* ================= SORT HELPERS ================= */
+function getTitleForSorting(link){
+  return ((currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"") ).toString().toLowerCase();
+}
+function getDateForSorting(link){
+  // try multiple possible date fields
+  if(link.date) return new Date(link.date).getTime() || 0;
+  if(link.created_at) return new Date(link.created_at).getTime() || 0;
+  if(link.timestamp) return new Date(link.timestamp).getTime() || 0;
+  // fallback: 0 (so items without date appear last in new->old, or first in old->new as handled)
+  return 0;
+}
+function sortLinksArray(arr){
+  const mode = sortMode || 'title_asc';
+  const copy = arr.slice();
+  if(mode === 'title_asc'){
+    copy.sort((a,b)=> {
+      const aa = getTitleForSorting(a), bb = getTitleForSorting(b);
+      if(aa < bb) return -1;
+      if(aa > bb) return 1;
+      return 0;
+    });
+  } else if(mode === 'title_desc'){
+    copy.sort((a,b)=> {
+      const aa = getTitleForSorting(a), bb = getTitleForSorting(b);
+      if(aa > bb) return -1;
+      if(aa < bb) return 1;
+      return 0;
+    });
+  } else if(mode === 'date_new_old'){
+    copy.sort((a,b)=> {
+      const da = getDateForSorting(a), db = getDateForSorting(b);
+      return db - da;
+    });
+  } else if(mode === 'date_old_new'){
+    copy.sort((a,b)=> {
+      const da = getDateForSorting(a), db = getDateForSorting(b);
+      return da - db;
+    });
+  }
+  return copy;
+}
+
+/* ================= DEDUPLICATION (merge duplicate links) ================= */
+function dedupeByUrl(list){
+  if(!mergeDuplicateLinks) return list.slice();
+  const map = new Map();
+  for(const item of list){
+    const key = (item.url||'').trim();
+    if(!key) continue;
+    if(!map.has(key)) map.set(key, item);
+    else {
+      // if duplicate, prefer richer object (with title/desc/img). merge shallow
+      const existing = map.get(key);
+      const merged = {...existing, ...item};
+      map.set(key, merged);
+    }
+  }
+  return Array.from(map.values());
+}
+
+/* ================= RENDER LINKS (dengan filter + pinned top + STAR group) ================= */
 function applyLocalOverrides(arr){
   return arr.map(l=>{
     const key = l.url || (l.title_id || l.title_en || Math.random().toString(36).slice(2));
@@ -768,7 +1014,16 @@ function applyLocalOverrides(arr){
 function renderLinks(list, search=""){
   linkContainer.innerHTML = "";
   const q = (search||"").toLowerCase();
-  const filtered = applyLocalOverrides(list).filter(l=>{
+
+  // work on a copy, apply overrides first
+  let working = applyLocalOverrides(list);
+
+  // if merge duplicate links requested, dedupe by URL BEFORE grouping (keeps favorites behavior separate)
+  if(mergeDuplicateLinks){
+    working = dedupeByUrl(working);
+  }
+
+  const filtered = working.filter(l=>{
     const titleText = (currentLang==="id")? (l.title_id||l.title_en||"") : (l.title_en||l.title_id||"");
     const groupName = (currentLang==="id")? (l.grup_id || l.grup || "Tanpa Grup") : (l.grup_en || l.grup || "No Group");
     if(q && !(titleText.toLowerCase().includes(q) || (l.grup_id||"").toLowerCase().includes(q))) return false;
@@ -789,17 +1044,46 @@ function renderLinks(list, search=""){
     });
   }
 
+  // STAR group behavior: favoriteLinks should be shown in a special group at top (duplicate remains in original group)
+  const starGroup = favoriteLinks ? favoriteLinks.slice() : [];
+
   if(simpleMode){
     const container = document.createElement("div"); container.className = "flat-items";
     container.innerHTML = `<div style="padding:8px;color:#9aa6bf">${t('simple_desc')}</div>`;
+
+    if(starGroup && starGroup.length){
+      const starHeader = document.createElement("div"); starHeader.className = "group-container";
+      const sh = document.createElement("h2"); sh.className = "group-title"; sh.textContent = (currentLang==="id")? "Star" : "Star";
+      starHeader.appendChild(sh);
+      const starItems = document.createElement("div"); starItems.className = "group-items";
+      const starSorted = sortLinksArray(starGroup);
+      starSorted.forEach(link=>{
+        const row = document.createElement("div"); row.className = "item-row";
+        if(compactList) row.style.padding = '6px';
+        const left = document.createElement("div"); left.className = "item-left";
+        const icon = createIconNode(link);
+        const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
+        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleTextRaw}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        left.appendChild(icon); left.appendChild(tEl);
+        const actions = createActionButtons(link);
+        row.appendChild(left); row.appendChild(actions);
+        row.addEventListener("click", ()=> window.location.href = link.url );
+        starItems.appendChild(row);
+      });
+      starHeader.appendChild(starItems);
+      container.appendChild(starHeader);
+    }
 
     if(pinnedList.length){
       const pinHeader = document.createElement("div"); pinHeader.className = "group-container";
       const ph = document.createElement("h2"); ph.className = "group-title"; ph.textContent = (currentLang==="id")? "Pin" : "Pinned";
       pinHeader.appendChild(ph);
       const pinItems = document.createElement("div"); pinItems.className = "group-items";
-      pinnedList.forEach(link=>{
+      // apply sorting to pinned group too
+      const pinnedSorted = sortLinksArray(pinnedList);
+      pinnedSorted.forEach(link=>{
         const row = document.createElement("div"); row.className = "item-row";
+        if(compactList) row.style.padding = '6px';
         const left = document.createElement("div"); left.className = "item-left";
         const icon = createIconNode(link);
         const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
@@ -814,37 +1098,17 @@ function renderLinks(list, search=""){
       container.appendChild(pinHeader);
     }
 
-    if(favoriteLinks && favoriteLinks.length && pinMode !== 'pin'){
-      const favHeader = document.createElement("div"); favHeader.className = "group-container";
-      const fh = document.createElement("h2"); fh.className = "group-title"; fh.textContent = (currentLang==="id")? "Favorit" : "Favorites";
-      favHeader.appendChild(fh);
-      const favList = document.createElement("div"); favList.className = "group-items";
-      favoriteLinks.forEach(link=>{
-        if(filtersSelected.size>0){ const grp = (currentLang==="id")? (link.grup_id||link.grup||"Tanpa Grup") : (link.grup_en||link.grup||"No Group"); if(!filtersSelected.has(grp)) return; }
-        const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
-        const titleText = `(${groupName}) ${titleTextRaw}`;
-        const row = document.createElement("div"); row.className = "item-row";
-        const left = document.createElement("div"); left.className = "item-left";
-        const icon = createIconNode(link);
-        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
-        left.appendChild(icon); left.appendChild(tEl);
-        const actions = createActionButtons(link);
-        row.appendChild(left); row.appendChild(actions);
-        row.addEventListener("click", ()=> window.location.href = link.url );
-        favList.appendChild(row);
-      });
-      favHeader.appendChild(favList);
-      container.appendChild(favHeader);
-    }
-
-    filtered.forEach(link=>{
-      if(pinnedList.some(p=>p.url===link.url)) return; // avoid duplicate
+    // apply sorting to filtered list
+    const filteredSorted = sortLinksArray(filtered);
+    filteredSorted.forEach(link=>{
+      // allow duplicates: if link is in starGroup we still show it in its group (user asked duplicate remains)
+      if(pinnedList.some(p=>p.url===link.url)) return; // avoid duplicate for pinned only
       const titleRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
       const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
       const titleText = `(${groupName}) ${titleRaw}`;
 
       const row = document.createElement("div"); row.className = "item-row";
+      if(compactList) row.style.padding = '6px';
       const left = document.createElement("div"); left.className = "item-left";
       const icon = createIconNode(link);
       const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
@@ -862,7 +1126,8 @@ function renderLinks(list, search=""){
 
   /* Grouped view */
   const groups = {};
-  const allFiltered = applyLocalOverrides(list);
+  const allFiltered = filtered; // already applied overrides and dedupe if selected
+
   allFiltered.forEach(l=>{
     if(pinMode==='pin' && pinnedItems.has(l.url)) return; // pinned are shown separately
     const gid = l.grup_id || l.grup || "Tanpa Grup";
@@ -876,10 +1141,15 @@ function renderLinks(list, search=""){
     groups[key].types.add(l.type||"local");
   });
 
+  // ensure STAR group shows first if there are favorites
+  if(starGroup && starGroup.length){
+    groups['FAVORIT'] = {links: starGroup.slice(), name:{id:'Star', en:'Star'}, types: new Set(['favorite'])};
+  }
+
   const keys = Object.keys(groups).sort((a,b)=> a==="FAVORIT"? -1 : b==="FAVORIT"? 1: 0);
   const isSmall = window.innerWidth <= 760;
   const effectiveView = isSmall ? "list" : viewMode;
-  linkContainer.className = "container " + (effectiveView==="grid"?"grid-view":effectiveView==="card"?"card-view":"list-view");
+  linkContainer.className = "container " + (effectiveView==="card"?"card-view":"list-view");
 
   // pinned group first (if any)
   if(pinnedList.length){
@@ -887,22 +1157,23 @@ function renderLinks(list, search=""){
     const h = document.createElement("h2"); h.className = "group-title"; h.textContent = (currentLang==="id")? "Pin" : "Pinned";
     section.appendChild(h);
     const items = document.createElement("div"); items.className = "group-items";
-    pinnedList.forEach(link=>{
+    // sort pinned
+    const pinnedSorted = sortLinksArray(pinnedList);
+    pinnedSorted.forEach(link=>{
       const card = document.createElement("div"); card.className = "link-card";
-      if(effectiveView==="grid"){
+      if(effectiveView==="card"){
         const icon = createIconNode(link, "link-icon", "");
         const title = document.createElement("div"); title.className="link-title"; title.textContent = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
         const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
         const acts = createActionButtons(link);
         card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
       } else {
-        const info = document.createElement("div"); info.className="link-info";
+        const left = document.createElement("div"); left.className = "item-left";
         const icon = createIconNode(link);
-        const title = document.createElement("div"); title.className="link-title"; title.textContent = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
-        info.appendChild(icon); info.appendChild(title); info.appendChild(desc);
+        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${(currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"")}</div><div class="link-desc">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        left.appendChild(icon); left.appendChild(tEl);
         const acts = createActionButtons(link);
-        card.appendChild(info); card.appendChild(acts);
+        card.appendChild(left); card.appendChild(acts);
       }
       card.addEventListener("click", ()=> window.location.href = link.url );
       items.appendChild(card);
@@ -927,13 +1198,20 @@ function renderLinks(list, search=""){
     }
     section.appendChild(h);
     h.textContent = gname;
+    if(showGroupCount) {
+      const badge = document.createElement('small'); badge.style.color='#9aa6bf'; badge.style.marginLeft='8px'; badge.textContent = `(${g.links.length})`;
+      h.appendChild(badge);
+    }
 
     if(effectiveView==="card"){
       const wrap = document.createElement("div"); wrap.className="group-wrap";
       const left = document.createElement("button"); left.className="slider-btn slider-left"; left.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
       const right = document.createElement("button"); right.className="slider-btn slider-right"; right.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
       const items = document.createElement("div"); items.className="group-items";
-      g.links.forEach(link=>{
+
+      // sort group links
+      const sorted = sortLinksArray(g.links);
+      sorted.forEach(link=>{
         const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
         const card = document.createElement("div"); card.className = "link-card card-item";
         const icon = createIconNode(link, "link-icon", "");
@@ -953,26 +1231,19 @@ function renderLinks(list, search=""){
 
     } else {
       const items = document.createElement("div"); items.className = "group-items";
-      g.links.forEach(link=>{
+      const sorted = sortLinksArray(g.links);
+      sorted.forEach(link=>{
         const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        const card = document.createElement("div"); card.className = "link-card";
-        if(effectiveView==="grid"){
-          const icon = createIconNode(link, "link-icon", "");
-          const title = document.createElement("div"); title.className="link-title"; title.textContent = titleText;
-          const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
-          const acts = createActionButtons(link);
-          card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
-        } else {
-          const info = document.createElement("div"); info.className="link-info";
-          const icon = createIconNode(link);
-          const title = document.createElement("div"); title.className="link-title"; title.textContent = titleText;
-          const desc = document.createElement("div"); desc.className="link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
-          info.appendChild(icon); info.appendChild(title); info.appendChild(desc);
-          const acts = createActionButtons(link);
-          card.appendChild(info); card.appendChild(acts);
-        }
-        card.addEventListener("click", ()=> window.location.href = link.url );
-        items.appendChild(card);
+        const row = document.createElement("div"); row.className = "item-row";
+        if(compactList) row.style.padding = '6px';
+        const left = document.createElement("div"); left.className = "item-left";
+        const icon = createIconNode(link);
+        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleText}</div><div class="link-desc">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        left.appendChild(icon); left.appendChild(tEl);
+        const acts = createActionButtons(link);
+        row.appendChild(left); row.appendChild(acts);
+        row.addEventListener("click", ()=> window.location.href = link.url );
+        items.appendChild(row);
       });
       section.appendChild(items);
     }
@@ -988,11 +1259,12 @@ btnClose.addEventListener("click", ()=>{ previewPopup.style.display = "none"; pr
 /* ================= SETTINGS INTERACTIONS ================= */
 btnSettings.addEventListener("click", ()=>{ settingsOverlay.classList.add("open"); });
 document.getElementById("settings-close").addEventListener("click", ()=> settingsOverlay.classList.remove("open"));
-settingsOverlay.addEventListener("click",(e)=>{ if(e.target === settingsOverlay) settingsOverlay.classList.remove("open"); });
+settingsOverlay.addEventListener("click",(e)=>{ if(e.target === settingsOverlay) settingsOverlay.classList.remove('open'); });
 
 settingsToggleCollapse.addEventListener('click', ()=>{ settingsMenu.classList.toggle('collapsed'); });
 
-settingsTabs.forEach(bt=> bt.addEventListener('click', ()=>{ settingsTabs.forEach(x=>x.classList.remove('active')); bt.classList.add('active'); const tab = bt.dataset.tab; panelGeneral.classList.toggle('open', tab==='general'); panelExperimental.classList.toggle('open', tab==='experimental'); }));
+/* settings tab switching (now includes general, links, data, experimental) */
+settingsTabs.forEach(bt=> bt.addEventListener('click', ()=>{ settingsTabs.forEach(x=>x.classList.remove('active')); bt.classList.add('active'); const tab = bt.dataset.tab; panelGeneral.classList.toggle('open', tab==='general'); panelLinks.classList.toggle('open', tab==='links'); panelData.classList.toggle('open', tab==='data'); panelExperimental.classList.toggle('open', tab==='experimental'); }));
 
 selLanguage.addEventListener("change", ()=>{ currentLang = selLanguage.value; localStorage.setItem("lang", currentLang); applyLanguageUI(); renderLinks(linksData, searchBox.value); populateFilterPanel(); });
 selView.addEventListener("change", ()=>{ viewMode = selView.value; localStorage.setItem("viewMode", viewMode); renderLinks(linksData, searchBox.value); });
@@ -1000,12 +1272,34 @@ selView.addEventListener("change", ()=>{ viewMode = selView.value; localStorage.
 chkMerge.addEventListener("change", ()=>{ mergeSources = chkMerge.checked; localStorage.setItem("merge_sources", mergeSources ? "1" : "0"); renderLinks(linksData, searchBox.value); });
 chkSimple.addEventListener("change", ()=>{ simpleMode = chkSimple.checked; localStorage.setItem("simple_mode", simpleMode ? "1" : "0"); renderLinks(linksData, searchBox.value); });
 
-pinmodeStar.addEventListener('change', ()=>{ if(pinmodeStar.checked){ pinMode='star'; localStorage.setItem('pin_mode','star'); // ensure star UI visible
-  document.getElementById('label-pinmode-star').style.display='inline-flex'; renderLinks(linksData, searchBox.value); }});
-pinmodePin.addEventListener('change', ()=>{ if(pinmodePin.checked){ pinMode='pin'; localStorage.setItem('pin_mode','pin'); // when pin mode active, favorites UI still exists but star actions hidden in list
-  document.getElementById('label-pinmode-star').style.display='inline-flex'; renderLinks(linksData, searchBox.value); }});
+pinmodeStar.addEventListener('change', ()=>{ if(pinmodeStar.checked){ pinMode='star'; localStorage.setItem('pin_mode','star'); renderLinks(linksData, searchBox.value); }});
+pinmodePin.addEventListener('change', ()=>{ if(pinmodePin.checked){ pinMode='pin'; localStorage.setItem('pin_mode','pin'); renderLinks(linksData, searchBox.value); }});
 
 btnReset.addEventListener("click", ()=>{ settingsOverlay.classList.remove("open"); openResetPopup(); });
+
+/* sorting select */
+selSort.addEventListener('change', ()=> {
+  sortMode = selSort.value;
+  localStorage.setItem('sort_mode', sortMode);
+  renderLinks(linksData, searchBox.value);
+});
+
+/* links tab settings toggles */
+chkShowGroupCount.addEventListener('change', ()=> {
+  showGroupCount = chkShowGroupCount.checked;
+  localStorage.setItem('show_group_count', showGroupCount ? '1' : '0');
+  renderLinks(linksData, searchBox.value);
+});
+chkCompactList.addEventListener('change', ()=> {
+  compactList = chkCompactList.checked;
+  localStorage.setItem('compact_list', compactList ? '1' : '0');
+  renderLinks(linksData, searchBox.value);
+});
+chkMergeDuplicates.addEventListener('change', ()=> {
+  mergeDuplicateLinks = chkMergeDuplicates.checked;
+  localStorage.setItem('merge_duplicate_links', mergeDuplicateLinks ? '1' : '0');
+  renderLinks(linksData, searchBox.value);
+});
 
 /* Edit CSS gating */
 openEditInput.addEventListener("input", ()=> { openEditBtn.disabled = openEditInput.value.trim().toUpperCase() !== "EDITCSS"; });
@@ -1042,12 +1336,95 @@ function getAllSourcesArray(){
   return arr;
 }
 
+/* download offline bundle (saves to localStorage) */
+async function downloadOfflineBundle(){
+  loadingOverlay.classList.add("open");
+  loadingText.textContent = "Mengunduh bundle offline...";
+  const all = [];
+  let anySuccess = false;
+  let errs = "";
+  const srcs = getAllSourcesArray();
+  for(const src of srcs){
+    try{
+      if(src.startsWith('inline:')){
+        const jsonText = src.slice(7);
+        const j = JSON.parse(jsonText);
+        if(j.links && Array.isArray(j.links)){ all.push(...j.links.map(x=>({...x, type:x.type||'inline'}))); anySuccess = true; }
+        else if(Array.isArray(j)){ all.push(...j.map(x=>({...x, type:'inline'}))); anySuccess = true; }
+        else throw new Error("Inline JSON tidak berisi array atau object.links");
+      } else {
+        const url = src + "?_=" + Date.now();
+        const res = await fetch(url);
+        if(!res.ok) throw new Error("HTTP " + res.status + " for " + src);
+        const j = await res.json();
+        if(j.links && Array.isArray(j.links)){
+          const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
+          all.push(...j.links.map(x=>({...x, type: x.type || inferredType})));
+          anySuccess = true;
+        } else if(Array.isArray(j)){
+          const inferredType = (new URL(src, location.href).origin === location.origin) ? "local" : "global";
+          all.push(...j.map(x=>({...x, type: x.type || inferredType})));
+          anySuccess = true;
+        } else {
+          throw new Error("Invalid JSON structure");
+        }
+      }
+    } catch(e){
+      console.warn("fail loading", src, e);
+      errs += src + " (" + (e && e.message ? e.message : "") + ") ";
+    }
+  }
+
+  if(anySuccess){
+    const bundle = {links: all, timestamp: Date.now(), sources: srcs};
+    try{
+      localStorage.setItem(OFFLINE_BUNDLE_KEY, JSON.stringify(bundle));
+      offlineStatusEl.textContent = `Bundle offline tersedia (${new Date(bundle.timestamp).toLocaleString()})`;
+      showToast("Bundle offline tersimpan");
+    } catch(e){
+      showToast("Gagal menyimpan bundle offline (quota?).");
+    }
+  } else {
+    showToast("Gagal mengunduh semua sumber. " + errs);
+  }
+
+  loadingOverlay.classList.remove("open");
+  return anySuccess;
+}
+
+/* load sources using offline mode if enabled and bundle exists */
 async function loadAndRenderSources(){
   loadingOverlay.classList.add("open");
   loadingText.textContent = t("loading_text");
   const all = [];
   lastErrorMessage = "";
   let anySuccess = false;
+
+  // if offline mode active and bundle exists, use it
+  if(experimentalOffline){
+    const bundleStr = localStorage.getItem(OFFLINE_BUNDLE_KEY);
+    if(bundleStr){
+      try{
+        const bundle = JSON.parse(bundleStr);
+        if(bundle && Array.isArray(bundle.links)){
+          linksData = bundle.links.map(x=>({...x}));
+          anySuccess = true;
+          loadingOverlay.classList.remove("open");
+          showToast((currentLang==="id") ? "Memuat dari bundle offline" : "Loaded from offline bundle");
+          populateFilterPanel();
+          renderLinks(linksData);
+          return;
+        }
+      } catch(e){
+        console.warn("invalid offline bundle", e);
+        lastErrorMessage += "Invalid offline bundle. ";
+      }
+    } else {
+      showToast("Tidak ada bundle offline. Silakan tekan 'Download Data untuk Offline'.");
+      loadingOverlay.classList.remove("open");
+      // fallback: continue to attempt online load
+    }
+  }
 
   const srcs = getAllSourcesArray();
   for(const src of srcs){
@@ -1093,7 +1470,7 @@ async function loadAndRenderSources(){
 
 /* ================= LOAD / SAVE LOCAL DATA (legacy full backup) ================= */
 saveLocalBtn.addEventListener('click', ()=>{
-  // original "Save Local" behavior -> full backup
+  // original "Save Local" behavior -> full backup (include sort_mode and links tab options)
   const backup = {
     favoriteLinks: JSON.parse(localStorage.getItem('favoriteLinks')||'[]'),
     local_link_overrides: JSON.parse(localStorage.getItem('local_link_overrides')||'{}'),
@@ -1105,12 +1482,43 @@ saveLocalBtn.addEventListener('click', ()=>{
     merge_sources: localStorage.getItem('merge_sources')||'',
     simple_mode: localStorage.getItem('simple_mode')||'',
     pin_mode: localStorage.getItem('pin_mode')||'',
+    sort_mode: localStorage.getItem('sort_mode')||'',
+    show_group_count: localStorage.getItem('show_group_count')||'',
+    compact_list: localStorage.getItem('compact_list')||'',
+    merge_duplicate_links: localStorage.getItem('merge_duplicate_links')||'',
+    experimental_offline_mode: localStorage.getItem('experimental_offline_mode')||'',
     extra_sources: extraSources
   };
   const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = `kumin-links-backup-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 });
+
+/* data tab load/save buttons */
+dataSaveBtn && dataSaveBtn.addEventListener('click', ()=> {
+  // simple save of all settings + data (same as saveLocalBtn)
+  saveLocalBtn.click();
+});
+dataLoadBtn && dataLoadBtn.addEventListener('click', ()=> {
+  const f = dataLoadFile.files[0];
+  if(!f){ showToast('Pilih file JSON terlebih dahulu'); return; }
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const obj = JSON.parse(ev.target.result);
+      const allowed = ['favoriteLinks','local_link_overrides','custom_css','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','sort_mode','show_group_count','compact_list','merge_duplicate_links','experimental_offline_mode','extra_sources'];
+      allowed.forEach(k=>{ if(obj[k]!==undefined) {
+        if(k==='extra_sources') { extraSources = obj[k]; saveExtraSources(); }
+        else localStorage.setItem(k, (typeof obj[k] === 'string') ? obj[k] : JSON.stringify(obj[k]).replace(/^"|"$/g,'')); 
+      } });
+      showToast('Data dimuat. Memuat ulang...');
+      setTimeout(()=> location.reload(),800);
+    } catch(e){ showToast('File tidak valid'); }
+  };
+  reader.readAsText(f);
+});
+dataResetBtn && dataResetBtn.addEventListener('click', ()=> { openResetModalBtn.click(); });
+dataOpenSaveChoices && dataOpenSaveChoices.addEventListener('click', ()=> { saveModal.classList.add('open'); });
 
 loadFileBtn.addEventListener('click', ()=>{
   const f = loadFileInput.files[0];
@@ -1119,10 +1527,10 @@ loadFileBtn.addEventListener('click', ()=>{
   reader.onload = (ev)=>{
     try{
       const obj = JSON.parse(ev.target.result);
-      const allowed = ['favoriteLinks','local_link_overrides','custom_css','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','extra_sources'];
+      const allowed = ['favoriteLinks','local_link_overrides','custom_css','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','sort_mode','show_group_count','compact_list','merge_duplicate_links','experimental_offline_mode','extra_sources'];
       allowed.forEach(k=>{ if(obj[k]!==undefined) {
         if(k==='extra_sources') { extraSources = obj[k]; saveExtraSources(); }
-        else localStorage.setItem(k, JSON.stringify(obj[k]).replace(/^"|"$/g,'')); 
+        else localStorage.setItem(k, (typeof obj[k] === 'string') ? obj[k] : JSON.stringify(obj[k]).replace(/^"|"$/g,'')); 
       } });
       showToast('Data dimuat. Memuat ulang...');
       setTimeout(()=> location.reload(),800);
@@ -1150,6 +1558,11 @@ saveModalOk.addEventListener('click', ()=>{
     backup.merge_sources = localStorage.getItem('merge_sources')||'';
     backup.simple_mode = localStorage.getItem('simple_mode')||'';
     backup.pin_mode = localStorage.getItem('pin_mode')||'';
+    backup.sort_mode = localStorage.getItem('sort_mode')||'';
+    backup.show_group_count = localStorage.getItem('show_group_count')||'';
+    backup.compact_list = localStorage.getItem('compact_list')||'';
+    backup.merge_duplicate_links = localStorage.getItem('merge_duplicate_links')||'';
+    backup.experimental_offline_mode = localStorage.getItem('experimental_offline_mode')||'';
   }
   if(checks.includes('extra_sources')) backup.extra_sources = extraSources;
 
@@ -1183,6 +1596,11 @@ loadModalOk.addEventListener('click', ()=>{
         if(obj.merge_sources !== undefined) localStorage.setItem('merge_sources', obj.merge_sources);
         if(obj.simple_mode !== undefined) localStorage.setItem('simple_mode', obj.simple_mode);
         if(obj.pin_mode !== undefined) localStorage.setItem('pin_mode', obj.pin_mode);
+        if(obj.sort_mode !== undefined) localStorage.setItem('sort_mode', obj.sort_mode);
+        if(obj.show_group_count !== undefined) localStorage.setItem('show_group_count', obj.show_group_count);
+        if(obj.compact_list !== undefined) localStorage.setItem('compact_list', obj.compact_list);
+        if(obj.merge_duplicate_links !== undefined) localStorage.setItem('merge_duplicate_links', obj.merge_duplicate_links);
+        if(obj.experimental_offline_mode !== undefined) localStorage.setItem('experimental_offline_mode', obj.experimental_offline_mode);
       }
       if(toLoad.includes('extra_sources') && obj.extra_sources !== undefined){ extraSources = obj.extra_sources; saveExtraSources(); }
       showToast('File dimuat. Memuat ulang...');
@@ -1208,7 +1626,7 @@ resetModalOk.addEventListener('click', ()=>{
     if(k === 'custom_css') localStorage.removeItem('custom_css');
     if(k === 'pinned_items') localStorage.removeItem('pinned_items');
     if(k === 'filters_selected') localStorage.removeItem('filters_selected');
-    if(k === 'settings'){ localStorage.removeItem('lang'); localStorage.removeItem('viewMode'); localStorage.removeItem('merge_sources'); localStorage.removeItem('simple_mode'); localStorage.removeItem('pin_mode'); }
+    if(k === 'settings'){ localStorage.removeItem('lang'); localStorage.removeItem('viewMode'); localStorage.removeItem('merge_sources'); localStorage.removeItem('simple_mode'); localStorage.removeItem('pin_mode'); localStorage.removeItem('sort_mode'); localStorage.removeItem('show_group_count'); localStorage.removeItem('compact_list'); localStorage.removeItem('merge_duplicate_links'); localStorage.removeItem('experimental_offline_mode'); }
     if(k === 'extra_sources'){ extraSources = []; saveExtraSources(); }
   });
   resetModal.classList.remove('open');
@@ -1216,26 +1634,121 @@ resetModalOk.addEventListener('click', ()=>{
   setTimeout(()=> location.reload(),700);
 });
 
+/* ================= OFFLINE WARNING (when offline mode active but browser is online) ================= */
+function showOfflineWarning(){
+  offlineWarningModal.classList.add('open');
+  offlineWarningModal.style.display = 'flex';
+  offlineWarningModal.setAttribute('aria-hidden','false');
+}
+function hideOfflineWarning(){
+  offlineWarningModal.classList.remove('open');
+  offlineWarningModal.style.display = 'none';
+  offlineWarningModal.setAttribute('aria-hidden','true');
+}
+offlineWarningTurnOffBtn && offlineWarningTurnOffBtn.addEventListener('click', ()=>{
+  // turn off experimental offline and reload data from online sources
+  experimentalOffline = false;
+  localStorage.setItem('experimental_offline_mode', '0');
+  chkOfflineMode.checked = false;
+  hideOfflineWarning();
+  showToast('Offline dimatikan. Memeriksa data online...');
+  loadAndRenderSources();
+});
+offlineWarningKeepBtn && offlineWarningKeepBtn.addEventListener('click', ()=>{
+  hideOfflineWarning();
+  showToast('Tetap menggunakan mode offline.');
+});
+offlineWarningCloseBtn && offlineWarningCloseBtn.addEventListener('click', ()=> hideOfflineWarning());
+
+/* fire warning when coming ONLINE while offline mode active */
+window.addEventListener('online', ()=>{
+  if(experimentalOffline){
+    // small delay to avoid spamming on flaky connections
+    setTimeout(()=>{
+      if(navigator.onLine) showOfflineWarning();
+    }, 350);
+  }
+});
+
 /* ================= INIT & search ================= */
 function enforceSmallScreenBehavior(){ if(window.innerWidth <= 760){ selView.value = "list"; } else selView.value = viewMode; }
 window.addEventListener("resize", ()=> { enforceSmallScreenBehavior(); renderLinks(linksData, searchBox.value); });
 
 function init(){
+  // ensure mergeDuplicateLinks is saved if first-run default applied
+  if(localStorage.getItem('merge_duplicate_links') === null){
+    localStorage.setItem('merge_duplicate_links', mergeDuplicateLinks ? '1' : '0');
+  }
+
   selLanguage.value = currentLang; selView.value = viewMode; chkMerge.checked = mergeSources; chkSimple.checked = simpleMode;
+  selSort.value = sortMode || 'title_asc';
+  chkShowGroupCount.checked = showGroupCount;
+  chkCompactList.checked = compactList;
+  chkMergeDuplicates.checked = mergeDuplicateLinks;
+  chkOfflineMode.checked = experimentalOffline;
   applyLanguageUI();
   applyCustomCssOnLoad();
   enforceSmallScreenBehavior();
   if(pinMode === 'pin') pinmodePin.checked = true; else pinmodeStar.checked = true;
 
   renderExtraSourcesList();
-  // hide star actions in lists when pinMode is 'pin' is handled inside createActionButtons
+  populateFilterPanel();
+
+  // show offline bundle status
+  const bundleStr = localStorage.getItem(OFFLINE_BUNDLE_KEY);
+  if(bundleStr){
+    try{
+      const b = JSON.parse(bundleStr);
+      offlineStatusEl.textContent = `Bundle offline tersedia (${new Date(b.timestamp).toLocaleString()})`;
+    } catch(e){
+      offlineStatusEl.textContent = 'Bundle offline tidak valid.';
+    }
+  } else {
+    offlineStatusEl.textContent = 'Tidak ada bundle offline.';
+  }
+
+  // If offline mode is active but browser currently online, warn user to optionally turn it off
+  if(experimentalOffline && navigator.onLine){
+    // small delay so UI fully loads
+    setTimeout(()=> showOfflineWarning(), 450);
+  }
+
+  // load sources (this function handles offline mode)
   loadAndRenderSources().then(()=>{ /* done */ }).catch(e=>{ console.error(e); showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data"); loadingOverlay.classList.remove("open"); });
 }
 init();
 
 searchBox.addEventListener("input", ()=> renderLinks(linksData, searchBox.value));
 
-document.addEventListener("click", (e)=>{ const dbg = document.getElementById("debug-popup"); if(dbg && dbg.style.display === "flex" && !dbg.contains(e.target) && !debugBtn.contains(e.target)) dbg.style.display='none'; });
+document.addEventListener("click", (e)=>{ 
+  const dbg = document.getElementById("debug-popup"); 
+  if(dbg && dbg.style.display === "flex" && !dbg.contains(e.target) && !debugBtn.contains(e.target)) dbg.style.display='none'; 
+});
+
+/* offline controls */
+btnOfflineDownload.addEventListener('click', async ()=>{
+  btnOfflineDownload.disabled = true;
+  const ok = await downloadOfflineBundle();
+  if(ok){
+    experimentalOffline = true;
+    localStorage.setItem('experimental_offline_mode', '1');
+    chkOfflineMode.checked = true;
+  }
+  btnOfflineDownload.disabled = false;
+});
+
+chkOfflineMode.addEventListener('change', ()=>{
+  experimentalOffline = chkOfflineMode.checked;
+  localStorage.setItem('experimental_offline_mode', experimentalOffline ? '1' : '0');
+  if(experimentalOffline){
+    const bundle = localStorage.getItem(OFFLINE_BUNDLE_KEY);
+    if(!bundle) showToast('Tidak ada bundle offline. Tekan "Download Data untuk Offline" terlebih dahulu.');
+    else showToast('Offline mode aktif. Memuat dari bundle jika tersedia.');
+  } else {
+    showToast('Offline mode nonaktif. Menggunakan sumber online.');
+  }
+  loadAndRenderSources();
+});
 </script>
 </body>
 </html>
