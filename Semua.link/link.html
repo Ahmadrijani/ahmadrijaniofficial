@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kumin Links</title>
+<title>AHMAD RIJANI</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
 <link rel="icon" href="https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/image/Kuning%20minum.png" type="image/png">
 <style id="base-style">
@@ -89,7 +89,7 @@
   .switch-small input:checked + .track{background:linear-gradient(90deg,var(--accent),#7fb0ff)}
   .switch-small input:checked + .track .thumb{transform:translateX(18px)}
 
-  /* CARD view slider (card retained; grid removed as requested) */
+  /* CARD view slider (grid removed) */
   .card-view .group-wrap{position:relative}
   .card-view .group-items{display:flex;gap:12px;overflow-x:auto;padding:6px 40px;scroll-snap-type:x mandatory;scroll-behavior:smooth}
   .card-view .link-card{flex:0 0 220px;height:340px;min-width:220px;border-radius:14px;padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 10px 30px rgba(2,6,23,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));scroll-snap-align:center;transition:transform .12s}
@@ -171,7 +171,7 @@
   .stabilo{background:#ffd94d;color:#000;padding:0 6px;border-radius:4px;font-weight:700}
   .editcss-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1800;justify-content:center;align-items:center}
   .editcss-box{background:var(--panel);padding:12px;border-radius:10px;width:92%;max-width:920px;max-height:86vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
-  .editcss-textarea{width:100%;min-height:280px;background:#0b0c0f;color:#e6eef8;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:13px}
+  .editcss-textarea{width:100%;min-height:200px;background:#0b0c0f;color:#e6eef8;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:13px}
   .debug-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1900;justify-content:center;align-items:center}
   .debug-box{background:var(--panel);padding:12px;border-radius:10px;width:92%;max-width:920px;max-height:86vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
   .debug-textarea{width:100%;min-height:120px;background:#0b0c0f;color:#e6eef8;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-word}
@@ -186,6 +186,13 @@
   .settings-panel{display:none;flex-direction:column;gap:10px}
   .settings-panel.open{display:flex}
   .exp-row{display:flex;gap:8px;align-items:center}
+
+/* mods UI */
+.mod-row{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:6px}
+.mod-info{display:flex;gap:10px;align-items:center}
+.mod-icon{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,0.02);color:var(--muted)}
+.mod-actions button{margin-left:6px}
+.mod-store-item{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:6px}
 </style>
 
 <style id="custom-css-placeholder"></style>
@@ -227,11 +234,12 @@
         </div>
       </div>
 
-      <!-- added two more tabs: Links & Data -->
+      <!-- added two more tabs: Links & Data & Mods -->
       <div class="settings-tabs">
         <button class="settings-tab active" data-tab="general">General</button>
         <button class="settings-tab" data-tab="links">Links</button>
         <button class="settings-tab" data-tab="data">Data</button>
+        <button class="settings-tab" data-tab="mods">Mods</button>
         <button class="settings-tab" data-tab="experimental">Experimental</button>
       </div>
 
@@ -298,7 +306,7 @@
         </div>
       </div>
 
-      <!-- DATA tab: move load/save/reset UI into a dedicated place -->
+      <!-- DATA tab -->
       <div id="panel-data" class="settings-panel">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <strong>Data</strong>
@@ -318,6 +326,34 @@
         <div style="margin-top:10px;color:#9aa6bf">Catatan: Pengaturan (termasuk urutkan) akan disimpan jika memilih 'Settings' saat save.</div>
       </div>
 
+      <!-- MODS tab -->
+      <div id="panel-mods" class="settings-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Mods</strong><small style="color:#9aa6bf">(Mod manager: install / enable / remove)</small>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="file" id="mod-file-input" accept=".js,.ero4mod,.json" />
+          <button id="add-mod-btn" class="btn-primary">Add Mod</button>
+        </div>
+
+        <div style="margin-top:8px">
+          <div id="mods-list" style="max-height:220px;overflow:auto;margin-top:8px"></div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:8px 0" />
+
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Mod Store</strong><small style="color:#9aa6bf">Install dari katalog</small>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+          <button id="open-website-mod-btn" class="btn-primary" onclick="window.location.href='https://kuningminum.github.io/Kumin/mod/Store.html'">Open Mod Website</button>
+          <button id="open-mod-store-btn" class="btn-primary">Buka Toko Mods (bug)</button>
+        
+        </div>
+        <div id="mod-store-list" style="max-height:220px;overflow:auto;margin-top:8px"></div>
+      </div>
+
       <!-- EXPERIMENTAL -->
       <div id="panel-experimental" class="settings-panel">
         <div style="display:flex;justify-content:space-between;align-items:center"><strong>Experimental</strong><small style="color:#9aa6bf">(Untuk eksperimen — gunakan hati-hati)</small></div>
@@ -325,20 +361,24 @@
         <div class="exp-row"><button id="btn-debug" class="btn-ghost">Debug</button><button id="copy-debug-btn_exp" class="btn-ghost" style="display:none">Copy</button></div>
 
         <div style="display:flex;flex-direction:column;gap:6px">
-          <label>Edit CSS — untuk membuka ketik <span class="stabilo">EDITCSS</span> di bawah</label>
+          <!-- REPLACED: create mod from JS -->
+          <label>Create Mod from JS — tempel kode JavaScript di bawah lalu tekan "Create Mod from JS". Mod akan langsung terpasang dan diarahkan ke tab Mods.</label>
           <div style="display:flex;gap:8px;align-items:center">
-            <input id="open-edit-input" placeholder="Ketik EDITCSS untuk membuka" style="flex:1;padding:8px;border-radius:8px;border:none;background:#0b0c0f;color:#fff" />
-            <button id="open-edit-btn" class="btn-primary" disabled>Buka Edit CSS</button>
+            <textarea id="modjs-textarea" class="editcss-textarea" placeholder="// Tempel kode JavaScript di sini..."></textarea>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button id="create-mod-js-btn" class="btn-primary">Create Mod from JS</button>
+            <button id="clear-modjs-btn" class="btn-ghost">Clear</button>
           </div>
         </div>
 
-        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px">
           <div>
             <label id="lbl-reset"></label>
-            <div style="color:#9aa6bf;font-size:0.9rem">Reset CSS & data lokal tersedia di sini</div>
+            <div style="color:#9aa6bf;font-size:0.9rem">Reset CSS & data lokal tersedia di sini (mod-related actions ada di tab Mods)</div>
           </div>
           <div style="display:flex;gap:8px">
-            <button id="reset-css-btn" class="btn-ghost">Reset CSS</button>
+            <button id="reset-css-btn" class="btn-ghost">Remove CSS Mods</button>
             <button id="btn-reset" class="btn-ghost">Reset Data</button>
           </div>
         </div>
@@ -350,7 +390,7 @@
             <button id="load-file-btn" class="btn-primary">Load</button>
             <button id="save-local-btn" class="btn-ghost">Save Local</button>
           </div>
-          <small style="color:#9aa6bf">Load akan menimpa kunci yang ada (favorites, overrides, css, pinned). File harus format backup yang dibuat "Save Local".</small>
+          <small style="color:#9aa6bf">Load akan menimpa kunci yang ada (favorites, overrides, mods, pinned). File harus format backup yang dibuat "Save Local".</small>
         </div>
 
         <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.03);padding-top:8px;display:flex;flex-direction:column;gap:12px">
@@ -390,35 +430,35 @@
     </div>
   </div>
 
-  <!-- offline-warning modal -->
-  <div class="modal" id="offline-warning-modal" aria-hidden="true">
-    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="offline-warning-title">
+  <!-- MODS warning modal: appears on page load if any mods saved as enabled -->
+  <div class="modal" id="mod-warning-modal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="mod-warning-title">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong id="offline-warning-title">Mode Offline Aktif</strong>
-        <button id="offline-warning-close" class="btn-ghost">✖</button>
+        <strong id="mod-warning-title">Mod Detected</strong>
+        <button id="mod-warning-close" class="btn-ghost">✖</button>
       </div>
-      <div style="margin-top:8px;color:#e6eef8">
-        Anda sedang menggunakan mode offline, tetapi koneksi internet tersedia. Ingin mematikan mode offline untuk mengecek & mengunduh data terbaru?
+      <div id="mod-warning-content" style="margin-top:8px;color:#e6eef8">
+        <p><strong>Peringatan:</strong> Terdeteksi mod yang aktif pada akun ini. Mod dapat mengubah tampilan atau fungsi situs — dan mungkin merusak UI. Semua mod saat ini akan ditahan (tidak dijalankan) sampai Anda memberikan persetujuan.</p>
+        <p>Anda ingin menyalakan mod sekarang atau tetap menonaktifkan mod (dan menyimpan pilihan)?</p>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button id="offline-warning-keep" class="btn-ghost">Tetap Offline</button>
-        <button id="offline-warning-turnoff" class="btn-primary">Matikan Offline & Cek</button>
+        <button id="mod-warning-disable" class="btn-ghost">Keep Mods Disabled (Disable & Reload)</button>
+        <button id="mod-warning-enable" class="btn-primary">Enable Mods Now</button>
       </div>
     </div>
   </div>
 
-  <!-- Edit CSS modal -->
-  <div class="editcss-popup" id="editcss-popup" aria-hidden="true">
-    <div class="editcss-box" role="dialog" aria-modal="true" aria-labelledby="editcss-title">
+  <!-- detected mods modal (prompt on first visit if store has auto-enabled mods) -->
+  <div class="modal" id="store-mod-detect-modal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="store-mod-detect-title">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong id="editcss-title">Edit CSS (mengubah style utama)</strong>
-        <button id="editcss-close" class="btn-ghost">✖</button>
+        <strong id="store-mod-detect-title">Detected Active Mods</strong>
+        <button id="store-mod-detect-close" class="btn-ghost">✖</button>
       </div>
-      <small style="color:#9aa6bf" id="editcss-note">Perhatian: Edit CSS akan mengganti CSS utama (semua layout & style) KECUALI styling pengaturan/modal. Backup otomatis disimpan. Jika mau kembalikan, tekan Reset CSS.</small>
-      <textarea id="editcss-textarea" class="editcss-textarea" placeholder="/* tulis css untuk mengganti seluruh base-style di sini */"></textarea>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button id="reset-css-btn_confirm" class="btn-ghost">Reset CSS ke Asli</button>
-        <button id="apply-css-btn" class="btn-primary">Terapkan CSS</button>
+      <div id="store-mod-detect-list" style="margin-top:8px;max-height:260px;overflow:auto;color:#e6eef8"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button id="store-mod-detect-decline" class="btn-ghost">Decline</button>
+        <button id="store-mod-detect-accept" class="btn-primary">Install & Run</button>
       </div>
     </div>
   </div>
@@ -444,7 +484,7 @@
       <div id="save-modal-list">
         <div class="modal-row"><label><input type="checkbox" data-key="favoriteLinks" checked> Favorites</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="local_link_overrides" checked> Overrides</label></div>
-        <div class="modal-row"><label><input type="checkbox" data-key="custom_css" checked> Custom CSS</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="mods" checked> Mods</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="pinned_items" checked> Pinned</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings (incl. urutkan)</label></div>
@@ -467,7 +507,7 @@
       <div id="load-modal-list">
         <div class="modal-row"><label><input type="checkbox" data-key="favoriteLinks"> Favorites</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="local_link_overrides"> Overrides</label></div>
-        <div class="modal-row"><label><input type="checkbox" data-key="custom_css"> Custom CSS</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="mods"> Mods</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="pinned_items"> Pinned</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings (incl. urutkan)</label></div>
@@ -487,7 +527,7 @@
       <div id="reset-modal-list">
         <div class="modal-row"><label><input type="checkbox" data-key="favoriteLinks"> Favorites</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="local_link_overrides"> Overrides</label></div>
-        <div class="modal-row"><label><input type="checkbox" data-key="custom_css"> Custom CSS</label></div>
+        <div class="modal-row"><label><input type="checkbox" data-key="mods"> Mods</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="pinned_items"> Pinned</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="filters_selected"> Filters</label></div>
         <div class="modal-row"><label><input type="checkbox" data-key="settings"> Settings</label></div>
@@ -541,6 +581,11 @@ const SOURCE_URLS = [
 
 const EXTRA_SOURCES_KEY = 'extra_sources'; // key for storing user-added sources
 const OFFLINE_BUNDLE_KEY = 'offline_bundle'; // saved offline bundle
+const MODS_KEY = 'mods_installed'; // installed mods
+
+// Perubahan: mod store URL sesuai permintaan
+const MOD_STORE_URL = 'https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/mod_store.json';
+
 const T = {
   id:{
     title:"Kumin Links",
@@ -560,14 +605,14 @@ const T = {
     copy_link:"Salin",
     open_link:"Buka",
     preview:"Pratinjau",
-    css_apply_success:"CSS diterapkan",
-    css_reset_success:"CSS dikembalikan ke default",
+    css_apply_success:"CSS applied as mod",
+    css_reset_success:"CSS mods removed",
     no_errors:"Tidak ada pesan kesalahan.",
     search_placeholder:"Cari link...",
     btn_settings_label:"Pengaturan",
     btn_debug_label:"Debug",
-    editcss_title:"Edit CSS (mengubah style utama)",
-    editcss_note:"Perhatian: Edit CSS akan mengganti CSS utama (semua layout & style) KECUALI styling pengaturan/modal. Backup otomatis disimpan. Jika mau kembalikan, tekan Reset CSS.",
+    editcss_title:"Edit CSS (change main styling)",
+    editcss_note:"Warning: Edit CSS will replace main base-style (settings modal styling won't be changed). Backup saved automatically.",
     loading_text:"Memuat data...",
     filter_title:"Filter",
     filter_all:"All",
@@ -592,8 +637,8 @@ const T = {
     copy_link:"Copy",
     open_link:"Open",
     preview:"Preview",
-    css_apply_success:"CSS applied",
-    css_reset_success:"CSS reset to default",
+    css_apply_success:"CSS applied as mod",
+    css_reset_success:"CSS mods removed",
     no_errors:"No errors.",
     search_placeholder:"Search links...",
     btn_settings_label:"Settings",
@@ -609,7 +654,6 @@ const T = {
 };
 
 /* ================= STATE ================= */
-/* default favorites/pinned/extra state */
 let favoriteLinks = JSON.parse(localStorage.getItem("favoriteLinks")||"[]");
 let currentLang = localStorage.getItem("lang") || ((navigator.language && navigator.language.startsWith("id")) ? "id" : "en");
 let viewMode = localStorage.getItem("viewMode") || "list";
@@ -619,7 +663,6 @@ let linksData = [];
 let lastErrorMessage = "";
 let originalBaseCss = document.getElementById('base-style').textContent || "";
 let localLinkOverrides = JSON.parse(localStorage.getItem("local_link_overrides")||"{}");
-let storedCustomCss = localStorage.getItem("custom_css") || "";
 let filtersSelected = new Set(JSON.parse(localStorage.getItem('filters_selected')||'[]'));
 let pinMode = localStorage.getItem('pin_mode') || 'star'; // 'star' or 'pin'
 let pinnedItems = new Set(JSON.parse(localStorage.getItem('pinned_items')||'[]'));
@@ -629,13 +672,20 @@ let extraSources = JSON.parse(localStorage.getItem(EXTRA_SOURCES_KEY) || '[]'); 
 let sortMode = localStorage.getItem('sort_mode') || 'title_asc';
 
 // links tab settings
-// default merge duplicate links to true as requested
 let mergeDuplicateLinks = (localStorage.getItem('merge_duplicate_links') === null) ? true : (localStorage.getItem('merge_duplicate_links') === '1');
 let showGroupCount = (localStorage.getItem('show_group_count') === '1');
 let compactList = (localStorage.getItem('compact_list') === '1');
 
 // experimental offline
 let experimentalOffline = (localStorage.getItem('experimental_offline_mode') === '1');
+
+// mods
+let mods = JSON.parse(localStorage.getItem(MODS_KEY) || '[]'); // each mod: {id,name,icon,enabled,code,css,source}
+const modScriptEls = {}; // map mod.id -> script element(s) injected
+const modStyleEls = {}; // map mod.id -> style element(s) injected
+
+// new: suppress automatic mod execution until user consents
+let suppressModsOnLoad = false;
 
 /* ================= DOM ================= */
 const headerTitle = document.getElementById("header-title");
@@ -648,14 +698,10 @@ const selView = document.getElementById("sel-view");
 const btnReset = document.getElementById("btn-reset");
 const chkMerge = document.getElementById("chk-merge");
 const chkSimple = document.getElementById("chk-simple");
-const openEditInput = document.getElementById("open-edit-input");
-const openEditBtn = document.getElementById("open-edit-btn");
-const editcssPopup = document.getElementById("editcss-popup");
-const editcssTextarea = document.getElementById("editcss-textarea");
-const applyCssBtn = document.getElementById("apply-css-btn");
-const resetCssBtn_confirm = document.getElementById("reset-css-btn_confirm");
+const modjsTextarea = document.getElementById("modjs-textarea");
+const createModJsBtn = document.getElementById("create-mod-js-btn");
+const clearModJsBtn = document.getElementById("clear-modjs-btn");
 const resetCssBtn = document.getElementById("reset-css-btn");
-const editcssClose = document.getElementById("editcss-close");
 const debugBtn = document.getElementById("btn-debug");
 const debugPopup = document.getElementById("debug-popup");
 const debugArea = document.getElementById("debug-area");
@@ -682,6 +728,7 @@ const settingsTabs = document.querySelectorAll('.settings-tab');
 const panelGeneral = document.getElementById('panel-general');
 const panelLinks = document.getElementById('panel-links');
 const panelData = document.getElementById('panel-data');
+const panelMods = document.getElementById('panel-mods');
 const panelExperimental = document.getElementById('panel-experimental');
 const pinmodeStar = document.getElementById('pinmode-star');
 const pinmodePin = document.getElementById('pinmode-pin');
@@ -734,16 +781,31 @@ const chkOfflineMode = document.getElementById('chk-offline-mode');
 const btnOfflineDownload = document.getElementById('btn-offline-download');
 const offlineStatusEl = document.getElementById('offline-status');
 
-// offline warning modal elements
-const offlineWarningModal = document.getElementById('offline-warning-modal');
-const offlineWarningTurnOffBtn = document.getElementById('offline-warning-turnoff');
-const offlineWarningKeepBtn = document.getElementById('offline-warning-keep');
-const offlineWarningCloseBtn = document.getElementById('offline-warning-close');
+// mods UI
+const modFileInput = document.getElementById('mod-file-input');
+const addModBtn = document.getElementById('add-mod-btn');
+const modsListEl = document.getElementById('mods-list');
+const openModStoreBtn = document.getElementById('open-mod-store-btn');
+const modStoreListEl = document.getElementById('mod-store-list');
+
+// store-detect modal elements
+const storeDetectModal = document.getElementById('store-mod-detect-modal');
+const storeDetectListEl = document.getElementById('store-mod-detect-list');
+const storeDetectAcceptBtn = document.getElementById('store-mod-detect-accept');
+const storeDetectDeclineBtn = document.getElementById('store-mod-detect-decline');
+const storeDetectCloseBtn = document.getElementById('store-mod-detect-close');
+
+// mod warning modal elements
+const modWarningModal = document.getElementById('mod-warning-modal');
+const modWarningEnableBtn = document.getElementById('mod-warning-enable');
+const modWarningDisableBtn = document.getElementById('mod-warning-disable');
+const modWarningCloseBtn = document.getElementById('mod-warning-close');
 
 /* ================= HELPERS ================= */
 function t(k){ return (T[currentLang] && T[currentLang][k]) || k; }
 function showToast(msg, ms=3000){ toast.textContent = msg; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"), ms); }
 function isUrl(s){ if(!s) return false; return /^(https?:\/\/|data:|\/)/i.test(s); }
+function saveMods(){ localStorage.setItem(MODS_KEY, JSON.stringify(mods)); }
 
 /* ================= UI LANGUAGE ================= */
 function applyLanguageUI(){
@@ -757,9 +819,6 @@ function applyLanguageUI(){
   document.getElementById("lbl-simple").textContent = t("simple_label");
   document.getElementById("lbl-simple-desc").textContent = t("simple_desc");
   originalLinkAnchor.textContent = t("original_link_text");
-  document.getElementById("open-edit-input").placeholder = t("editcss_title");
-  document.getElementById("editcss-title").textContent = t("editcss_title");
-  document.getElementById("editcss-note").innerHTML = t("editcss_note");
   searchBox.placeholder = t("search_placeholder");
   document.getElementById("btn-settings-label").textContent = t("btn_settings_label");
   loadingText.textContent = t("loading_text");
@@ -769,13 +828,6 @@ function applyLanguageUI(){
   filterApplyBtn.textContent = t('filter_apply');
 }
 applyLanguageUI();
-
-/* ================= CUSTOM CSS ON LOAD ================= */
-function applyCustomCssOnLoad(){
-  const css = localStorage.getItem("custom_css") || "";
-  if(css){ baseStyleEl.textContent = css; editcssTextarea.value = css; } else { baseStyleEl.textContent = originalBaseCss; }
-}
-applyCustomCssOnLoad();
 
 /* ================= ICON RENDER ================= */
 function createIconNode(link, cls='link-icon', sizeStyle=''){
@@ -845,8 +897,7 @@ filterBackdrop.addEventListener('click', ()=>{
 document.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape'){
     if(filterPanel.classList.contains('open')) closeFilterPanel();
-    if(settingsOverlay.classList.contains('open')) settingsOverlay.classList.remove('open');
-    if(editcssPopup.style.display === 'flex') { editcssPopup.style.display = 'none'; editcssPopup.setAttribute('aria-hidden','true'); }
+    if(settingsOverlay.classList.contains('open')) settingsOverlay.classList.remove("open");
   }
 });
 
@@ -897,17 +948,226 @@ addSourceBtn.addEventListener('click', ()=>{
   saveExtraSources(); renderExtraSourcesList(); newSourceInput.value=''; showToast('Sumber URL ditambahkan'); loadAndRenderSources();
 });
 
+/* ================= MOD SYSTEM ================= */
+/*
+ Mods structure:
+  { id: string, name: string, icon?: string, enabled: bool, code?: string, css?: string, source?: string }
+*/
+function renderModsList(){
+  modsListEl.innerHTML = '';
+  if(!mods || mods.length === 0){
+    modsListEl.innerHTML = '<div style="color:#9aa6bf">No mods installed.</div>';
+    return;
+  }
+  mods.forEach((m, idx)=>{
+    const row = document.createElement('div'); row.className = 'mod-row';
+    const left = document.createElement('div'); left.className = 'mod-info';
+    const icon = document.createElement('div'); icon.className = 'mod-icon';
+    icon.innerHTML = m.icon ? `<img src="${m.icon}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" />` : '<i class="fa-solid fa-puzzle-piece"></i>';
+    const info = document.createElement('div'); info.innerHTML = `<div style="font-weight:700">${m.name}</div><div style="font-size:0.85rem;color:#9aa6bf">${m.source || ''}</div>`;
+    left.appendChild(icon); left.appendChild(info);
+
+    const right = document.createElement('div'); right.className = 'mod-actions';
+    const toggle = document.createElement('button'); toggle.className = 'btn-ghost'; toggle.innerHTML = m.enabled ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>';
+    toggle.title = m.enabled ? 'Disable mod' : 'Enable mod';
+    toggle.addEventListener('click', (e)=>{ e.stopPropagation(); mods[idx].enabled = !mods[idx].enabled; saveMods(); 
+      // if toggled on while suppressModsOnLoad is true, we should not automatically run without consent; show warning
+      if(mods[idx].enabled && suppressModsOnLoad){ showModWarning(); renderModsList(); showToast('Mod enabled but will not run until you accept the warning.'); return; }
+      applyMods(); renderModsList(); showToast(mods[idx].enabled ? 'Mod enabled' : 'Mod disabled'); });
+    const editBtn = document.createElement('button'); editBtn.className = 'btn-ghost'; editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>'; editBtn.title='View/Edit';
+    editBtn.addEventListener('click', (e)=>{ e.stopPropagation(); openModEditor(idx); });
+    const del = document.createElement('button'); del.className = 'btn-ghost'; del.innerHTML = '<i class="fa-solid fa-trash"></i>'; del.title='Remove mod';
+    del.addEventListener('click', (e)=>{ e.stopPropagation(); if(confirm('Remove mod "'+m.name+'"?')){ uninstallMod(m.id); } });
+    right.appendChild(toggle); right.appendChild(editBtn); right.appendChild(del);
+
+    row.appendChild(left); row.appendChild(right);
+    modsListEl.appendChild(row);
+  });
+}
+function installMod(modObj){
+  // ensure id uniqueness
+  if(!modObj.id) modObj.id = 'mod-'+Date.now();
+  const exists = mods.find(m=>m.id === modObj.id || (m.name === modObj.name && m.source === modObj.source));
+  if(exists){
+    // replace
+    mods = mods.map(m=> (m.id===exists.id ? {...exists, ...modObj} : m) );
+  } else {
+    mods.push({...modObj, enabled: !!modObj.enabled});
+  }
+  saveMods();
+  renderModsList();
+  // do not auto-run if suppressModsOnLoad true
+  if(!suppressModsOnLoad) applyMods();
+  showToast('Mod terpasang: ' + modObj.name);
+}
+function uninstallMod(modId){
+  // remove injected script/style if active
+  removeModInjection(modId);
+  mods = mods.filter(m=>m.id !== modId);
+  saveMods();
+  renderModsList();
+  showToast('Mod dihapus');
+}
+function openModEditor(idx){
+  const m = mods[idx];
+  const editorTitle = 'Edit Mod: ' + m.name;
+  const content = prompt(editorTitle + '\n\n(Anda dapat mengedit code JS; mengosongkan akan menonaktifkan code. Untuk CSS, tambahkan di awal dengan: /*CSS_START*/.../*CSS_END*/ )', (m.code || '') + (m.css ? ('\n/*CSS_START*/\n' + m.css + '\n/*CSS_END*/\n') : ''));
+  if(content !== null){
+    // naive parse: extract CSS between markers if present
+    const cssMatch = content.match(/\/\*CSS_START\*\/([\s\S]*?)\/\*CSS_END\*\//);
+    let js = content;
+    let css = '';
+    if(cssMatch){
+      css = cssMatch[1].trim();
+      js = content.replace(cssMatch[0], '').trim();
+    }
+    mods[idx].code = js;
+    mods[idx].css = css;
+    saveMods();
+    applyMods();
+    renderModsList();
+    showToast('Mod diperbarui');
+  }
+}
+
+function applyMods(){
+  // remove all previous injections
+  Object.keys(modScriptEls).forEach(k => removeModInjection(k));
+  Object.keys(modStyleEls).forEach(k => removeModInjection(k));
+
+  mods.forEach(m=>{
+    if(m.enabled){
+      // inject CSS
+      if(m.css){
+        try{
+          const style = document.createElement('style');
+          style.id = 'mod-style-' + m.id;
+          style.textContent = m.css;
+          document.head.appendChild(style);
+          modStyleEls[m.id] = style;
+        } catch(e){ console.warn('mod css error', e); }
+      }
+      // execute JS
+      if(m.code){
+        try{
+          // create <script> so it runs in global scope and can modify DOM
+          const s = document.createElement('script');
+          s.id = 'mod-script-' + m.id;
+          s.type = 'text/javascript';
+          s.textContent = `(function(){try{ ${m.code} }catch(e){ console.error('Mod ${m.name} error', e); }})();`;
+          document.head.appendChild(s);
+          modScriptEls[m.id] = s;
+        } catch(e){ console.warn('mod exec error', e); }
+      }
+    }
+  });
+}
+
+function removeModInjection(modId){
+  // remove script
+  try{
+    if(modScriptEls[modId]){
+      modScriptEls[modId].remove();
+      delete modScriptEls[modId];
+    }
+    if(modStyleEls[modId]){
+      modStyleEls[modId].remove();
+      delete modStyleEls[modId];
+    }
+  } catch(e){ console.warn('remove injection', e); }
+}
+
+/* Add mod from uploaded file */
+function handleModFileUpload(file){
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    const text = ev.target.result;
+    const name = file.name;
+    if(name.toLowerCase().endsWith('.json')){
+      try{
+        const obj = JSON.parse(text);
+        if(obj && (obj.code || obj.css || obj.name)){
+          const modObj = {
+            id: obj.id || 'mod-'+Date.now(),
+            name: obj.name || name,
+            icon: obj.icon || '',
+            enabled: true,
+            code: obj.code || '',
+            css: obj.css || '',
+            source: 'local-file'
+          };
+          installMod(modObj);
+          return;
+        } else {
+          showToast('JSON tidak valid untuk mod');
+          return;
+        }
+      } catch(e){
+        showToast('JSON mod tidak valid');
+        return;
+      }
+    } else {
+      // treat as JS file: create mod with code content
+      const modObj = {
+        id: 'mod-'+Date.now(),
+        name: name,
+        icon: '',
+        enabled: true,
+        code: text,
+        css: '',
+        source: 'local-file'
+      };
+      installMod(modObj);
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* Mod store: fetch MOD_STORE_URL and render items with install button */
+async function openModStore(){
+  modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Loading store...</div>';
+  try{
+    const res = await fetch(MOD_STORE_URL + '?_=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    // expect j.mods = [{id,name,icon,code,css,auto_enable/active/enabled}]
+    const items = j.mods || j;
+    if(!Array.isArray(items) || items.length === 0){ modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Store kosong.</div>'; return; }
+    modStoreListEl.innerHTML = '';
+    items.forEach(it=>{
+      const row = document.createElement('div'); row.className = 'mod-store-item';
+      const left = document.createElement('div'); left.style.display='flex'; left.style.alignItems='center'; left.style.gap='8px';
+      const icon = document.createElement('div'); icon.className = 'mod-icon'; icon.innerHTML = it.icon ? `<img src="${it.icon}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" />` : '<i class="fa-solid fa-box"></i>';
+      const info = document.createElement('div'); info.innerHTML = `<div style="font-weight:700">${it.name}</div><div style="font-size:0.85rem;color:#9aa6bf">${it.description||''}</div>`;
+      left.appendChild(icon); left.appendChild(info);
+      const right = document.createElement('div');
+      const installed = mods.some(m=>m.source === (it.source||MOD_STORE_URL) && m.name === it.name);
+      const btn = document.createElement('button'); btn.className = installed ? 'btn-ghost' : 'btn-primary'; btn.textContent = installed ? 'Installed' : 'Install';
+      btn.disabled = installed;
+      btn.addEventListener('click', ()=>{
+        installMod({id: it.id || 'mod-'+Date.now(), name: it.name, icon: it.icon, enabled: true, code: it.code||'', css: it.css||'', source: it.source || MOD_STORE_URL});
+        btn.textContent = 'Installed'; btn.disabled = true;
+      });
+      right.appendChild(btn);
+      row.appendChild(left); row.appendChild(right);
+      modStoreListEl.appendChild(row);
+    });
+  } catch(e){
+    modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Gagal memuat store.</div>';
+    console.warn(e);
+  }
+}
+
 /* ================= PIN/STAR ACTION CREATOR ================= */
 function togglePin(url){ if(pinnedItems.has(url)) pinnedItems.delete(url); else pinnedItems.add(url); localStorage.setItem('pinned_items', JSON.stringify(Array.from(pinnedItems))); }
 
-/* createActionButtons returns the actions container; in list mode these are appended as the right-aligned actions */
 function createActionButtons(link){
   const actions = document.createElement('div'); actions.className = 'link-actions';
   const eye = document.createElement('button'); eye.className='btn-icon'; eye.title = t('preview'); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
   eye.addEventListener('click',(e)=>{ e.stopPropagation(); openPreview(link.url); });
   const open = document.createElement('button'); open.className='btn-icon'; open.title = t('open_link'); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
   open.addEventListener('click',(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-  const copyBtn = document.createElement('button'); copyBtn.className='btn-icon'; copyBtn.title = t('copy_link'); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+  const copyBtn = document.createElement('button'); copyBtn.className = 'btn-icon'; copyBtn.title = t('copy_link'); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
   copyBtn.addEventListener('click',(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t('copy_link')+" ✅")); });
 
   actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn);
@@ -944,11 +1204,9 @@ function getTitleForSorting(link){
   return ((currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"") ).toString().toLowerCase();
 }
 function getDateForSorting(link){
-  // try multiple possible date fields
   if(link.date) return new Date(link.date).getTime() || 0;
   if(link.created_at) return new Date(link.created_at).getTime() || 0;
   if(link.timestamp) return new Date(link.timestamp).getTime() || 0;
-  // fallback: 0 (so items without date appear last in new->old, or first in old->new as handled)
   return 0;
 }
 function sortLinksArray(arr){
@@ -991,7 +1249,6 @@ function dedupeByUrl(list){
     if(!key) continue;
     if(!map.has(key)) map.set(key, item);
     else {
-      // if duplicate, prefer richer object (with title/desc/img). merge shallow
       const existing = map.get(key);
       const merged = {...existing, ...item};
       map.set(key, merged);
@@ -1045,7 +1302,7 @@ function renderLinks(list, search=""){
   }
 
   // STAR group behavior: favoriteLinks should be shown in a special group at top (duplicate remains in original group)
-  const starGroup = favoriteLinks ? favoriteLinks.slice() : [];
+  const starGroup = (pinMode === 'pin') ? [] : (favoriteLinks ? favoriteLinks.slice() : []);
 
   if(simpleMode){
     const container = document.createElement("div"); container.className = "flat-items";
@@ -1079,7 +1336,6 @@ function renderLinks(list, search=""){
       const ph = document.createElement("h2"); ph.className = "group-title"; ph.textContent = (currentLang==="id")? "Pin" : "Pinned";
       pinHeader.appendChild(ph);
       const pinItems = document.createElement("div"); pinItems.className = "group-items";
-      // apply sorting to pinned group too
       const pinnedSorted = sortLinksArray(pinnedList);
       pinnedSorted.forEach(link=>{
         const row = document.createElement("div"); row.className = "item-row";
@@ -1098,10 +1354,8 @@ function renderLinks(list, search=""){
       container.appendChild(pinHeader);
     }
 
-    // apply sorting to filtered list
     const filteredSorted = sortLinksArray(filtered);
     filteredSorted.forEach(link=>{
-      // allow duplicates: if link is in starGroup we still show it in its group (user asked duplicate remains)
       if(pinnedList.some(p=>p.url===link.url)) return; // avoid duplicate for pinned only
       const titleRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
       const groupName = (currentLang==="id")? (link.grup_id || link.grup || "Tanpa Grup") : (link.grup_en || link.grup || "No Group");
@@ -1141,8 +1395,8 @@ function renderLinks(list, search=""){
     groups[key].types.add(l.type||"local");
   });
 
-  // ensure STAR group shows first if there are favorites
-  if(starGroup && starGroup.length){
+  // ensure STAR group shows first if there are favorites and not in pin mode
+  if(starGroup && starGroup.length && pinMode !== 'pin'){
     groups['FAVORIT'] = {links: starGroup.slice(), name:{id:'Star', en:'Star'}, types: new Set(['favorite'])};
   }
 
@@ -1157,7 +1411,6 @@ function renderLinks(list, search=""){
     const h = document.createElement("h2"); h.className = "group-title"; h.textContent = (currentLang==="id")? "Pin" : "Pinned";
     section.appendChild(h);
     const items = document.createElement("div"); items.className = "group-items";
-    // sort pinned
     const pinnedSorted = sortLinksArray(pinnedList);
     pinnedSorted.forEach(link=>{
       const card = document.createElement("div"); card.className = "link-card";
@@ -1209,7 +1462,6 @@ function renderLinks(list, search=""){
       const right = document.createElement("button"); right.className="slider-btn slider-right"; right.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
       const items = document.createElement("div"); items.className="group-items";
 
-      // sort group links
       const sorted = sortLinksArray(g.links);
       sorted.forEach(link=>{
         const titleText = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
@@ -1263,8 +1515,8 @@ settingsOverlay.addEventListener("click",(e)=>{ if(e.target === settingsOverlay)
 
 settingsToggleCollapse.addEventListener('click', ()=>{ settingsMenu.classList.toggle('collapsed'); });
 
-/* settings tab switching (now includes general, links, data, experimental) */
-settingsTabs.forEach(bt=> bt.addEventListener('click', ()=>{ settingsTabs.forEach(x=>x.classList.remove('active')); bt.classList.add('active'); const tab = bt.dataset.tab; panelGeneral.classList.toggle('open', tab==='general'); panelLinks.classList.toggle('open', tab==='links'); panelData.classList.toggle('open', tab==='data'); panelExperimental.classList.toggle('open', tab==='experimental'); }));
+/* settings tab switching (now includes general, links, data, mods, experimental) */
+settingsTabs.forEach(bt=> bt.addEventListener('click', ()=>{ settingsTabs.forEach(x=>x.classList.remove('active')); bt.classList.add('active'); const tab = bt.dataset.tab; panelGeneral.classList.toggle('open', tab==='general'); panelLinks.classList.toggle('open', tab==='links'); panelData.classList.toggle('open', tab==='data'); panelMods.classList.toggle('open', tab==='mods'); panelExperimental.classList.toggle('open', tab==='experimental'); }));
 
 selLanguage.addEventListener("change", ()=>{ currentLang = selLanguage.value; localStorage.setItem("lang", currentLang); applyLanguageUI(); renderLinks(linksData, searchBox.value); populateFilterPanel(); });
 selView.addEventListener("change", ()=>{ viewMode = selView.value; localStorage.setItem("viewMode", viewMode); renderLinks(linksData, searchBox.value); });
@@ -1301,14 +1553,38 @@ chkMergeDuplicates.addEventListener('change', ()=> {
   renderLinks(linksData, searchBox.value);
 });
 
-/* Edit CSS gating */
-openEditInput.addEventListener("input", ()=> { openEditBtn.disabled = openEditInput.value.trim().toUpperCase() !== "EDITCSS"; });
-openEditBtn.addEventListener("click", ()=> { editcssPopup.style.display = "flex"; editcssPopup.setAttribute("aria-hidden","false"); editcssTextarea.value = localStorage.getItem("custom_css") || originalBaseCss; });
+/* create mod from JS (Experimental) */
+createModJsBtn.addEventListener('click', ()=>{
+  const code = (modjsTextarea.value || '').trim();
+  if(!code){ showToast('Kode JS kosong'); return; }
+  const modObj = {
+    id: 'mod-js-'+Date.now(),
+    name: 'User JS Mod - ' + new Date().toLocaleString(),
+    icon: '',
+    enabled: true,
+    code: code,
+    css: '',
+    source: 'editor-js'
+  };
+  installMod(modObj);
+  modjsTextarea.value = '';
+  // switch to Mods tab so user sees the installed mod
+  settingsTabs.forEach(x=>x.classList.remove('active'));
+  Array.from(settingsTabs).find(x=>x.dataset.tab==='mods').classList.add('active');
+  panelGeneral.classList.remove('open'); panelLinks.classList.remove('open'); panelData.classList.remove('open'); panelMods.classList.add('open'); panelExperimental.classList.remove('open');
+  showToast('Mod dibuat dan dipasang. Lihat di tab Mods.');
+});
 
-editcssClose.addEventListener("click", ()=> { editcssPopup.style.display = "none"; editcssPopup.setAttribute("aria-hidden","true"); });
-applyCssBtn.addEventListener("click", ()=> { const css = editcssTextarea.value || ""; if(!localStorage.getItem("base_css_backup")) localStorage.setItem("base_css_backup", originalBaseCss); baseStyleEl.textContent = css; localStorage.setItem("custom_css", css); showToast(t("css_apply_success")); });
-resetCssBtn_confirm.addEventListener('click', ()=>{ if(confirm((currentLang==="id")? "Kembalikan CSS ke keadaan asli?" : "Reset CSS to original?")){ localStorage.removeItem("custom_css"); const backup = localStorage.getItem("base_css_backup") || originalBaseCss; baseStyleEl.textContent = backup; editcssTextarea.value = backup; showToast(t("css_reset_success")); }});
-resetCssBtn.addEventListener('click', ()=>{ if(confirm((currentLang==="id")? "Kembalikan CSS ke keadaan asli?" : "Reset CSS to original?")){ localStorage.removeItem('custom_css'); location.reload(); }});
+/* clear editor */
+clearModJsBtn.addEventListener('click', ()=> modjsTextarea.value = '');
+
+/* remove all CSS mods (specific behaviour kept) */
+resetCssBtn.addEventListener('click', ()=> {
+  if(!confirm('Remove all CSS mods?')) return;
+  const cssMods = mods.filter(m=> m.id && m.id.startsWith('mod-css-'));
+  cssMods.forEach(m=> uninstallMod(m.id));
+  showToast(t('css_reset_success'));
+});
 
 /* DEBUG */
 debugBtn.addEventListener("click", ()=> { const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors"); debugArea.textContent = msg; debugPopup.style.display = "flex"; });
@@ -1324,7 +1600,7 @@ const resetProceed = document.getElementById("reset-proceed");
 resetClose && resetClose.addEventListener("click", ()=> resetPopup.style.display = "none");
 resetCancel && resetCancel.addEventListener("click", ()=> resetPopup.style.display = "none");
 function openResetPopup(){ resetInput.value=""; resetPopup.style.display = "flex"; }
-resetProceed && resetProceed.addEventListener("click", ()=>{ const v = (resetInput.value||"").trim().toUpperCase(); if(v === "RESET"){ resetPopup.style.display = "none"; if(confirm((currentLang==="id")? "Yakin ingin menghapus semua data lokal (favorites, overrides, css, settings)? Tindakan ini tidak bisa dibatalkan." : "Are you sure to delete all local data? This cannot be undone.")){ localStorage.clear(); alert((currentLang==="id")? "Selesai. Semua data lokal dihapus. Halaman akan dimuat ulang." : "Done. All local data cleared. Page will reload."); location.reload(); } } else { resetInput.style.boxShadow = "0 0 0 6px rgba(255,217,77,0.25)"; setTimeout(()=> resetInput.style.boxShadow = "none",900); showToast((currentLang==="id")? "Ketik RESET untuk konfirmasi" : "Type RESET to confirm"); }});
+resetProceed && resetProceed.addEventListener("click", ()=>{ const v = (resetInput.value||"").trim().toUpperCase(); if(v === "RESET"){ resetPopup.style.display = "none"; if(confirm((currentLang==="id")? "Yakin ingin menghapus semua data lokal (favorites, overrides, mods, settings)? Tindakan ini tidak bisa dibatalkan." : "Are you sure to delete all local data? This cannot be undone.")){ localStorage.clear(); alert((currentLang==="id")? "Selesai. Semua data lokal dihapus. Halaman akan dimuat ulang." : "Done. All local data cleared. Page will reload."); location.reload(); } } else { resetInput.style.boxShadow = "0 0 0 6px rgba(255,217,77,0.25)"; setTimeout(()=> resetInput.style.boxShadow = "none",900); showToast((currentLang==="id")? "Ketik RESET untuk konfirmasi" : "Type RESET to confirm"); }});
 
 /* ================= MULTI-SOURCE LOADER (menggabungkan EXTRA_SOURCES) ================= */
 function getAllSourcesArray(){
@@ -1470,11 +1746,11 @@ async function loadAndRenderSources(){
 
 /* ================= LOAD / SAVE LOCAL DATA (legacy full backup) ================= */
 saveLocalBtn.addEventListener('click', ()=>{
-  // original "Save Local" behavior -> full backup (include sort_mode and links tab options)
+  // Save Local includes mods now
   const backup = {
     favoriteLinks: JSON.parse(localStorage.getItem('favoriteLinks')||'[]'),
     local_link_overrides: JSON.parse(localStorage.getItem('local_link_overrides')||'{}'),
-    custom_css: localStorage.getItem('custom_css') || '',
+    mods: mods,
     pinned_items: JSON.parse(localStorage.getItem('pinned_items')||'[]'),
     filters_selected: JSON.parse(localStorage.getItem('filters_selected')||'[]'),
     lang: localStorage.getItem('lang')||'',
@@ -1496,7 +1772,6 @@ saveLocalBtn.addEventListener('click', ()=>{
 
 /* data tab load/save buttons */
 dataSaveBtn && dataSaveBtn.addEventListener('click', ()=> {
-  // simple save of all settings + data (same as saveLocalBtn)
   saveLocalBtn.click();
 });
 dataLoadBtn && dataLoadBtn.addEventListener('click', ()=> {
@@ -1506,30 +1781,10 @@ dataLoadBtn && dataLoadBtn.addEventListener('click', ()=> {
   reader.onload = (ev)=>{
     try{
       const obj = JSON.parse(ev.target.result);
-      const allowed = ['favoriteLinks','local_link_overrides','custom_css','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','sort_mode','show_group_count','compact_list','merge_duplicate_links','experimental_offline_mode','extra_sources'];
+      const allowed = ['favoriteLinks','local_link_overrides','mods','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','sort_mode','show_group_count','compact_list','merge_duplicate_links','experimental_offline_mode','extra_sources'];
       allowed.forEach(k=>{ if(obj[k]!==undefined) {
-        if(k==='extra_sources') { extraSources = obj[k]; saveExtraSources(); }
-        else localStorage.setItem(k, (typeof obj[k] === 'string') ? obj[k] : JSON.stringify(obj[k]).replace(/^"|"$/g,'')); 
-      } });
-      showToast('Data dimuat. Memuat ulang...');
-      setTimeout(()=> location.reload(),800);
-    } catch(e){ showToast('File tidak valid'); }
-  };
-  reader.readAsText(f);
-});
-dataResetBtn && dataResetBtn.addEventListener('click', ()=> { openResetModalBtn.click(); });
-dataOpenSaveChoices && dataOpenSaveChoices.addEventListener('click', ()=> { saveModal.classList.add('open'); });
-
-loadFileBtn.addEventListener('click', ()=>{
-  const f = loadFileInput.files[0];
-  if(!f){ showToast('Pilih file JSON terlebih dahulu'); return; }
-  const reader = new FileReader();
-  reader.onload = (ev)=>{
-    try{
-      const obj = JSON.parse(ev.target.result);
-      const allowed = ['favoriteLinks','local_link_overrides','custom_css','pinned_items','filters_selected','lang','viewMode','merge_sources','simple_mode','pin_mode','sort_mode','show_group_count','compact_list','merge_duplicate_links','experimental_offline_mode','extra_sources'];
-      allowed.forEach(k=>{ if(obj[k]!==undefined) {
-        if(k==='extra_sources') { extraSources = obj[k]; saveExtraSources(); }
+        if(k==='mods') { mods = obj[k]; saveMods(); }
+        else if(k==='extra_sources') { extraSources = obj[k]; saveExtraSources(); }
         else localStorage.setItem(k, (typeof obj[k] === 'string') ? obj[k] : JSON.stringify(obj[k]).replace(/^"|"$/g,'')); 
       } });
       showToast('Data dimuat. Memuat ulang...');
@@ -1549,7 +1804,7 @@ saveModalOk.addEventListener('click', ()=>{
   const backup = {};
   if(checks.includes('favoriteLinks')) backup.favoriteLinks = JSON.parse(localStorage.getItem('favoriteLinks')||'[]');
   if(checks.includes('local_link_overrides')) backup.local_link_overrides = JSON.parse(localStorage.getItem('local_link_overrides')||'{}');
-  if(checks.includes('custom_css')) backup.custom_css = localStorage.getItem('custom_css') || '';
+  if(checks.includes('mods')) backup.mods = mods;
   if(checks.includes('pinned_items')) backup.pinned_items = JSON.parse(localStorage.getItem('pinned_items')||'[]');
   if(checks.includes('filters_selected')) backup.filters_selected = JSON.parse(localStorage.getItem('filters_selected')||'[]');
   if(checks.includes('settings')) {
@@ -1587,7 +1842,7 @@ loadModalOk.addEventListener('click', ()=>{
       // apply only selected keys
       if(toLoad.includes('favoriteLinks') && obj.favoriteLinks !== undefined) localStorage.setItem('favoriteLinks', JSON.stringify(obj.favoriteLinks));
       if(toLoad.includes('local_link_overrides') && obj.local_link_overrides !== undefined) localStorage.setItem('local_link_overrides', JSON.stringify(obj.local_link_overrides));
-      if(toLoad.includes('custom_css') && obj.custom_css !== undefined) localStorage.setItem('custom_css', obj.custom_css);
+      if(toLoad.includes('mods') && obj.mods !== undefined){ mods = obj.mods; saveMods(); }
       if(toLoad.includes('pinned_items') && obj.pinned_items !== undefined) localStorage.setItem('pinned_items', JSON.stringify(obj.pinned_items));
       if(toLoad.includes('filters_selected') && obj.filters_selected !== undefined) localStorage.setItem('filters_selected', JSON.stringify(obj.filters_selected));
       if(toLoad.includes('settings')){
@@ -1623,7 +1878,7 @@ resetModalOk.addEventListener('click', ()=>{
   toReset.forEach(k=>{
     if(k === 'favoriteLinks') localStorage.removeItem('favoriteLinks');
     if(k === 'local_link_overrides') localStorage.removeItem('local_link_overrides');
-    if(k === 'custom_css') localStorage.removeItem('custom_css');
+    if(k === 'mods') { mods = []; saveMods(); }
     if(k === 'pinned_items') localStorage.removeItem('pinned_items');
     if(k === 'filters_selected') localStorage.removeItem('filters_selected');
     if(k === 'settings'){ localStorage.removeItem('lang'); localStorage.removeItem('viewMode'); localStorage.removeItem('merge_sources'); localStorage.removeItem('simple_mode'); localStorage.removeItem('pin_mode'); localStorage.removeItem('sort_mode'); localStorage.removeItem('show_group_count'); localStorage.removeItem('compact_list'); localStorage.removeItem('merge_duplicate_links'); localStorage.removeItem('experimental_offline_mode'); }
@@ -1636,38 +1891,142 @@ resetModalOk.addEventListener('click', ()=>{
 
 /* ================= OFFLINE WARNING (when offline mode active but browser is online) ================= */
 function showOfflineWarning(){
-  offlineWarningModal.classList.add('open');
-  offlineWarningModal.style.display = 'flex';
-  offlineWarningModal.setAttribute('aria-hidden','false');
+  // modal not implemented earlier; kept placeholder in codebase
+  console.warn('Offline warning requested.');
 }
 function hideOfflineWarning(){
-  offlineWarningModal.classList.remove('open');
-  offlineWarningModal.style.display = 'none';
-  offlineWarningModal.setAttribute('aria-hidden','true');
+  // placeholder
 }
-offlineWarningTurnOffBtn && offlineWarningTurnOffBtn.addEventListener('click', ()=>{
-  // turn off experimental offline and reload data from online sources
-  experimentalOffline = false;
-  localStorage.setItem('experimental_offline_mode', '0');
-  chkOfflineMode.checked = false;
-  hideOfflineWarning();
-  showToast('Offline dimatikan. Memeriksa data online...');
-  loadAndRenderSources();
-});
-offlineWarningKeepBtn && offlineWarningKeepBtn.addEventListener('click', ()=>{
-  hideOfflineWarning();
-  showToast('Tetap menggunakan mode offline.');
-});
-offlineWarningCloseBtn && offlineWarningCloseBtn.addEventListener('click', ()=> hideOfflineWarning());
-
-/* fire warning when coming ONLINE while offline mode active */
 window.addEventListener('online', ()=>{
   if(experimentalOffline){
-    // small delay to avoid spamming on flaky connections
     setTimeout(()=>{
-      if(navigator.onLine) showOfflineWarning();
+      if(navigator.onLine) console.warn('Online while offline mode active');
     }, 350);
   }
+});
+
+/* ================= MODS - file input handlers and store opener ================= */
+addModBtn.addEventListener('click', ()=>{
+  const f = modFileInput.files[0];
+  if(!f){ showToast('Pilih file mod (.js .ero4mod .json) terlebih dahulu'); return; }
+  handleModFileUpload(f);
+  modFileInput.value = '';
+});
+openModStoreBtn.addEventListener('click', ()=> openModStore());
+
+/* ================= STORE-ACTIVE DETECTION ================= */
+/*
+ On first load, fetch MOD_STORE_URL.
+ If store returns mods array, check for items with flags 'auto_enable' || 'enabled' || 'active' set true.
+ If any found, show modal prompting user to Install & Run or Decline.
+ Mods WILL NOT run until user Accepts (install & enable).
+*/
+let storeDetectedModsCache = null;
+async function detectStoreActiveModsOnInit(){
+  try{
+    const res = await fetch(MOD_STORE_URL + '?_=' + Date.now());
+    if(!res.ok) return;
+    const j = await res.json();
+    const items = (j.mods || j);
+    if(!Array.isArray(items) || items.length === 0) return;
+    // detect mods that appear "active" in store metadata
+    const activeCandidates = items.filter(it => it && (it.auto_enable === true || it.enabled === true || it.active === true));
+    if(activeCandidates.length === 0) return;
+
+    // prepare modal list
+    storeDetectListEl.innerHTML = '';
+    activeCandidates.forEach(it => {
+      const div = document.createElement('div');
+      div.style.padding = '8px';
+      div.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
+      div.innerHTML = `<div style="font-weight:700">${it.name}</div><div style="font-size:0.85rem;color:#9aa6bf">${it.description || ''}</div>`;
+      storeDetectListEl.appendChild(div);
+    });
+    storeDetectedModsCache = activeCandidates;
+
+    // show modal
+    storeDetectModal.classList.add('open');
+    storeDetectModal.style.display = 'flex';
+    storeDetectModal.setAttribute('aria-hidden','false');
+  } catch(e){
+    console.warn('detect store mods failed', e);
+  }
+}
+
+storeDetectAcceptBtn && storeDetectAcceptBtn.addEventListener('click', ()=>{
+  if(!storeDetectedModsCache || storeDetectedModsCache.length === 0) {
+    storeDetectModal.classList.remove('open');
+    storeDetectModal.style.display = 'none';
+    storeDetectModal.setAttribute('aria-hidden','true');
+    return;
+  }
+  // install & enable each detected mod, but set source to MOD_STORE_URL
+  storeDetectedModsCache.forEach(it=>{
+    installMod({
+      id: it.id || 'mod-store-' + Date.now(),
+      name: it.name || 'Store Mod',
+      icon: it.icon || '',
+      enabled: true,
+      code: it.code || '',
+      css: it.css || '',
+      source: it.source || MOD_STORE_URL
+    });
+  });
+  // close modal
+  storeDetectedModsCache = null;
+  storeDetectModal.classList.remove('open');
+  storeDetectModal.style.display = 'none';
+  storeDetectModal.setAttribute('aria-hidden','true');
+  // switch to Mods tab so user sees installed mods
+  settingsTabs.forEach(x=>x.classList.remove('active'));
+  Array.from(settingsTabs).find(x=>x.dataset.tab==='mods').classList.add('active');
+  panelGeneral.classList.remove('open'); panelLinks.classList.remove('open'); panelData.classList.remove('open'); panelMods.classList.add('open'); panelExperimental.classList.remove('open');
+  showToast('Mods dari store telah terpasang (tetap bisa dinonaktifkan dari Mods).');
+});
+
+storeDetectDeclineBtn && storeDetectDeclineBtn.addEventListener('click', ()=>{
+  storeDetectedModsCache = null;
+  storeDetectModal.classList.remove('open');
+  storeDetectModal.style.display = 'none';
+  storeDetectModal.setAttribute('aria-hidden','true');
+});
+storeDetectCloseBtn && storeDetectCloseBtn.addEventListener('click', ()=>{
+  storeDetectedModsCache = null;
+  storeDetectModal.classList.remove('open');
+  storeDetectModal.style.display = 'none';
+  storeDetectModal.setAttribute('aria-hidden','true');
+});
+
+/* ================= MOD WARNING DIALOG HANDLING ================= */
+function showModWarning(){
+  modWarningModal.classList.add('open');
+  modWarningModal.style.display = 'flex';
+  modWarningModal.setAttribute('aria-hidden','false');
+}
+function hideModWarning(){
+  modWarningModal.classList.remove('open');
+  modWarningModal.style.display = 'none';
+  modWarningModal.setAttribute('aria-hidden','true');
+}
+modWarningEnableBtn && modWarningEnableBtn.addEventListener('click', ()=>{
+  // user accepts mods: run applyMods and close modal
+  suppressModsOnLoad = false;
+  hideModWarning();
+  applyMods();
+  renderModsList();
+  showToast('Mods dijalankan.');
+});
+modWarningDisableBtn && modWarningDisableBtn.addEventListener('click', ()=>{
+  // user chooses to keep mods disabled: set stored mods enabled=false, save and reload
+  mods.forEach(m=> m.enabled = false);
+  saveMods();
+  hideModWarning();
+  showToast('Mods dinonaktifkan. Memuat ulang halaman...');
+  setTimeout(()=> location.reload(), 500);
+});
+modWarningCloseBtn && modWarningCloseBtn.addEventListener('click', ()=>{
+  // treat close as keep disabled but do not change stored settings (we keep them disabled in-memory until user accepts)
+  hideModWarning();
 });
 
 /* ================= INIT & search ================= */
@@ -1675,7 +2034,6 @@ function enforceSmallScreenBehavior(){ if(window.innerWidth <= 760){ selView.val
 window.addEventListener("resize", ()=> { enforceSmallScreenBehavior(); renderLinks(linksData, searchBox.value); });
 
 function init(){
-  // ensure mergeDuplicateLinks is saved if first-run default applied
   if(localStorage.getItem('merge_duplicate_links') === null){
     localStorage.setItem('merge_duplicate_links', mergeDuplicateLinks ? '1' : '0');
   }
@@ -1687,14 +2045,27 @@ function init(){
   chkMergeDuplicates.checked = mergeDuplicateLinks;
   chkOfflineMode.checked = experimentalOffline;
   applyLanguageUI();
-  applyCustomCssOnLoad();
   enforceSmallScreenBehavior();
   if(pinMode === 'pin') pinmodePin.checked = true; else pinmodeStar.checked = true;
 
   renderExtraSourcesList();
   populateFilterPanel();
+  renderModsList();
 
-  // show offline bundle status
+  // --- NEW: do NOT auto-run mods if there are mods saved as enabled.
+  const modsEnabledExist = mods.some(m=>m.enabled);
+  if(modsEnabledExist){
+    // suppress automatic injection until user responds to warning
+    suppressModsOnLoad = true;
+    // show modal to the user notifying mods are held and asking consent
+    // note: we DO NOT change stored settings yet; mods remain enabled in storage but WILL NOT RUN until accepted
+    showModWarning();
+  } else {
+    // no enabled mods in storage -> safe to apply mods (none anyway)
+    suppressModsOnLoad = false;
+    applyMods();
+  }
+
   const bundleStr = localStorage.getItem(OFFLINE_BUNDLE_KEY);
   if(bundleStr){
     try{
@@ -1707,13 +2078,13 @@ function init(){
     offlineStatusEl.textContent = 'Tidak ada bundle offline.';
   }
 
-  // If offline mode is active but browser currently online, warn user to optionally turn it off
   if(experimentalOffline && navigator.onLine){
-    // small delay so UI fully loads
-    setTimeout(()=> showOfflineWarning(), 450);
+    setTimeout(()=> console.warn('Offline mode active and browser online'), 450);
   }
 
-  // load sources (this function handles offline mode)
+  // detect store active mods on first load (non-blocking)
+  setTimeout(()=>{ detectStoreActiveModsOnInit().catch(()=>{}); }, 600);
+
   loadAndRenderSources().then(()=>{ /* done */ }).catch(e=>{ console.error(e); showToast((currentLang==="id")? "Gagal memuat data" : "Failed loading data"); loadingOverlay.classList.remove("open"); });
 }
 init();
@@ -1725,30 +2096,6 @@ document.addEventListener("click", (e)=>{
   if(dbg && dbg.style.display === "flex" && !dbg.contains(e.target) && !debugBtn.contains(e.target)) dbg.style.display='none'; 
 });
 
-/* offline controls */
-btnOfflineDownload.addEventListener('click', async ()=>{
-  btnOfflineDownload.disabled = true;
-  const ok = await downloadOfflineBundle();
-  if(ok){
-    experimentalOffline = true;
-    localStorage.setItem('experimental_offline_mode', '1');
-    chkOfflineMode.checked = true;
-  }
-  btnOfflineDownload.disabled = false;
-});
-
-chkOfflineMode.addEventListener('change', ()=>{
-  experimentalOffline = chkOfflineMode.checked;
-  localStorage.setItem('experimental_offline_mode', experimentalOffline ? '1' : '0');
-  if(experimentalOffline){
-    const bundle = localStorage.getItem(OFFLINE_BUNDLE_KEY);
-    if(!bundle) showToast('Tidak ada bundle offline. Tekan "Download Data untuk Offline" terlebih dahulu.');
-    else showToast('Offline mode aktif. Memuat dari bundle jika tersedia.');
-  } else {
-    showToast('Offline mode nonaktif. Menggunakan sumber online.');
-  }
-  loadAndRenderSources();
-});
 </script>
 </body>
 </html>
