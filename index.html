@@ -1,311 +1,776 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mengarahkan...</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<style>
-:root{
-  --bg:#e9ecef;
-  --card:#ffffff;
-  --muted:#6b7280;
-  --accent:#2b8cff;
-  --error:#ef4444;
-  --glass-border: rgba(0,0,0,0.06);
-  --radius:14px;
-  --shadow: 0 10px 30px rgba(15,23,42,0.12);
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <link rel="icon" type="image/jpeg" href="https://i.pinimg.com/736x/34/e4/e7/34e4e751e0dfbb4e3e222e33634d8cab.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    
+    <title>AHMAD RIJANI</title>
 
-html,body{
-  height:100%;
-  margin:0;
-  background:var(--bg);
-  font-family:"Comic Sans MS","Comic Sans","ComicNeue",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  display:grid;
-  place-items:center;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.card{
-  position:relative;
-  width:95%;
-  max-width:400px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,250,250,0.96));
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  border:1px solid var(--glass-border);
-  padding:28px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:14px;
-  text-align:center;
-}
+        :root{
+            --bg: #000;
+            --panel: rgba(15, 15, 15, 0.95);
+            --panel2: rgba(10, 10, 10, 0.98);
+            --line: rgba(255,255,255,0.1);
+            --text: #fff;
+            --muted: #bbb;
+            --accent: #00a8ff;
+            --accent2: #0f6aa8;
+        }
 
-.top-banner{
-  width:100%;
-  font-size:14px;
-  color:var(--muted);
-  display:flex;
-  justify-content:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.top-banner a{
-  color:var(--accent);
-  font-weight:600;
-  text-decoration:none;
-}
+        body, html {
+            height: 100%;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            font-weight: 400;
+        }
 
-.error-title{
-  font-size:24px;
-  font-weight:bold;
-  color:var(--error);
-}
+        b, strong, h1, h2 { font-weight: 700; }
 
-.spinner-container{
-  position:relative;
-  width:100px;
-  height:100px;
-  display:grid;
-  place-items:center;
-  margin-top:10px;
-}
+        .aero-header {
+            background: var(--panel);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--line);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+            position: relative;
+        }
 
-/* spinner sekarang punya ring yang berputar, tapi teks di tengah tidak ikut berputar */
-.spinner{
-  width:100px;
-  height:100px;
-  position:relative;
-  display:grid;
-  place-items:center;
-  pointer-events:none;
-}
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
 
-.spinner .ring{
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  background: conic-gradient(
-    rgb(43,140,255),
-    rgb(0,200,150),
-    rgb(255,120,80),
-    rgb(43,140,255)
-  );
-  transform-origin:center;
-  animation:spin 1s linear infinite;
-  /* untuk memberi kesan 'garis' ubah inner hole di .ring::before */
-}
-.spinner .ring::before{
-  content:"";
-  position:absolute;
-  inset:8px;
-  border-radius:50%;
-  background:var(--card);
-  box-shadow: 0 4px 12px rgba(15,23,42,0.04);
-}
+        .avatar-small {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 1px solid #444;
+            object-fit: cover;
+            flex: 0 0 auto;
+        }
 
-.spinner .spin-text{
-  position:relative;
-  z-index:2;
-  font-weight:bold;
-  font-size:22px;
-  color:var(--accent);
-  display:grid;
-  place-items:center;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-}
+        .brand h1 {
+            font-size: clamp(0.8rem, 4vw, 1rem);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-@keyframes spin{ to { transform: rotate(360deg); } }
+        .win7-btn {
+            border: 1px solid #333;
+            box-shadow: 0 0 0 1px #000;
+            border-radius: 8px;
+            background: linear-gradient(to bottom, #444 0%, #222 50%, #111 51%, #000 100%);
+            color: #eee;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-.spinner.error .ring{
-  animation:none;
-  background: rgb(239,68,68); /* merah RGB saat error */
-}
-.spinner.error .spin-text{
-  color: #7a1b1b;
-}
+        .win7-btn:hover {
+            border: 1px solid #555;
+            box-shadow: 0 0 0 1px #00a8ff;
+        }
 
-.info{
-  font-size:18px;
-  font-weight:700;
-  color:#0f172a;
-}
+        .win7-btn.active {
+            border: 1px solid #00a8ff;
+            box-shadow: 0 0 0 1px #005a9e;
+            background: linear-gradient(to bottom, #222 0%, #111 50%, #050505 51%, #000 100%);
+            color: #00a8ff;
+        }
 
-.status{
-  font-size:13px;
-  color:var(--muted);
-}
+        .desktop-nav {
+            display: flex;
+            gap: 8px;
+        }
 
-/* tombol pindah manual */
-.manualBtn{
-  margin-top:8px;
-  padding:10px 16px;
-  border-radius:10px;
-  border:1px solid rgba(15,23,42,0.06);
-  background:linear-gradient(180deg,var(--accent),#1f6fd8);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  display:inline-flex;
-  gap:8px;
-  align-items:center;
-}
+        .desktop-nav .win7-btn{
+            height: 34px;
+            padding: 0 14px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
 
-/* tombol X besar */
-.bigX{
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-size:48px;
-  color:#ef4444;
-  background:rgba(255,255,255,0.85);
-  border:2px solid rgba(0,0,0,0.06);
-  cursor:pointer;
-  margin-top:16px;
-  font-weight:bold;
-}
+        .desktop-nav .win7-btn i{
+            font-size: 13px;
+        }
 
-.address{
-  font-size:14px;
-  color:var(--muted);
-  margin-top:12px;
-}
+        .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
 
-.device-info{
-  font-size:14px;
-  color:var(--muted);
-  margin-top:8px;
-}
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: min(86%, 330px);
+            height: 100%;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 3000;
+            transition: 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding: 18px;
+            border-left: 1px solid rgba(255,255,255,0.08);
+        }
 
-@media(max-width:480px){
-  .spinner{ width:80px; height:80px; }
-  .spinner .spin-text{ font-size:18px; }
-  .bigX{ width:120px; height:120px; font-size:42px; }
-  .card{ padding:20px; max-width:90%; }
-  .manualBtn{ padding:12px 20px; font-size:16px; }
-}
-</style>
+        .mobile-sidebar.active { right: 0; }
+
+        .sidebar-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            padding-bottom:14px;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-head h3{
+            font-size: 15px;
+            letter-spacing: .4px;
+        }
+
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: linear-gradient(to bottom, #333, #111);
+            color: #fff;
+            cursor: pointer;
+            font-size: 22px;
+            line-height: 1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .menu-scroll-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-top: 16px;
+            padding-right: 2px;
+        }
+
+        .menu-grid{
+            display:grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .sidebar-btn{
+            min-height: 90px;
+            padding: 14px 10px;
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+            width: 100%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sidebar-btn i{
+            font-size: 18px;
+        }
+
+        .sidebar-btn .nav-label{
+            line-height:1.1;
+        }
+
+        main {
+            height: calc(100% - 60px);
+            padding: 10px;
+        }
+
+        .window-frame {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        #beranda {
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #000;
+        }
+
+        #beranda::-webkit-scrollbar { width: 6px; }
+        #beranda::-webkit-scrollbar-track { background: #000; }
+        #beranda::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .hero {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero img {
+            width: clamp(80px, 20vw, 120px);
+            height: clamp(80px, 20vw, 120px);
+            border-radius: 50%;
+            border: 3px solid #333;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .hero h2 {
+            font-size: clamp(1.1rem, 5vw, 1.5rem);
+            margin-bottom: 25px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #222;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 700;
+            font-size: clamp(0.75rem, 3vw, 0.9rem);
+        }
+
+        .card i {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .card:hover {
+            background: rgba(0, 168, 255, 0.1);
+            border-color: #00a8ff;
+            transform: scale(1.02);
+        }
+
+        .settings-wrap{
+            padding: 18px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .settings-title{
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .settings-desc{
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .setting-grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            max-width: 700px;
+        }
+
+        .setting-card{
+            border: 1px solid rgba(255,255,255,0.10);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+            border-radius: 14px;
+            padding: 16px 14px;
+            cursor:pointer;
+            transition: 0.2s;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap: 10px;
+            min-height: 140px;
+            text-align:center;
+        }
+
+        .setting-card:hover{
+            transform: translateY(-2px);
+            border-color: rgba(0,168,255,0.5);
+            box-shadow: 0 0 0 1px rgba(0,168,255,0.12);
+        }
+
+        .setting-card.active{
+            border-color: rgba(0,168,255,0.75);
+            box-shadow: 0 0 0 1px rgba(0,168,255,0.18);
+            background: linear-gradient(to bottom, rgba(0,168,255,0.18), rgba(255,255,255,0.03));
+        }
+
+        .setting-card i{
+            font-size: 28px;
+            color: var(--accent);
+        }
+
+        .setting-card .label{
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .setting-card .sub{
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        .mobile-bottom-nav .win7-btn {
+            min-height: 58px;
+            width: 100%;
+            padding: 8px 6px;
+            font-size: 10px;
+            flex-direction: column;
+            gap: 6px;
+            border-radius: 12px;
+        }
+
+        .mobile-bottom-nav .win7-btn i {
+            font-size: 15px;
+        }
+
+        .mobile-bottom-nav .nav-label{
+            line-height: 1;
+        }
+
+        .mobile-bottom-nav .nav-item{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .mobile-bottom-nav .nav-item.settings-wide{
+            grid-column: span 1;
+        }
+
+        .mobile-bottom-nav .nav-grid{
+            display:grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 2500;
+            display: none;
+        }
+
+        .overlay.active{
+            display:block;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav { display: none; }
+            .hamburger { display: flex; }
+
+            main {
+                padding-bottom: 0;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            body.mobile-bottom-active main{
+                padding-bottom: 82px;
+            }
+
+            .mobile-bottom-nav.show{
+                display:block;
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 2200;
+                padding: 10px;
+                background: rgba(10, 10, 10, 0.96);
+                border-top: 1px solid rgba(255,255,255,0.08);
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+            }
+
+            .mobile-bottom-nav .nav-grid{
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 420px) {
+            .mobile-bottom-nav .win7-btn {
+                font-size: 9px;
+                padding: 7px 4px;
+                min-height: 56px;
+            }
+
+            .mobile-bottom-nav .win7-btn i {
+                font-size: 14px;
+            }
+
+            .sidebar-btn{
+                min-height: 82px;
+                padding: 12px 8px;
+                font-size: 11px;
+            }
+
+            .setting-card{
+                min-height: 132px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="card" role="dialog" aria-labelledby="info" aria-describedby="status">
 
-  <div class="error-title">404 NOT FOUND</div>
+    <header class="aero-header">
+        <div class="brand">
+            <img src="https://i.pinimg.com/736x/34/e4/e7/34e4e751e0dfbb4e3e222e33634d8cab.jpg" class="avatar-small" alt="Avatar">
+            <h1>AHMAD RIJANI</h1>
+        </div>
 
-  <div class="top-banner">
-    <i class="fa-solid fa-location-arrow"></i>
-    Alamat lama sudah dipindahkan ke 
-    <a href="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" target="_blank">link baru</a>
-  </div>
+        <nav class="desktop-nav" id="desktopNav">
+            <div class="win7-btn active" data-tab="beranda"><i class="fa fa-home"></i> <span class="nav-label">Beranda</span></div>
+            <div class="win7-btn" data-tab="berita"><i class="fa fa-newspaper"></i> <span class="nav-label">Berita</span></div>
+            <div class="win7-btn" data-tab="project"><i class="fa fa-folder-open"></i> <span class="nav-label">Project</span></div>
+            <div class="win7-btn" data-tab="sosmed"><i class="fa fa-link"></i> <span class="nav-label">Sosial Media & Link</span></div>
+            <div class="win7-btn" data-tab="pengaturan"><i class="fa fa-gear"></i> <span class="nav-label">Pengaturan</span></div>
+        </nav>
 
-  <div class="spinner-container">
-    <div class="spinner" id="spinner">
-      <div class="ring" aria-hidden="true"></div>
-      <div class="spin-text" id="spinnerText">60</div>
+        <div class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
+            <i class="fa fa-bars"></i>
+        </div>
+    </header>
+
+    <main>
+        <div class="window-frame">
+            <div id="beranda" class="tab-content" style="display: block;">
+                <div class="hero">
+                    <img src="https://i.pinimg.com/736x/34/e4/e7/34e4e751e0dfbb4e3e222e33634d8cab.jpg" alt="Avatar">
+                    <h2>Halo, nama saya <b>Ahmad Rijani</b></h2>
+                    <div class="grid">
+                        <div class="card" data-go="berita"><i class="fa fa-newspaper"></i><div>Berita</div></div>
+                        <div class="card" data-go="project"><i class="fa fa-folder-open"></i><div>Project</div></div>
+                        <div class="card" data-go="sosmed"><i class="fa fa-link"></i><div>Sosial Media & Link</div></div>
+                        <div class="card" data-go="pengaturan"><i class="fa fa-gear"></i><div>Pengaturan</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="berita" class="tab-content">
+                <iframe src="news.html" id="iframeBerita"></iframe>
+            </div>
+
+            <div id="project" class="tab-content">
+                <iframe src="project.html" id="iframeProject"></iframe>
+            </div>
+
+            <div id="sosmed" class="tab-content">
+                <iframe src="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" id="iframeSosmed"></iframe>
+            </div>
+
+            <div id="pengaturan" class="tab-content">
+                <div class="settings-wrap">
+                    <div class="settings-title">Pengaturan Navigasi</div>
+                    <div class="settings-desc">
+                        Pilih tampilan menu saat layar mengecil. Default-nya adalah navigasi bawah.
+                    </div>
+
+                    <div class="setting-grid">
+                        <div class="setting-card" data-mode="bottom">
+                            <i class="fa fa-layer-group"></i>
+                            <div class="label">Navigasi Bawah</div>
+                            <div class="sub">Tombol ada di bawah layar, enak dipakai di HP.</div>
+                        </div>
+
+                        <div class="setting-card" data-mode="hamburger">
+                            <i class="fa fa-bars"></i>
+                            <div class="label">Hamburger</div>
+                            <div class="sub">Menu disembunyikan di tombol garis tiga.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="mobile-sidebar" id="mobileMenu" aria-hidden="true">
+        <div class="sidebar-head">
+            <h3>Menu</h3>
+            <button class="close-btn" id="closeSidebarBtn" type="button" aria-label="Tutup menu">
+                &times;
+            </button>
+        </div>
+
+        <div class="menu-scroll-area">
+            <div class="menu-grid">
+                <div class="win7-btn sidebar-btn active" data-tab="beranda">
+                    <i class="fa fa-home"></i>
+                    <span class="nav-label">Beranda</span>
+                </div>
+                <div class="win7-btn sidebar-btn" data-tab="berita">
+                    <i class="fa fa-newspaper"></i>
+                    <span class="nav-label">Berita</span>
+                </div>
+                <div class="win7-btn sidebar-btn" data-tab="project">
+                    <i class="fa fa-folder-open"></i>
+                    <span class="nav-label">Project</span>
+                </div>
+                <div class="win7-btn sidebar-btn" data-tab="sosmed">
+                    <i class="fa fa-link"></i>
+                    <span class="nav-label">Link</span>
+                </div>
+                <div class="win7-btn sidebar-btn" data-tab="pengaturan">
+                    <i class="fa fa-gear"></i>
+                    <span class="nav-label">Pengaturan</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="info" id="info">Mengarahkan ke versi terbaru...</div>
-  <div class="status" id="status">Tekan <strong>ESC</strong> atau klik ❌ untuk membatalkan. Setelah dibatalkan, akan mencoba lagi dalam 60 detik.</div>
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <div class="nav-grid">
+            <div class="win7-btn nav-item active" data-tab="beranda">
+                <i class="fa fa-home"></i>
+                <span class="nav-label">Beranda</span>
+            </div>
+            <div class="win7-btn nav-item" data-tab="berita">
+                <i class="fa fa-newspaper"></i>
+                <span class="nav-label">Berita</span>
+            </div>
+            <div class="win7-btn nav-item" data-tab="project">
+                <i class="fa fa-folder-open"></i>
+                <span class="nav-label">Project</span>
+            </div>
+            <div class="win7-btn nav-item" data-tab="sosmed">
+                <i class="fa fa-link"></i>
+                <span class="nav-label">Link</span>
+            </div>
+            <div class="win7-btn nav-item" data-tab="pengaturan">
+                <i class="fa fa-gear"></i>
+                <span class="nav-label">Setelan</span>
+            </div>
+        </div>
+    </nav>
 
-  <button class="manualBtn" id="manualBtn">Pindah Manual</button>
+    <script>
+        const STORAGE_KEY = "navModeMobile";
+        const DEFAULT_MODE = "bottom";
 
-  <div class="bigX" id="batalVirtual">✖</div>
+        const tabs = ["beranda", "berita", "project", "sosmed", "pengaturan"];
 
-  <div class="device-info" id="deviceInfo"></div>
+        const mobileMenu = document.getElementById("mobileMenu");
+        const mobileBottomNav = document.getElementById("mobileBottomNav");
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const overlay = document.getElementById("overlay");
+        const closeSidebarBtn = document.getElementById("closeSidebarBtn");
 
-</div>
+        function getSavedMode() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return (saved === "hamburger" || saved === "bottom") ? saved : DEFAULT_MODE;
+        }
 
-<script>
-(function(){
-  const urlTujuan = "https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html";
-  const spinner = document.getElementById('spinner');
-  const spinnerText = document.getElementById('spinnerText');
-  const ring = spinner.querySelector('.ring');
-  const batalVirtual = document.getElementById('batalVirtual');
-  const info = document.getElementById('info');
-  const status = document.getElementById('status');
-  const deviceInfo = document.getElementById('deviceInfo');
-  const manualBtn = document.getElementById('manualBtn');
+        function setSavedMode(mode) {
+            localStorage.setItem(STORAGE_KEY, mode);
+            applyNavMode();
+            updateSettingsUI();
+        }
 
-  let batal = false;
-  let mencobaLagi = false;
-  let cooldownId = null;
-  let retryRemaining = 60;
-  let redirected = false;
+        function isMobile() {
+            return window.matchMedia("(max-width: 768px)").matches;
+        }
 
-  spinnerText.textContent = retryRemaining;
+        function applyNavMode() {
+            const mode = getSavedMode();
+            const mobile = isMobile();
 
-  function startRetryCountdown(seconds = 60){
-    mencobaLagi = true;
-    retryRemaining = seconds;
-    spinner.classList.remove('error');
-    spinnerText.textContent = retryRemaining;
-    status.innerHTML = "Tekan <strong>ESC</strong> atau klik ❌ untuk membatalkan percobaan ulang.";
+            mobileBottomNav.classList.toggle("show", mobile && mode === "bottom");
+            hamburgerBtn.style.display = (mobile && mode === "hamburger") ? "flex" : "none";
+            document.body.classList.toggle("mobile-bottom-active", mobile && mode === "bottom");
 
-    cooldownId = setInterval(()=>{
-      retryRemaining--;
-      spinnerText.textContent = retryRemaining;
-      if(retryRemaining <= 0){
-        clearInterval(cooldownId);
-        mencobaLagi = false;
-        batal = false;
-        info.textContent = "Mengarahkan ulang...";
-        status.innerHTML = "Tekan <strong>ESC</strong> untuk membatalkan.";
-        setTimeout(()=> { doRedirect(); }, 500);
-      }
-    },1000);
-  }
+            if (!mobile || mode === "bottom") {
+                closeSidebar();
+            }
+        }
 
-  function cancelOrToggleRetry(){
-    if(!mencobaLagi){
-      batal = true;
-      info.textContent = "Pengalihan dibatalkan.";
-      status.textContent = "Mencoba lagi dalam 60 detik... Tekan ESC atau klik ❌ lagi untuk hentikan total.";
-      startRetryCountdown(60);
-    } else {
-      clearInterval(cooldownId);
-      mencobaLagi = false;
-      batal = true;
-      info.textContent = "ERROR";
-      status.textContent = "Percobaan ulang dibatalkan sepenuhnya.";
-      spinner.classList.add('error');
-      spinnerText.textContent = "ERR";
-    }
-  }
+        function openSidebar() {
+            mobileMenu.classList.add("active");
+            overlay.classList.add("active");
+            mobileMenu.setAttribute("aria-hidden", "false");
+        }
 
-  function doRedirect(){
-    if(redirected) return;
-    redirected = true;
-    window.location.replace(urlTujuan);
-  }
+        function closeSidebar() {
+            mobileMenu.classList.remove("active");
+            overlay.classList.remove("active");
+            mobileMenu.setAttribute("aria-hidden", "true");
+        }
 
-  manualBtn.addEventListener('click', doRedirect);
-  batalVirtual.addEventListener('click', cancelOrToggleRetry);
-  window.addEventListener('keydown', (e)=>{ if(e.key==="Escape"){ cancelOrToggleRetry(); } });
+        function openTab(tabName) {
+            const tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
 
-  let isAndroid = /android/i.test(navigator.userAgent);
-  let timeout = isAndroid ? 900 : 600;
-  deviceInfo.textContent = "Perangkat Anda: " + (isAndroid ? "Android" : "PC / Desktop");
+            const targetTab = document.getElementById(tabName);
+            if (targetTab) targetTab.style.display = "block";
 
-  history.pushState(null, document.title, location.href);
-  window.addEventListener('popstate', (e)=>{
-    cancelOrToggleRetry();
-    history.pushState(null, document.title, location.href);
-  });
+            document.querySelectorAll(".win7-btn[data-tab]").forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(btn => btn.classList.add("active"));
 
-  setTimeout(()=>{
-    if(!batal && !redirected){
-      doRedirect();
-    }
-  }, timeout);
-})();
-</script>
+            closeSidebar();
+
+            setTimeout(() => {
+                const iframe = targetTab ? targetTab.querySelector("iframe") : null;
+                if (iframe) patchIframeLinks(iframe);
+            }, 100);
+        }
+
+        function triggerNav(tabName) {
+            openTab(tabName);
+        }
+
+        function patchIframeLinks(iframe) {
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!doc) return;
+
+                const updateLinks = () => {
+                    doc.querySelectorAll("a").forEach(a => {
+                        a.target = "_top";
+                        a.rel = "noopener noreferrer";
+                    });
+                };
+
+                updateLinks();
+
+                const observer = new MutationObserver(updateLinks);
+                observer.observe(doc.body, {
+                    childList: true,
+                    subtree: true
+                });
+
+                iframe.__linkObserver = observer;
+            } catch (e) {
+                // Kalau beda domain, browser akan blok akses.
+            }
+        }
+
+        function updateSettingsUI() {
+            const mode = getSavedMode();
+            document.querySelectorAll(".setting-card[data-mode]").forEach(card => {
+                card.classList.toggle("active", card.getAttribute("data-mode") === mode);
+            });
+        }
+
+        function initIframePatches() {
+            document.querySelectorAll("iframe").forEach(iframe => {
+                iframe.addEventListener("load", () => patchIframeLinks(iframe));
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            initIframePatches();
+
+            const iframeBerita = document.getElementById("iframeBerita");
+            const iframeProject = document.getElementById("iframeProject");
+            if (iframeBerita) patchIframeLinks(iframeBerita);
+            if (iframeProject) patchIframeLinks(iframeProject);
+
+            document.querySelectorAll("[data-tab]").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const tab = btn.getAttribute("data-tab");
+                    openTab(tab);
+                });
+            });
+
+            document.querySelectorAll("[data-go]").forEach(card => {
+                card.addEventListener("click", () => {
+                    triggerNav(card.getAttribute("data-go"));
+                });
+            });
+
+            document.querySelectorAll(".setting-card[data-mode]").forEach(card => {
+                card.addEventListener("click", () => {
+                    setSavedMode(card.getAttribute("data-mode"));
+                });
+            });
+
+            hamburgerBtn.addEventListener("click", openSidebar);
+            overlay.addEventListener("click", closeSidebar);
+            closeSidebarBtn.addEventListener("click", closeSidebar);
+
+            window.addEventListener("resize", applyNavMode);
+
+            updateSettingsUI();
+            applyNavMode();
+        });
+    </script>
 </body>
 </html>
