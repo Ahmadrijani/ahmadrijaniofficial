@@ -20,12 +20,12 @@
   html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:var(--bg);display:flex;flex-direction:column;}
   .header{display:flex;align-items:center;gap:8px;padding:10px;background:var(--panel);border-bottom:1px solid rgba(255,255,255,0.03);flex-wrap:wrap;position:relative;backdrop-filter: blur(6px)}
   .header h1{margin:0;flex:1;font-size:1.2rem}
-  .controls{display:flex;gap:8px;align-items:center}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 
   /* search with icon */
   .search-wrapper{position:relative;display:flex;align-items:center}
   .search-wrapper i{position:absolute;left:10px;font-size:0.95rem;color:#9aa6bf}
-  .controls .search-input{padding:8px 12px 8px 34px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;outline:none;min-width:200px}
+  .controls .search-input{padding:8px 12px 8px 34px;border-radius:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;font-size:0.95rem;outline:none;min-width:0;flex:1 1 220px}
 
   /* filter button & centered popup */
   .btn-filter{padding:8px 10px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer}
@@ -39,7 +39,7 @@
   .btn-primary{background:var(--accent);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
 
   /* settings button styling (requested) */
-  .btn-settings{padding:8px 10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#7fb0ff);color:#fff;cursor:pointer;display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(77,144,254,0.12);transition:transform .12s,box-shadow .12s;font-weight:600}
+  .btn-settings{padding:8px 10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#7fb0ff);color:#fff;cursor:pointer;display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(77,144,254,0.12);transition:transform .12s,box-shadow .12s;font-weight:600;min-width:0}
   .btn-settings:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(77,144,254,0.18)}
   .btn-settings i{margin-right:6px;font-size:0.95rem}
 
@@ -114,6 +114,17 @@
   .link-icon{width:44px;height:44px;min-width:44px;border-radius:8px;display:grid;place-items:center;font-size:1.25rem;color:var(--muted);background:rgba(255,255,255,0.02);object-fit:cover}
   .link-title{font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .link-desc{font-size:0.9rem;color:#b9c6dc;opacity:0.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40ch}
+  .marquee-clip{overflow:hidden;white-space:nowrap;position:relative}
+  .marquee-track{display:inline-block;min-width:100%;will-change:transform}
+  .marquee-text{display:inline-block;white-space:nowrap}
+  .marquee-active .marquee-track{animation:marquee-move var(--marquee-duration, 9s) linear infinite}
+  .marquee-active:hover .marquee-track{animation-play-state:paused}
+  @keyframes marquee-move{
+    0%{transform:translateX(0)}
+    18%{transform:translateX(0)}
+    82%{transform:translateX(calc(-1 * var(--marquee-distance, 0px)))}
+    100%{transform:translateX(calc(-1 * var(--marquee-distance, 0px)))}
+  }
   /* ensure actions are always on the right and do not wrap */
   .link-actions{display:flex;gap:8px;align-items:center;margin-left:12px;flex-shrink:0}
   .btn-icon{background:none;border:none;color:var(--muted);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px}
@@ -127,6 +138,27 @@
   .preview-content{width:92%;max-width:900px;height:80%;background:var(--panel);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
   .preview-header{display:flex;justify-content:flex-end;gap:8px;padding:8px;background:#000}
   .preview-iframe{flex:1;border:none}
+
+/* fullscreen preview */
+.preview-popup.open{display:flex}
+.preview-content.fullscreen{width:100vw;height:100vh;max-width:none;border-radius:0}
+.preview-content.fullscreen .preview-header{position:sticky;top:0;z-index:2}
+.preview-iframe{width:100%;height:100%;display:block}
+
+/* mobile action menu */
+.link-actions{position:relative}
+.btn-more{display:none}
+.mobile-action-menu{position:absolute;right:0;top:calc(100% + 8px);min-width:180px;background:rgba(0,0,0,0.94);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:6px;box-shadow:0 12px 40px rgba(0,0,0,0.45);z-index:80;display:none;flex-direction:column;gap:4px}
+.mobile-action-menu.open{display:flex}
+.mobile-action-menu button{width:100%;justify-content:flex-start;display:flex;align-items:center;gap:8px;padding:8px 10px;border:none;background:transparent;color:#e6eef8;border-radius:8px;text-align:left}
+.mobile-action-menu button:hover{background:rgba(255,255,255,0.04)}
+.mobile-action-menu .danger{color:#ffb3b3}
+.link-actions .desktop-only{display:inline-flex}
+@media (max-width:760px){
+  .btn-more{display:inline-flex}
+  .link-actions .desktop-only{display:none !important}
+  .mobile-action-menu{display:none}
+}
 
   .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:0.95rem;opacity:0;transition:opacity .25s;z-index:1600}
   .toast.show{opacity:1}
@@ -154,11 +186,17 @@
   .settings-menu::-webkit-scrollbar, .modal-box::-webkit-scrollbar, .editcss-box::-webkit-scrollbar{width:10px}
   .settings-menu::-webkit-scrollbar-thumb, .modal-box::-webkit-scrollbar-thumb, .editcss-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px}
   @media (max-width:760px){
+    .header{padding:8px}
     .header h1{font-size:1.0rem}
+    .controls{width:100%}
+    .search-wrapper{flex:1 1 100%}
+    .controls .search-input{width:100%;flex:1 1 100%}
+    .btn-filter,.btn-settings{flex:1 1 0;justify-content:center}
     .card-view .link-card{flex:0 0 200px;min-width:200px;height:300px}
     .filter-panel{left:50%;top:50%;transform:translate(-50%,-50%);min-width:90%}
     .settings-menu{width:94%;max-height:70vh}
     .link-desc{max-width:28ch}
+    .preview-content,.modal-box,.debug-box,.editcss-box{width:96%}
   }
 </style>
 
@@ -348,7 +386,7 @@
         </div>
         <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
           <button id="open-website-mod-btn" class="btn-primary" onclick="window.location.href='https://kuningminum.github.io/Kumin/mod/Store.html'">Open Mod Website</button>
-          <button id="open-mod-store-btn" class="btn-primary">Buka Toko Mods (bug)</button>
+          <button id="open-mod-store-btn" class="btn-primary">Buka Toko Mods</button>
         
         </div>
         <div id="mod-store-list" style="max-height:220px;overflow:auto;margin-top:8px"></div>
@@ -546,7 +584,7 @@
   <main class="container" id="link-container"></main>
 
   <div class="preview-popup" id="preview-popup">
-    <div class="preview-content">
+    <div class="preview-content fullscreen">
       <div class="preview-header">
         <button class="btn-icon" id="btn-go" title=""><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
         <button class="btn-icon" id="btn-close" title=""><i class="fa-solid fa-xmark"></i></button>
@@ -569,7 +607,7 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="original-link-small" id="original-link-small"><a id="original-link-anchor" href="https://kuningminum.github.io/Kumin/Global%20Links.html" target="_blank" style="color:var(--accent);text-decoration:underline"></a></div>
+  <div class="original-link-small" id="original-link-small"><a id="original-link-anchor" href="https://kuningminum.github.io/Kumin/Global%20Links.html" target="_top" style="color:var(--accent);text-decoration:underline"></a></div>
   <div class="loading-overlay" id="loading-overlay"><div class="spinner" aria-hidden="true"></div><div class="loading-text" id="loading-text">Memuat data...</div></div>
 
 <script>
@@ -585,6 +623,25 @@ const MODS_KEY = 'mods_installed'; // installed mods
 
 // Perubahan: mod store URL sesuai permintaan
 const MOD_STORE_URL = 'https://raw.githubusercontent.com/KuningMinum/Kumin/refs/heads/main/mod_store.json';
+const MOD_STORE_FALLBACK_URLS = [
+  MOD_STORE_URL,
+  'https://kuningminum.github.io/Kumin/mod_store.json'
+];
+
+const DEFAULT_BUILTIN_MOD = {
+  id: 'default-popplin-font',
+  name: 'Popplin Font',
+  description: 'Font default dari Google Fonts untuk tampilan yang lebih rapi.',
+  icon: '',
+  enabled: true,
+  code: '',
+  css: `@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+:root{--font-default:'Poppins',Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;}
+html,body,button,input,select,textarea,.settings-menu,.modal-box,.debug-box,.editcss-box{font-family:var(--font-default)!important;}
+body{font-family:var(--font-default)!important;}`, 
+  source: 'builtin',
+  builtin: true
+};
 
 const T = {
   id:{
@@ -664,7 +721,7 @@ let lastErrorMessage = "";
 let originalBaseCss = document.getElementById('base-style').textContent || "";
 let localLinkOverrides = JSON.parse(localStorage.getItem("local_link_overrides")||"{}");
 let filtersSelected = new Set(JSON.parse(localStorage.getItem('filters_selected')||'[]'));
-let pinMode = localStorage.getItem('pin_mode') || 'star'; // 'star' or 'pin'
+let pinMode = localStorage.getItem('pin_mode') || 'pin'; // 'star' or 'pin'
 let pinnedItems = new Set(JSON.parse(localStorage.getItem('pinned_items')||'[]'));
 let extraSources = JSON.parse(localStorage.getItem(EXTRA_SOURCES_KEY) || '[]'); // user-added sources
 
@@ -683,6 +740,15 @@ let experimentalOffline = (localStorage.getItem('experimental_offline_mode') ===
 let mods = JSON.parse(localStorage.getItem(MODS_KEY) || '[]'); // each mod: {id,name,icon,enabled,code,css,source}
 const modScriptEls = {}; // map mod.id -> script element(s) injected
 const modStyleEls = {}; // map mod.id -> style element(s) injected
+
+function ensureDefaultBuiltinMod(){
+  const exists = mods.some(m => String(m.id || '').toLowerCase() === DEFAULT_BUILTIN_MOD.id);
+  if(!exists){
+    mods.unshift({...DEFAULT_BUILTIN_MOD});
+    saveMods();
+  }
+}
+ensureDefaultBuiltinMod();
 
 // new: suppress automatic mod execution until user consents
 let suppressModsOnLoad = false;
@@ -807,6 +873,28 @@ function showToast(msg, ms=3000){ toast.textContent = msg; toast.classList.add("
 function isUrl(s){ if(!s) return false; return /^(https?:\/\/|data:|\/)/i.test(s); }
 function saveMods(){ localStorage.setItem(MODS_KEY, JSON.stringify(mods)); }
 
+const debugLog = [];
+function addDebug(type, message, detail){
+  const entry = {
+    time: new Date().toISOString(),
+    type,
+    message: String(message || ''),
+    detail: detail ? (typeof detail === 'string' ? detail : JSON.stringify(detail, null, 2)) : ''
+  };
+  debugLog.push(entry);
+  if(debugLog.length > 80) debugLog.shift();
+  if(type === 'error'){
+    lastErrorMessage = `${entry.time} [${entry.type}] ${entry.message}${entry.detail ? `\n${entry.detail}` : ''}`;
+  }
+}
+window.addEventListener('error', (ev)=>{
+  addDebug('error', ev.message || 'Window error', ev.error && ev.error.stack ? ev.error.stack : '');
+});
+window.addEventListener('unhandledrejection', (ev)=>{
+  const reason = ev.reason;
+  addDebug('error', 'Unhandled promise rejection', reason && reason.stack ? reason.stack : reason);
+});
+
 /* ================= UI LANGUAGE ================= */
 function applyLanguageUI(){
   headerTitle.textContent = t("title");
@@ -842,6 +930,44 @@ function createIconNode(link, cls='link-icon', sizeStyle=''){
     const i = document.createElement("i"); i.className = link.icon || 'fa-solid fa-link'; wrapper.appendChild(i);
   }
   return wrapper;
+}
+
+function makeMarqueeText(text, className){
+  const clip = document.createElement('div');
+  clip.className = 'marquee-clip';
+
+  const track = document.createElement('span');
+  track.className = 'marquee-track';
+
+  const span = document.createElement('span');
+  span.className = `marquee-text ${className || ''}`.trim();
+  span.textContent = text || '';
+
+  track.appendChild(span);
+  clip.appendChild(track);
+  return clip;
+}
+
+function applyOverflowMarquee(root=document){
+  const nodes = root.querySelectorAll('.marquee-clip');
+  nodes.forEach(clip=>{
+    const track = clip.querySelector('.marquee-track');
+    const text = clip.querySelector('.marquee-text');
+    if(!track || !text) return;
+
+    clip.classList.remove('marquee-active');
+    track.style.removeProperty('--marquee-distance');
+    track.style.removeProperty('--marquee-duration');
+
+    const overflow = text.scrollWidth > clip.clientWidth + 2;
+    if(overflow){
+      const distance = Math.max(20, text.scrollWidth - clip.clientWidth + 40);
+      const duration = Math.max(6, Math.min(16, distance / 26));
+      track.style.setProperty('--marquee-distance', `${distance}px`);
+      track.style.setProperty('--marquee-duration', `${duration}s`);
+      clip.classList.add('marquee-active');
+    }
+  });
 }
 
 /* ================= FILTER PANEL ================= */
@@ -964,7 +1090,7 @@ function renderModsList(){
     const left = document.createElement('div'); left.className = 'mod-info';
     const icon = document.createElement('div'); icon.className = 'mod-icon';
     icon.innerHTML = m.icon ? `<img src="${m.icon}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" />` : '<i class="fa-solid fa-puzzle-piece"></i>';
-    const info = document.createElement('div'); info.innerHTML = `<div style="font-weight:700">${m.name}</div><div style="font-size:0.85rem;color:#9aa6bf">${m.source || ''}</div>`;
+    const info = document.createElement('div'); info.innerHTML = `<div style="font-weight:700">${m.name}${m.builtin ? ' <span style="color:#ffd94d">(default)</span>' : ''}</div><div style="font-size:0.85rem;color:#9aa6bf">${m.source || ''}</div>`;
     left.appendChild(icon); left.appendChild(info);
 
     const right = document.createElement('div'); right.className = 'mod-actions';
@@ -1123,79 +1249,210 @@ function handleModFileUpload(file){
   reader.readAsText(file);
 }
 
-/* Mod store: fetch MOD_STORE_URL and render items with install button */
+/* Mod store: fetch MOD_STORE_URL and render items with install/uninstall toggle */
+function normalizeStoreItems(raw){
+  let items = [];
+  if(Array.isArray(raw)){
+    items = raw;
+  } else if(raw && Array.isArray(raw.mods)){
+    items = raw.mods;
+  } else if(raw && Array.isArray(raw.items)){
+    items = raw.items;
+  } else if(raw && Array.isArray(raw.data)){
+    items = raw.data;
+  } else if(raw && typeof raw === 'object'){
+    items = Object.values(raw);
+  }
+
+  items = items
+    .filter(Boolean)
+    .map((it, idx)=>({
+      id: it.id || it.slug || it.key || `store-${idx}-${Date.now()}`,
+      name: it.name || it.title || `Store Mod ${idx+1}`,
+      description: it.description || it.desc || '',
+      icon: it.icon || '',
+      code: it.code || '',
+      css: it.css || '',
+      enabled: !!it.enabled,
+      source: it.source || MOD_STORE_URL
+    }))
+
+  return items;
+}
+
+async function fetchStoreJson(){
+  let lastErr = null;
+  for(const url of MOD_STORE_FALLBACK_URLS){
+    try{
+      const res = await fetch(url + '?_=' + Date.now(), {cache:'no-store'});
+      if(!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+      return await res.json();
+    } catch(err){
+      lastErr = err;
+      addDebug('warn', `Store fetch gagal: ${url}`, err && err.stack ? err.stack : String(err));
+    }
+  }
+  throw lastErr || new Error('Store fetch failed');
+}
+
 async function openModStore(){
   modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Loading store...</div>';
   try{
-    const res = await fetch(MOD_STORE_URL + '?_=' + Date.now());
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const j = await res.json();
-    // expect j.mods = [{id,name,icon,code,css,auto_enable/active/enabled}]
-    const items = j.mods || j;
-    if(!Array.isArray(items) || items.length === 0){ modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Store kosong.</div>'; return; }
+    const j = await fetchStoreJson();
+    const items = normalizeStoreItems(j);
+    if(!Array.isArray(items) || items.length === 0){
+      modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Store kosong.</div>';
+      return;
+    }
+
     modStoreListEl.innerHTML = '';
     items.forEach(it=>{
-      const row = document.createElement('div'); row.className = 'mod-store-item';
-      const left = document.createElement('div'); left.style.display='flex'; left.style.alignItems='center'; left.style.gap='8px';
-      const icon = document.createElement('div'); icon.className = 'mod-icon'; icon.innerHTML = it.icon ? `<img src="${it.icon}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" />` : '<i class="fa-solid fa-box"></i>';
-      const info = document.createElement('div'); info.innerHTML = `<div style="font-weight:700">${it.name}</div><div style="font-size:0.85rem;color:#9aa6bf">${it.description||''}</div>`;
-      left.appendChild(icon); left.appendChild(info);
+      const installedMod = mods.find(m => (m.id && m.id === it.id) || (m.name === it.name && (m.source || '') === (it.source || '')) || (m.builtin && it.id === DEFAULT_BUILTIN_MOD.id));
+      const row = document.createElement('div');
+      row.className = 'mod-store-item';
+
+      const left = document.createElement('div');
+      left.style.display='flex';
+      left.style.alignItems='center';
+      left.style.gap='8px';
+      left.style.minWidth='0';
+
+      const icon = document.createElement('div');
+      icon.className = 'mod-icon';
+      icon.innerHTML = it.icon ? `<img src="${it.icon}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" />` : '<i class="fa-solid fa-box"></i>';
+
+      const info = document.createElement('div');
+      info.style.minWidth = '0';
+      info.innerHTML = `<div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${it.name}</div><div style="font-size:0.85rem;color:#9aa6bf;overflow:hidden;text-overflow:ellipsis">${it.description||''}</div>`;
+      left.appendChild(icon);
+      left.appendChild(info);
+
       const right = document.createElement('div');
-      const installed = mods.some(m=>m.source === (it.source||MOD_STORE_URL) && m.name === it.name);
-      const btn = document.createElement('button'); btn.className = installed ? 'btn-ghost' : 'btn-primary'; btn.textContent = installed ? 'Installed' : 'Install';
-      btn.disabled = installed;
+      const btn = document.createElement('button');
+      btn.className = installedMod ? 'btn-ghost' : 'btn-primary';
+      btn.textContent = installedMod ? 'Uninstall' : 'Install';
+
       btn.addEventListener('click', ()=>{
-        installMod({id: it.id || 'mod-'+Date.now(), name: it.name, icon: it.icon, enabled: true, code: it.code||'', css: it.css||'', source: it.source || MOD_STORE_URL});
-        btn.textContent = 'Installed'; btn.disabled = true;
+        const existing = mods.find(m => (m.id && m.id === it.id) || (m.name === it.name && (m.source || '') === (it.source || '')));
+        if(existing){
+          uninstallMod(existing.id);
+          openModStore();
+          return;
+        }
+        installMod({
+          id: it.id || 'mod-'+Date.now(),
+          name: it.name,
+          icon: it.icon,
+          enabled: !!it.enabled,
+          code: it.code || '',
+          css: it.css || '',
+          source: it.source || MOD_STORE_URL
+        });
+        openModStore();
       });
+
       right.appendChild(btn);
-      row.appendChild(left); row.appendChild(right);
+      row.appendChild(left);
+      row.appendChild(right);
       modStoreListEl.appendChild(row);
     });
   } catch(e){
-    modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Gagal memuat store.</div>';
+    addDebug('error', 'Gagal memuat mod store', e && e.stack ? e.stack : String(e));
+    modStoreListEl.innerHTML = '<div style="color:#9aa6bf">Gagal memuat store. Cek Debug.</div>';
     console.warn(e);
   }
 }
 
 /* ================= PIN/STAR ACTION CREATOR ================= */
-function togglePin(url){ if(pinnedItems.has(url)) pinnedItems.delete(url); else pinnedItems.add(url); localStorage.setItem('pinned_items', JSON.stringify(Array.from(pinnedItems))); }
+function togglePin(url){
+  if(pinnedItems.has(url)) pinnedItems.delete(url);
+  else pinnedItems.add(url);
+  localStorage.setItem('pinned_items', JSON.stringify(Array.from(pinnedItems)));
+}
 
 function createActionButtons(link){
-  const actions = document.createElement('div'); actions.className = 'link-actions';
-  const eye = document.createElement('button'); eye.className='btn-icon'; eye.title = t('preview'); eye.innerHTML = '<i class="fa-solid fa-eye"></i>';
-  eye.addEventListener('click',(e)=>{ e.stopPropagation(); openPreview(link.url); });
-  const open = document.createElement('button'); open.className='btn-icon'; open.title = t('open_link'); open.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-  open.addEventListener('click',(e)=>{ e.stopPropagation(); window.location.href = link.url; });
-  const copyBtn = document.createElement('button'); copyBtn.className = 'btn-icon'; copyBtn.title = t('copy_link'); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-  copyBtn.addEventListener('click',(e)=>{ e.stopPropagation(); navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t('copy_link')+" ✅")); });
+  const actions = document.createElement('div');
+  actions.className = 'link-actions';
 
-  actions.appendChild(eye); actions.appendChild(open); actions.appendChild(copyBtn);
+  const openUrl = ()=> { window.open(link.url, '_top'); };
+  const previewUrl = ()=> openPreview(link.url);
+  const copyUrl = ()=> {
+    navigator.clipboard && navigator.clipboard.writeText(link.url).then(()=> showToast(t('copy_link') + ' ✅'));
+  };
+  const toggleMark = ()=>{
+    if(pinMode === 'pin'){
+      togglePin(link.url);
+    } else {
+      const found = favoriteLinks.find(f=>f.url===link.url);
+      if(found){
+        favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url);
+      } else {
+        favoriteLinks.push({...link});
+      }
+      localStorage.setItem('favoriteLinks', JSON.stringify(favoriteLinks));
+    }
+    renderLinks(linksData, searchBox.value);
+  };
 
-  const modeBtn = document.createElement('button'); modeBtn.className = 'btn-icon';
-  if(pinMode === 'pin'){
-    modeBtn.innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
-    if(pinnedItems.has(link.url)) modeBtn.classList.add('pinned');
-    modeBtn.addEventListener('click',(e)=>{ e.stopPropagation(); togglePin(link.url); renderLinks(linksData, searchBox.value); });
-    actions.appendChild(modeBtn);
-  } else {
-    modeBtn.innerHTML = '<i class="fa-solid fa-star"></i>';
-    if(favoriteLinks.some(f=>f.url===link.url)) modeBtn.classList.add('favorite');
-    modeBtn.addEventListener('click',(e)=>{ 
-      e.stopPropagation(); 
-      const found = favoriteLinks.find(f=>f.url===link.url); 
-      if(found){ 
-        favoriteLinks = favoriteLinks.filter(f=>f.url!==link.url); 
-      } else { 
-        // store the full link object so the "Star" group can show it
-        favoriteLinks.push({...link}); 
-      } 
-      localStorage.setItem('favoriteLinks', JSON.stringify(favoriteLinks)); 
-      renderLinks(linksData, searchBox.value); 
-    });
-    actions.appendChild(modeBtn);
-  }
+  const desktopItems = [
+    { key:'preview', icon:'fa-solid fa-eye', title:t('preview'), onClick: previewUrl },
+    { key:'open', icon:'fa-solid fa-arrow-up-right-from-square', title:t('open_link'), onClick: openUrl },
+    { key:'copy', icon:'fa-regular fa-copy', title:t('copy_link'), onClick: copyUrl },
+    {
+      key:'mark',
+      icon: pinMode === 'pin' ? 'fa-solid fa-thumbtack' : 'fa-solid fa-star',
+      title: pinMode === 'pin' ? 'Pin' : 'Star',
+      onClick: toggleMark
+    }
+  ];
 
+  desktopItems.forEach(item=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn-icon desktop-only';
+    btn.title = item.title;
+    btn.innerHTML = `<i class="${item.icon}"></i>`;
+    if(item.key === 'mark'){
+      if(pinMode === 'pin'){
+        if(pinnedItems.has(link.url)) btn.classList.add('pinned');
+      } else if(favoriteLinks.some(f=>f.url===link.url)){
+        btn.classList.add('favorite');
+      }
+    }
+    btn.addEventListener('click',(e)=>{ e.stopPropagation(); item.onClick(); });
+    actions.appendChild(btn);
+  });
+
+  const moreBtn = document.createElement('button');
+  moreBtn.className = 'btn-icon btn-more';
+  moreBtn.title = 'Menu';
+  moreBtn.innerHTML = '<i class="fa-solid fa-ellipsis-vertical"></i>';
+
+  const menu = document.createElement('div');
+  menu.className = 'mobile-action-menu';
+
+  const menuItems = [
+    { label: t('preview'), icon: 'fa-solid fa-eye', onClick: previewUrl },
+    { label: t('open_link'), icon: 'fa-solid fa-arrow-up-right-from-square', onClick: openUrl },
+    { label: t('copy_link'), icon: 'fa-regular fa-copy', onClick: copyUrl },
+    { label: pinMode === 'pin' ? 'Pin' : 'Star', icon: pinMode === 'pin' ? 'fa-solid fa-thumbtack' : 'fa-solid fa-star', onClick: toggleMark }
+  ];
+
+  menuItems.forEach(item=>{
+    const b = document.createElement('button');
+    b.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
+    b.addEventListener('click', (e)=>{ e.stopPropagation(); menu.classList.remove('open'); item.onClick(); });
+    menu.appendChild(b);
+  });
+
+  moreBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.mobile-action-menu.open').forEach(el=>el.classList.remove('open'));
+    if(!isOpen) menu.classList.add('open');
+  });
+
+  actions.appendChild(moreBtn);
+  actions.appendChild(menu);
   return actions;
 }
 
@@ -1320,11 +1577,17 @@ function renderLinks(list, search=""){
         const left = document.createElement("div"); left.className = "item-left";
         const icon = createIconNode(link);
         const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleTextRaw}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        const tEl = document.createElement("div");
+        tEl.appendChild(makeMarqueeText(titleTextRaw, 'link-title'));
+        const descTextRaw = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+        const dWrap = makeMarqueeText(descTextRaw, 'link-desc');
+        dWrap.style.fontSize = '0.8rem';
+        dWrap.style.color = '#9aa6bf';
+        tEl.appendChild(dWrap);
         left.appendChild(icon); left.appendChild(tEl);
         const actions = createActionButtons(link);
         row.appendChild(left); row.appendChild(actions);
-        row.addEventListener("click", ()=> window.location.href = link.url );
+        row.addEventListener("click", ()=> window.open(link.url, '_top') );
         starItems.appendChild(row);
       });
       starHeader.appendChild(starItems);
@@ -1343,11 +1606,17 @@ function renderLinks(list, search=""){
         const left = document.createElement("div"); left.className = "item-left";
         const icon = createIconNode(link);
         const titleTextRaw = (currentLang==="id")? (link.title_id||link.title_en||"") : (link.title_en||link.title_id||"");
-        const tEl = document.createElement("div"); tEl.innerHTML = `<div class="link-title">${titleTextRaw}</div><div class="link-desc" style="font-size:0.8rem;color:#9aa6bf">${(currentLang==="id")? (link.description_id||"") : (link.description_en||"")}</div>`;
+        const tEl = document.createElement("div");
+        tEl.appendChild(makeMarqueeText(titleTextRaw, 'link-title'));
+        const descTextRaw = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
+        const dWrap = makeMarqueeText(descTextRaw, 'link-desc');
+        dWrap.style.fontSize = '0.8rem';
+        dWrap.style.color = '#9aa6bf';
+        tEl.appendChild(dWrap);
         left.appendChild(icon); left.appendChild(tEl);
         const actions = createActionButtons(link);
         row.appendChild(left); row.appendChild(actions);
-        row.addEventListener("click", ()=> window.location.href = link.url );
+        row.addEventListener("click", ()=> window.open(link.url, '_top') );
         pinItems.appendChild(row);
       });
       pinHeader.appendChild(pinItems);
@@ -1370,7 +1639,7 @@ function renderLinks(list, search=""){
 
       const actions = createActionButtons(link);
       row.appendChild(left); row.appendChild(actions);
-      row.addEventListener("click", ()=> window.location.href = link.url );
+      row.addEventListener("click", ()=> window.open(link.url, '_top') );
       container.appendChild(row);
     });
 
@@ -1428,7 +1697,7 @@ function renderLinks(list, search=""){
         const acts = createActionButtons(link);
         card.appendChild(left); card.appendChild(acts);
       }
-      card.addEventListener("click", ()=> window.location.href = link.url );
+      card.addEventListener("click", ()=> window.open(link.url, '_top') );
       items.appendChild(card);
     });
     section.appendChild(items);
@@ -1471,7 +1740,7 @@ function renderLinks(list, search=""){
         const desc = document.createElement("div"); desc.className = "link-desc"; desc.textContent = (currentLang==="id")? (link.description_id||"") : (link.description_en||"");
         const acts = createActionButtons(link);
         card.appendChild(icon); card.appendChild(title); card.appendChild(desc); card.appendChild(acts);
-        card.addEventListener("click", ()=> window.location.href = link.url );
+        card.addEventListener("click", ()=> window.open(link.url, '_top') );
         items.appendChild(card);
       });
 
@@ -1494,7 +1763,7 @@ function renderLinks(list, search=""){
         left.appendChild(icon); left.appendChild(tEl);
         const acts = createActionButtons(link);
         row.appendChild(left); row.appendChild(acts);
-        row.addEventListener("click", ()=> window.location.href = link.url );
+        row.addEventListener("click", ()=> window.open(link.url, '_top') );
         items.appendChild(row);
       });
       section.appendChild(items);
@@ -1505,8 +1774,17 @@ function renderLinks(list, search=""){
 }
 
 /* ================= PREVIEW ================= */
-function openPreview(url){ previewFrame.src = url; previewPopup.style.display = "flex"; btnGo.onclick = ()=> window.location.href = url; }
-btnClose.addEventListener("click", ()=>{ previewPopup.style.display = "none"; previewFrame.src = ""; });
+function openPreview(url){
+  previewFrame.src = url;
+  previewPopup.classList.add('open');
+  previewPopup.style.display = "flex";
+  btnGo.onclick = ()=> window.open(url, '_top');
+}
+btnClose.addEventListener("click", ()=>{
+  previewPopup.classList.remove('open');
+  previewPopup.style.display = "none";
+  previewFrame.src = "";
+});
 
 /* ================= SETTINGS INTERACTIONS ================= */
 btnSettings.addEventListener("click", ()=>{ settingsOverlay.classList.add("open"); });
@@ -1587,7 +1865,12 @@ resetCssBtn.addEventListener('click', ()=> {
 });
 
 /* DEBUG */
-debugBtn.addEventListener("click", ()=> { const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors"); debugArea.textContent = msg; debugPopup.style.display = "flex"; });
+debugBtn.addEventListener("click", ()=>{
+  const msg = lastErrorMessage && lastErrorMessage.trim() ? lastErrorMessage : t("no_errors");
+  const recent = debugLog.slice(-12).map(x => `${x.time} [${x.type}] ${x.message}${x.detail ? `\n${x.detail}` : ''}`).join('\n\n');
+  debugArea.textContent = recent ? `${msg}\n\n--- Log terakhir ---\n${recent}` : msg;
+  debugPopup.style.display = "flex";
+});
 debugClose.addEventListener("click", ()=> debugPopup.style.display = "none");
 copyDebugBtn.addEventListener("click", ()=> { const text = debugArea.textContent; navigator.clipboard && navigator.clipboard.writeText(text).then(()=> showToast("Copied debug ✅")); });
 
@@ -1878,7 +2161,7 @@ resetModalOk.addEventListener('click', ()=>{
   toReset.forEach(k=>{
     if(k === 'favoriteLinks') localStorage.removeItem('favoriteLinks');
     if(k === 'local_link_overrides') localStorage.removeItem('local_link_overrides');
-    if(k === 'mods') { mods = []; saveMods(); }
+    if(k === 'mods') { mods = []; ensureDefaultBuiltinMod(); saveMods(); }
     if(k === 'pinned_items') localStorage.removeItem('pinned_items');
     if(k === 'filters_selected') localStorage.removeItem('filters_selected');
     if(k === 'settings'){ localStorage.removeItem('lang'); localStorage.removeItem('viewMode'); localStorage.removeItem('merge_sources'); localStorage.removeItem('simple_mode'); localStorage.removeItem('pin_mode'); localStorage.removeItem('sort_mode'); localStorage.removeItem('show_group_count'); localStorage.removeItem('compact_list'); localStorage.removeItem('merge_duplicate_links'); localStorage.removeItem('experimental_offline_mode'); }
@@ -2032,6 +2315,11 @@ modWarningCloseBtn && modWarningCloseBtn.addEventListener('click', ()=>{
 /* ================= INIT & search ================= */
 function enforceSmallScreenBehavior(){ if(window.innerWidth <= 760){ selView.value = "list"; } else selView.value = viewMode; }
 window.addEventListener("resize", ()=> { enforceSmallScreenBehavior(); renderLinks(linksData, searchBox.value); });
+window.addEventListener('resize', ()=> {
+  document.querySelectorAll('.mobile-action-menu.open').forEach(el=>el.classList.remove('open'));
+  applyOverflowMarquee(linkContainer);
+    requestAnimationFrame(()=>applyOverflowMarquee(linkContainer));
+});
 
 function init(){
   if(localStorage.getItem('merge_duplicate_links') === null){
@@ -2047,6 +2335,7 @@ function init(){
   applyLanguageUI();
   enforceSmallScreenBehavior();
   if(pinMode === 'pin') pinmodePin.checked = true; else pinmodeStar.checked = true;
+  if(!localStorage.getItem('pin_mode')) localStorage.setItem('pin_mode', 'pin');
 
   renderExtraSourcesList();
   populateFilterPanel();
