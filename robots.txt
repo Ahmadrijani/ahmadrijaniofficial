@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ahmadrijani.github.io/ahmadrijaniofficial/sitemap.xml
