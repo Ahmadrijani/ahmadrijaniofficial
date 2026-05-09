@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Poppins', -apple-system, sans-serif;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .judul-utama {
+            margin-bottom: 10px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .subjudul {
+            color: #aaa;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .status {
+            padding: 14px 16px;
+            border: 1px solid #222;
+            background: #111;
+            border-radius: 12px;
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #00a8ff;
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #222;
+            padding-bottom: 8px;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .v-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-decoration: none;
+            display: block;
+        }
+
+        .v-card:hover {
+            border-color: #00a8ff;
+            transform: translateY(-5px);
+            background: #161616;
+            box-shadow: 0 10px 20px rgba(0, 168, 255, 0.1);
+        }
+
+        .v-thumb {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .v-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+            display: block;
+        }
+
+        .v-card:hover .v-thumb img {
+            transform: scale(1.04);
+        }
+
+        .playlist-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 168, 255, 0.9);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .v-info {
+            padding: 15px;
+        }
+
+        .v-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 3px 8px;
+            background: #222;
+            color: #00a8ff;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .yt-footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px dashed #333;
+        }
+
+        .yt-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: #111;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid #333;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .yt-btn:hover {
+            border-color: #ff0000;
+            background: #1a0000;
+            transform: scale(1.05);
+        }
+
+        .yt-btn img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid #444;
+            object-fit: cover;
+        }
+
+        .error {
+            color: #ff6b6b;
+            background: #1a1111;
+            border: 1px solid #442222;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 14px;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .yt-btn {
+                width: 100%;
+                justify-content: center;
+                border-radius: 16px;
+                padding: 14px 16px;
+            }
+
+            .yt-btn span {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="judul-utama">Project Gallery</div>
+   
+    <div id="status" class="status">Memuat data...</div>
+    <div id="kontainer-projek"></div>
+
+    <div class="yt-footer" id="footer-area" style="display:none;">
+        <a id="footer-link" href="#" class="yt-btn" target="_top" rel="noopener noreferrer">
+            <img id="footer-thumb" src="" alt="Icon">
+            <span id="footer-judul"></span>
+        </a>
+    </div>
+</div>
+
+<script src="ProjectITEM.js"></script>
+<script>
+    const ikonKategori = {
+        "Project Gelas": "fa-glass-water",
+        "Cinema & Film Project": "fa-film",
+        "IT & Networking": "fa-server",
+        "Explore": "fa-compass"
+    };
+
+    const kontainerProjek = document.getElementById("kontainer-projek");
+    const statusBox = document.getElementById("status");
+    const footerArea = document.getElementById("footer-area");
+    const footerLink = document.getElementById("footer-link");
+    const footerThumb = document.getElementById("footer-thumb");
+    const footerJudul = document.getElementById("footer-judul");
+
+    function buatKartuItem(item) {
+        const a = document.createElement("a");
+        a.href = item.url || "#";
+        a.className = "v-card";
+        a.target = "_top";
+        a.rel = "noopener noreferrer";
+
+        const thumb = document.createElement("div");
+        thumb.className = "v-thumb";
+
+        const img = document.createElement("img");
+        img.src = item.thumbnail || "";
+        img.alt = item.judul || "Thumbnail";
+        thumb.appendChild(img);
+
+        if ((item.tipe || "").toLowerCase() === "playlist") {
+            const badge = document.createElement("div");
+            badge.className = "playlist-icon";
+            badge.innerHTML = '<i class="fa fa-list"></i> PLAYLIST';
+            thumb.appendChild(badge);
+        }
+
+        const info = document.createElement("div");
+        info.className = "v-info";
+
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = item.tag || "ITEM";
+
+        const judul = document.createElement("h4");
+        judul.textContent = item.judul || "Tanpa Judul";
+
+        info.appendChild(tag);
+        info.appendChild(judul);
+
+        a.appendChild(thumb);
+        a.appendChild(info);
+
+        return a;
+    }
+
+    function buatKategori(kategoriData) {
+        const judul = kategoriData.kategori || "Kategori";
+        const section = document.createElement("section");
+
+        const title = document.createElement("div");
+        title.className = "category-title";
+
+        const icon = document.createElement("i");
+        icon.className = `fa ${ikonKategori[judul] || "fa-folder"}`;
+
+        const teks = document.createElement("span");
+        teks.textContent = judul;
+
+        title.appendChild(icon);
+        title.appendChild(teks);
+
+        const grid = document.createElement("div");
+        grid.className = "project-grid";
+
+        (kategoriData.items || []).forEach(item => {
+            grid.appendChild(buatKartuItem(item));
+        });
+
+        section.appendChild(title);
+        section.appendChild(grid);
+
+        return section;
+    }
+
+    function tampilkanFooter(footer) {
+        if (!footer) return;
+
+        footerArea.style.display = "block";
+        footerLink.href = footer.url || "#";
+        footerThumb.src = footer.thumbnail || "";
+        footerThumb.alt = footer.judul || "Footer Icon";
+        footerJudul.textContent = footer.judul || "Lihat lainnya";
+    }
+
+    function muatData() {
+        try {
+            const data = ProjectITEM;
+
+            kontainerProjek.innerHTML = "";
+
+            if (Array.isArray(data.projek)) {
+                data.projek.forEach(kategori => {
+                    kontainerProjek.appendChild(buatKategori(kategori));
+                });
+            }
+
+            tampilkanFooter(data.footer);
+
+            statusBox.textContent = "Data berhasil dimuat.";
+            setTimeout(() => {
+                statusBox.style.display = "none";
+            }, 1200);
+        } catch (error) {
+            statusBox.textContent = "Gagal memuat data dari ProjectITEM.js.";
+            statusBox.classList.add("error");
+            console.error(error);
+        }
+    }
+
+    muatData();
+</script>
+
+</body>
+</html>
