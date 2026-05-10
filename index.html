@@ -56,7 +56,6 @@
     <meta property="og:url" content="https://ahmadrijani.github.io/ahmadrijaniofficial/">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg">
-</head>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,7 +71,7 @@
             --accent2: #0f6aa8;
         }
 
-        body, html {
+        html, body {
             height: 100%;
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             background: var(--bg);
@@ -278,6 +277,7 @@
             display: none;
             width: 100%;
             height: 100%;
+            min-height: 0;
             animation: fadeIn 0.3s ease-in;
         }
 
@@ -426,6 +426,145 @@
             line-height: 1.4;
         }
 
+        .popup-overlay{
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 3600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .popup-overlay.active{
+            display: flex;
+        }
+
+        .popup-card{
+            width: min(92vw, 420px);
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: linear-gradient(180deg, rgba(18,18,18,0.98), rgba(8,8,8,0.98));
+            box-shadow: 0 25px 80px rgba(0,0,0,0.55);
+            padding: 18px;
+            backdrop-filter: blur(18px);
+        }
+
+        .popup-card h3{
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .popup-card p{
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .popup-actions{
+            display: grid;
+            gap: 10px;
+        }
+
+        .popup-actions .win7-btn{
+            width: 100%;
+            min-height: 48px;
+            justify-content: flex-start;
+            padding: 0 14px;
+            font-size: 14px;
+        }
+
+        .popup-actions .win7-btn i{
+            width: 18px;
+            text-align: center;
+        }
+
+        .about-wrap{
+            height: 100%;
+            min-height: 0;
+            display:flex;
+            align-items: stretch;
+            justify-content:center;
+            padding: 18px;
+            overflow: hidden;
+        }
+
+        .about-card{
+            width: min(100%, 980px);
+            height: 100%;
+            min-height: 0;
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: radial-gradient(circle at top, rgba(0,168,255,0.14), rgba(255,255,255,0.03) 42%, rgba(255,255,255,0.02));
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            padding: 28px 22px;
+            text-align:center;
+            display:flex;
+            flex-direction:column;
+            overflow: hidden;
+        }
+
+        .about-card h2{
+            font-size: clamp(1.3rem, 4vw, 2rem);
+            margin-bottom: 12px;
+            flex: 0 0 auto;
+        }
+
+        .about-card .about-line{
+            width: 76px;
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), rgba(255,255,255,0.18));
+            margin: 0 auto 16px;
+            flex: 0 0 auto;
+        }
+
+        .about-shell{
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            text-align: left;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.28);
+            scrollbar-width: thin;
+            scrollbar-color: #333 #000;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .about-shell::-webkit-scrollbar { width: 6px; }
+        .about-shell::-webkit-scrollbar-track { background: #000; }
+        .about-shell::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .profil-bio{
+            color: #f2f2f2;
+            line-height: 1.8;
+            font-size: 15px;
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+
+        .profil-bio h3{
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .profil-bio p{
+            margin: 0 0 12px;
+        }
+
+        .kotak{
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
         .mobile-bottom-nav {
             display: none;
         }
@@ -452,10 +591,6 @@
             display:flex;
             align-items:center;
             justify-content:center;
-        }
-
-        .mobile-bottom-nav .nav-item.settings-wide{
-            grid-column: span 1;
         }
 
         .mobile-bottom-nav .nav-grid{
@@ -509,6 +644,21 @@
             .mobile-bottom-nav .nav-grid{
                 grid-template-columns: repeat(5, 1fr);
             }
+
+            .about-wrap{
+                padding: 12px;
+                align-items: stretch;
+            }
+
+            .about-card{
+                height: calc(100vh - 84px);
+                padding: 18px 14px;
+                border-radius: 18px;
+            }
+
+            .about-shell{
+                padding: 14px;
+            }
         }
 
         @media (max-width: 420px) {
@@ -538,7 +688,7 @@
 
     <header class="aero-header">
         <div class="brand">
-            <img src="https://i.pinimg.com/736x/34/e4/e7/34e4e751e0dfbb4e3e222e33634d8cab.jpg" class="avatar-small" alt="Avatar">
+            <img src="https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg" class="avatar-small" alt="Avatar">
             <h1>AHMAD RIJANI</h1>
         </div>
 
@@ -547,7 +697,7 @@
             <div class="win7-btn" data-tab="berita"><i class="fa fa-newspaper"></i> <span class="nav-label">Berita</span></div>
             <div class="win7-btn" data-tab="project"><i class="fa fa-folder-open"></i> <span class="nav-label">Project</span></div>
             <div class="win7-btn" data-tab="sosmed"><i class="fa fa-link"></i> <span class="nav-label">Sosial Media & Link</span></div>
-            <div class="win7-btn" data-tab="pengaturan"><i class="fa fa-gear"></i> <span class="nav-label">Pengaturan</span></div>
+            <div class="win7-btn" data-nav="lainnya"><i class="fa fa-ellipsis-h"></i> <span class="nav-label">Lainnya</span></div>
         </nav>
 
         <div class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
@@ -559,34 +709,91 @@
         <div class="window-frame">
             <div id="beranda" class="tab-content" style="display: block;">
                 <div class="hero">
-                    <img src="https://i.pinimg.com/736x/34/e4/e7/34e4e751e0dfbb4e3e222e33634d8cab.jpg" alt="Avatar">
+                    <img src="https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg" alt="Avatar">
                     <h2>Halo, nama saya <b>Ahmad Rijani</b></h2>
                     <div class="grid">
                         <div class="card" data-go="berita"><i class="fa fa-newspaper"></i><div>Berita</div></div>
                         <div class="card" data-go="project"><i class="fa fa-folder-open"></i><div>Project</div></div>
                         <div class="card" data-go="sosmed"><i class="fa fa-link"></i><div>Sosial Media & Link</div></div>
-                        <div class="card" data-go="pengaturan"><i class="fa fa-gear"></i><div>Pengaturan</div></div>
-                   </div>
-</div>
-</div>
+                        <div class="card" data-go="lainnya"><i class="fa fa-ellipsis-h"></i><div>Lainnya</div></div>
+                    </div>
+                </div>
+            </div>
 
+            <div id="berita" class="tab-content">
+                <iframe src="Website_Utama/news.html" id="iframeBerita"></iframe>
+            </div>
 
-<div id="berita" class="tab-content">
-    <iframe src="Website_Utama/news.html" id="iframeBerita"></iframe>
-</div>
+            <div id="project" class="tab-content">
+                <iframe src="Website_Utama/project.html" id="iframeProject"></iframe>
+            </div>
 
-<div id="project" class="tab-content">
-    <iframe src="Website_Utama/project.html" id="iframeProject"></iframe>
-</div>
+            <div id="sosmed" class="tab-content">
+                <iframe src="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" id="iframeSosmed"></iframe>
+            </div>
 
-<div id="sosmed" class="tab-content">
-    <iframe src="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" id="iframeSosmed"></iframe>
-</div>
+            <div id="tentang" class="tab-content">
+                <div class="about-wrap">
+                    <div class="about-card">
+                        <h2>Tentang Saya</h2>
+                        <div class="about-line"></div>
+                        <div class="about-shell">
+                            <div class="profil-bio">
+                                <h3>Ahmad Rijani</h3>
+                                <p>Content Creator • Blogger • Game Developer</p>
+
+                                <div class="kotak">
+                                    <p>
+                                        Halo, nama saya Ahmad Rijani. Saya adalah content creator, blogger, dan game developer
+                                        yang aktif di TikTok, Instagram, dan YouTube dengan nama
+                                        <b>@ahmadrijaniofficial</b>.
+                                    </p>
+
+                                    <p>
+                                        Saya juga membuat website ini sendiri sebagai project pribadi.
+                                    </p>
+                                </div>
+
+                                <div class="kotak">
+                                    <h3>ERO4 Entertainment</h3>
+                                    <p>
+                                        ERO4 Entertainment berfokus pada konten di YouTube, Instagram, dan TikTok.
+                                        Di sini saya membuat dan membagikan konten hiburan serta karya digital.
+                                    </p>
+                                </div>
+
+                                <div class="kotak">
+                                    <h3>ERO4 Studio</h3>
+                                    <p>
+                                        ERO4 Studio adalah bagian yang fokus pada game development.
+                                        Di sini saya membuat, mengembangkan, dan bereksperimen dengan project game.
+                                    </p>
+                                </div>
+
+                                <div class="kotak">
+                                    <h3>Jason Game Dev</h3>
+                                    <p>
+                                        Jason Game Dev adalah channel YouTube khusus untuk game development
+                                        dan proses pembuatan game yang saya kembangkan.
+                                    </p>
+                                </div>
+
+                                <div class="kotak">
+                                    <p>
+                                        *Kalau mau cek sosmed pindah aja ke tab <b>Sosial Media</b>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="pengaturan" class="tab-content">
                 <div class="settings-wrap">
-                    <div class="settings-title">Pengaturan Navigasi</div>
+                    <div class="settings-title">Setelan Navigasi</div>
                     <div class="settings-desc">
-                        Pilih tampilan menu saat layar mengecil. Default-nya adalah navigasi bawah.
+                        Pilih tampilan menu saat layar mengecil. Default-nya tetap navigasi bawah.
                     </div>
 
                     <div class="setting-grid">
@@ -608,6 +815,18 @@
     </main>
 
     <div class="overlay" id="overlay"></div>
+
+    <div class="popup-overlay" id="navPopup" aria-hidden="true">
+        <div class="popup-card" role="dialog" aria-modal="true" aria-labelledby="navPopupTitle">
+            <h3 id="navPopupTitle">Mau ke mana?</h3>
+            <p>Pilih tujuan yang ingin dibuka.</p>
+            <div class="popup-actions">
+                <div class="win7-btn" id="openSetelanBtn"><i class="fa fa-gear"></i><span>Setelan</span></div>
+                <div class="win7-btn" id="openTentangBtn"><i class="fa fa-user"></i><span>Tentang Saya</span></div>
+                <div class="win7-btn" id="closePopupBtn"><i class="fa fa-xmark"></i><span>Batal</span></div>
+            </div>
+        </div>
+    </div>
 
     <div class="mobile-sidebar" id="mobileMenu" aria-hidden="true">
         <div class="sidebar-head">
@@ -635,9 +854,9 @@
                     <i class="fa fa-link"></i>
                     <span class="nav-label">Link</span>
                 </div>
-                <div class="win7-btn sidebar-btn" data-tab="pengaturan">
-                    <i class="fa fa-gear"></i>
-                    <span class="nav-label">Pengaturan</span>
+                <div class="win7-btn sidebar-btn" data-nav="lainnya">
+                    <i class="fa fa-ellipsis-h"></i>
+                    <span class="nav-label">Lainnya</span>
                 </div>
             </div>
         </div>
@@ -661,9 +880,9 @@
                 <i class="fa fa-link"></i>
                 <span class="nav-label">Link</span>
             </div>
-            <div class="win7-btn nav-item" data-tab="pengaturan">
-                <i class="fa fa-gear"></i>
-                <span class="nav-label">Setelan</span>
+            <div class="win7-btn nav-item" data-nav="lainnya">
+                <i class="fa fa-ellipsis-h"></i>
+                <span class="nav-label">Lainnya</span>
             </div>
         </div>
     </nav>
@@ -672,9 +891,11 @@
         const STORAGE_KEY = "navModeMobile";
         const DEFAULT_MODE = "bottom";
 
-        const tabs = ["beranda", "berita", "project", "sosmed", "pengaturan"];
-
         const mobileMenu = document.getElementById("mobileMenu");
+        const navPopup = document.getElementById("navPopup");
+        const openSetelanBtn = document.getElementById("openSetelanBtn");
+        const openTentangBtn = document.getElementById("openTentangBtn");
+        const closePopupBtn = document.getElementById("closePopupBtn");
         const mobileBottomNav = document.getElementById("mobileBottomNav");
         const hamburgerBtn = document.getElementById("hamburgerBtn");
         const overlay = document.getElementById("overlay");
@@ -720,6 +941,31 @@
             mobileMenu.setAttribute("aria-hidden", "true");
         }
 
+        function openPopup() {
+            navPopup.classList.add("active");
+            navPopup.setAttribute("aria-hidden", "false");
+        }
+
+        function closePopup() {
+            navPopup.classList.remove("active");
+            navPopup.setAttribute("aria-hidden", "true");
+        }
+
+        function setHashForTab(tabName) {
+            const hashMap = {
+                beranda: "#beranda",
+                berita: "#berita",
+                project: "#project",
+                sosmed: "#sosmed",
+                pengaturan: "#setelan",
+                tentang: "#tentang"
+            };
+            const nextHash = hashMap[tabName] || "";
+            if (nextHash && window.location.hash !== nextHash) {
+                history.replaceState(null, "", nextHash);
+            }
+        }
+
         function openTab(tabName) {
             const tabcontent = document.getElementsByClassName("tab-content");
             for (let i = 0; i < tabcontent.length; i++) {
@@ -733,6 +979,8 @@
             document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(btn => btn.classList.add("active"));
 
             closeSidebar();
+            closePopup();
+            setHashForTab(tabName);
 
             setTimeout(() => {
                 const iframe = targetTab ? targetTab.querySelector("iframe") : null;
@@ -798,9 +1046,23 @@
                 });
             });
 
+            document.querySelectorAll("[data-nav]").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const nav = btn.getAttribute("data-nav");
+                    if (nav === "lainnya") {
+                        openPopup();
+                    }
+                });
+            });
+
             document.querySelectorAll("[data-go]").forEach(card => {
                 card.addEventListener("click", () => {
-                    triggerNav(card.getAttribute("data-go"));
+                    const target = card.getAttribute("data-go");
+                    if (target === "lainnya") {
+                        openPopup();
+                    } else {
+                        triggerNav(target);
+                    }
                 });
             });
 
@@ -808,6 +1070,21 @@
                 card.addEventListener("click", () => {
                     setSavedMode(card.getAttribute("data-mode"));
                 });
+            });
+
+            openSetelanBtn.addEventListener("click", () => {
+                closePopup();
+                openTab("pengaturan");
+            });
+
+            openTentangBtn.addEventListener("click", () => {
+                closePopup();
+                openTab("tentang");
+            });
+
+            closePopupBtn.addEventListener("click", closePopup);
+            navPopup.addEventListener("click", (e) => {
+                if (e.target === navPopup) closePopup();
             });
 
             hamburgerBtn.addEventListener("click", openSidebar);
@@ -818,6 +1095,23 @@
 
             updateSettingsUI();
             applyNavMode();
+
+            const initialHash = (window.location.hash || "").toLowerCase();
+            const hashMap = {
+                "#beranda": "beranda",
+                "#berita": "berita",
+                "#project": "project",
+                "#sosmed": "sosmed",
+                "#setelan": "pengaturan",
+                "#pengaturan": "pengaturan",
+                "#tentang": "tentang"
+            };
+
+            if (hashMap[initialHash]) {
+                openTab(hashMap[initialHash]);
+            } else {
+                setHashForTab("beranda");
+            }
         });
     </script>
 </body>
