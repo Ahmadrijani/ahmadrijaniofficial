@@ -1,8 +1,8 @@
 {
   "links": [
     {
-      "title_id": "Rekomendasi Ahmad Rijani Official",
-      "title_en": "Ahmad Rijani Official Recommendation",
+      "title_id": "Rekomendasi Ahmad Rijani",
+      "title_en": "Ahmad Rijani Recommendation",
       "url": "https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/Simple.html",
       "icon": "https://play-lh.googleusercontent.com/cWG9-bk2_zLdKsN9vsYEdbCReVfzgXU6FeHUmLI8a24FoZ05TpOLYXInCQ278FTwCw",
       "grup_id": "Rekomendasi",
@@ -10,8 +10,8 @@
       "type": "local"
     },
     {
-      "title_id": "Blog Ahmad Rijani Official",
-      "title_en": "Ahmad Rijani Official Blog",
+      "title_id": "Blog Ahmad Rijani",
+      "title_en": "Ahmad Rijani Blog",
       "url": "https://ahmadrijaniofficial.blogspot.com/",
       "icon": "https://play-lh.googleusercontent.com/cWG9-bk2_zLdKsN9vsYEdbCReVfzgXU6FeHUmLI8a24FoZ05TpOLYXInCQ278FTwCw",
       "grup_id": "Link Lainnya",
@@ -19,39 +19,39 @@
       "type": "local"
     },
     {
-      "title_id": "YouTube Ahmad Rijani Official",
-      "title_en": "Ahmad Rijani Official YouTube",
+      "title_id": "YouTube Ahmad Rijani",
+      "title_en": "Ahmad Rijani YouTube",
       "url": "https://www.youtube.com/@AhmadRijaniOfficial",
       "icon": "https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg",
-      "grup_id": "YouTube",
-      "grup_en": "YouTube",
+      "grup_id": "Link Lainnya",
+      "grup_en": "Other Links",
       "type": "local"
     },
     {
-      "title_id": "TikTok Ahmad Rijani Official",
-      "title_en": "Ahmad Rijani Official TikTok",
+      "title_id": "TikTok Ahmad Rijani",
+      "title_en": "Ahmad Rijani TikTok",
       "url": "https://www.tiktok.com/@ahmadrijaniofficial",
       "icon": "https://www.freepnglogos.com/uploads/tik-tok-logo-png/tik-tok-how-use-tiktok-create-cool-videos-with-iphone-14.png",
-      "grup_id": "TikTok",
-      "grup_en": "TikTok",
+      "grup_id": "Link Lainnya",
+      "grup_en": "Other Links",
       "type": "local"
     },
     {
-      "title_id": "Instagram Ahmad Rijani Official",
-      "title_en": "Ahmad Rijani Official Instagram",
+      "title_id": "Instagram Ahmad Rijani",
+      "title_en": "Ahmad Rijani Instagram",
       "url": "https://www.instagram.com/ahmadrijaniofficial/",
       "icon": "https://www.freepnglogos.com/uploads/instagram-logo-png-transparent-0.png",
-      "grup_id": "Instagram",
-      "grup_en": "Instagram",
+      "grup_id": "Link Lainnya",
+      "grup_en": "Other Links",
       "type": "local"
     },
     {
-      "title_id": "Website Resmi Ahmad Rijani Official",
-      "title_en": "Official Website Ahmad Rijani Official",
+      "title_id": "Website Ahmad Rijani Resmi",
+      "title_en": "Official Website Ahmad Rijani",
       "url": "https://ahmadrijani.github.io/ahmadrijaniofficial/",
       "icon": "https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg",
-      "grup_id": "Website",
-      "grup_en": "Website",
+      "grup_id": "Link Lainnya",
+      "grup_en": "Other Links",
       "type": "local"
     }
   ]
