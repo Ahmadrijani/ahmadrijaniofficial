@@ -15,7 +15,7 @@
     <title>AHMAD RIJANI</title>
 
     <!-- SEO CORE -->
-   <meta name="description" content="Website resmi dari Ahmad Rijani — content creator, blogger, game developer, ERO4 Studio & ERO4 Entertainment.">
+    <meta name="description" content="Website resmi dari Ahmad Rijani — content creator, blogger, game developer, ERO4 Studio & ERO4 Entertainment.">
 
     <meta name="keywords" content="
         AHMAD RIJANI,
@@ -56,19 +56,47 @@
     <meta property="og:url" content="https://ahmadrijani.github.io/ahmadrijaniofficial/">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg">
-
+</head>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+
+a {
+    text-shadow: rgb(0, 0, 0) 0px 0px 3px;
+}
+
+a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
         :root{
-            --bg: #000;
+            --bg: #000000;
             --panel: rgba(15, 15, 15, 0.95);
             --panel2: rgba(10, 10, 10, 0.98);
             --line: rgba(255,255,255,0.1);
             --text: #fff;
             --muted: #bbb;
             --accent: #00a8ff;
-            --accent2: #0f6aa8;
+
+            --btn-c1: #444444;
+            --btn-c2: #222222;
+            --btn-c3: #111111;
+            --btn-c4: #000000;
+            --btn-text: #f4f4f4;
+            --btn-border: #333333;
+            --btn-shadow: #000000;
+            --btn-active-c1: #222222;
+            --btn-active-c2: #111111;
+            --btn-active-c3: #050505;
+            --btn-active-c4: #000000;
+            --btn-active-text: #00a8ff;
+            --btn-active-border: #00a8ff;
+
+            --card-bg: rgba(255,255,255,0.05);
+            --card-border: #222222;
+            --card-hover-bg: rgba(0, 168, 255, 0.1);
+            --card-hover-border: #00a8ff;
         }
 
         html, body {
@@ -77,24 +105,74 @@
             background: var(--bg);
             color: var(--text);
             overflow: hidden;
-            font-weight: 400;
+        }
+
+        body.theme-default{
+            --bg: #000000;
+            --panel: rgba(15, 15, 15, 0.95);
+            --panel2: rgba(10, 10, 10, 0.98);
+            --line: rgba(255,255,255,0.1);
+            --text: #fff;
+            --muted: #bbb;
+            --accent: #00a8ff;
+        }
+
+        body.theme-abu{
+            --bg: #1a1a1a;
+            --panel: rgba(36, 36, 36, 0.96);
+            --panel2: rgba(28, 28, 28, 0.98);
+            --line: rgba(255,255,255,0.10);
+            --text: #f4f4f4;
+            --muted: #c7c7c7;
+            --accent: #7ec8ff;
+        }
+
+        body.theme-hitam{
+            --bg: #000000;
+            --panel: rgba(7, 7, 7, 0.98);
+            --panel2: rgba(4, 4, 4, 0.99);
+            --line: rgba(255,255,255,0.08);
+            --text: #fff;
+            --muted: #b5b5b5;
+            --accent: #00a8ff;
+        }
+
+        body.theme-custom{
+            --bg: #000000;
+            --panel: rgba(15, 15, 15, 0.95);
+            --panel2: rgba(10, 10, 10, 0.98);
+            --line: rgba(255,255,255,0.1);
+            --text: #fff;
+            --muted: #bbb;
+            --accent: #00a8ff;
         }
 
         b, strong, h1, h2 { font-weight: 700; }
 
-        .aero-header {
-            background: var(--panel);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--line);
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 1000;
-            position: relative;
-        }
+        
+.aero-header {
+    background: linear-gradient(
+        rgba(172, 172, 172, 0.9) 0px,
+        rgba(71, 71, 71, 0.9) 20%,
+        rgba(19, 19, 19, 0.9) 40%,
+        rgba(7, 7, 7, 0.93) 100%
+    );
+    border-right: 1px solid rgb(78, 78, 78);
+    border-left: 1px solid rgb(78, 78, 78);
+    border-top: 2px solid rgb(78, 78, 78);
+    border-radius: 70px 80px 0px 0px;
+    padding: 15px 10px 13px 30px;
+    backdrop-filter: blur(2px) saturate(150%);
+    -webkit-backdrop-filter: blur(2px) saturate(150%);
+    box-shadow:
+        rgba(0, 0, 0, 0.25) 0px 14px 28px,
+        rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 
         .brand {
             display: flex;
@@ -122,11 +200,11 @@
         }
 
         .win7-btn {
-            border: 1px solid #333;
-            box-shadow: 0 0 0 1px #000;
+            border: 1px solid var(--btn-border);
+            box-shadow: 0 0 0 1px var(--btn-shadow);
             border-radius: 8px;
-            background: linear-gradient(to bottom, #444 0%, #222 50%, #111 51%, #000 100%);
-            color: #eee;
+            background: linear-gradient(135deg, var(--btn-c1) 0%, var(--btn-c2) 35%, var(--btn-c3) 70%, var(--btn-c4) 100%);
+            color: var(--btn-text);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -136,18 +214,94 @@
             transition: 0.2s;
             user-select: none;
             -webkit-user-select: none;
+            text-shadow: 0 0 3px black;
         }
 
         .win7-btn:hover {
-            border: 1px solid #555;
-            box-shadow: 0 0 0 1px #00a8ff;
+            border: 1px solid var(--btn-active-border);
+            box-shadow: 0 0 0 1px var(--btn-active-border);
+            transform: translateY(-1px);
+        }
+
+        body.theme-default .aero-header {
+            background: linear-gradient(
+                rgba(172, 172, 172, 0.9) 0px,
+                rgba(71, 71, 71, 0.9) 20%,
+                rgba(19, 19, 19, 0.9) 40%,
+                rgba(7, 7, 7, 0.93) 100%
+            );
+            border-right: 1px solid rgb(78, 78, 78);
+            border-left: 1px solid rgb(78, 78, 78);
+            border-top: 2px solid rgb(78, 78, 78);
+            border-radius: 70px 80px 0px 0px;
+            padding: 15px 10px 13px 30px;
+            backdrop-filter: blur(2px) saturate(150%);
+            -webkit-backdrop-filter: blur(2px) saturate(150%);
+            box-shadow:
+                rgba(0, 0, 0, 0.25) 0px 14px 28px,
+                rgba(0, 0, 0, 0.22) 0px 10px 10px;
+        }
+
+        body.theme-default .aero-header .brand h1,
+        body.theme-default .aero-header a,
+        body.theme-default .aero-header .win7-btn,
+        body.theme-default .aero-header .hamburger {
+            text-shadow: rgb(0, 0, 0) 0px 0px 3px;
+        }
+
+        body.theme-default .aero-header a:hover,
+        body.theme-default .aero-header .win7-btn:hover,
+        body.theme-default .aero-header .hamburger:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        body.theme-default .win7-btn,
+        body.theme-default .hamburger,
+        body.theme-default .close-btn {
+            border: 1px solid rgb(15, 15, 15);
+            border-radius: 5px;
+            color: rgb(238, 238, 238);
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.25) 0px,
+                rgba(117, 117, 117, 0.15) 20%,
+                rgba(92, 92, 92, 0.15) 60%,
+                rgba(0, 0, 0, 0.3) 60%,
+                rgba(41, 41, 41, 0.3) 100%
+            );
+            text-shadow: 0 0 3px black;
+        }
+
+        body.theme-default .win7-btn:hover,
+        body.theme-default .hamburger:hover,
+        body.theme-default .close-btn:hover {
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.25),
+                rgba(117, 117, 117, 0.2),
+                rgba(92, 92, 92, 0.2),
+                rgba(43, 43, 43, 0.3),
+                rgba(161, 161, 161, 0.3)
+            );
+            transform: scale(1.03);
+        }
+
+        body.theme-default .win7-btn.active {
+            background: linear-gradient(
+                rgb(255, 255, 255) 0px,
+                rgba(129, 129, 129, 0.75) 3%,
+                rgba(56, 56, 56, 0.75) 50%,
+                rgba(27, 27, 27, 0.75) 50%
+            );
+            border: 1px solid rgb(0, 0, 0);
+            color: rgb(247, 244, 244);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
         }
 
         .win7-btn.active {
-            border: 1px solid #00a8ff;
-            box-shadow: 0 0 0 1px #005a9e;
-            background: linear-gradient(to bottom, #222 0%, #111 50%, #050505 51%, #000 100%);
-            color: #00a8ff;
+            border: 1px solid var(--btn-active-border);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--btn-active-border) 50%, #000 50%);
+            background: linear-gradient(135deg, var(--btn-active-c1) 0%, var(--btn-active-c2) 35%, var(--btn-active-c3) 70%, var(--btn-active-c4) 100%);
+            color: var(--btn-active-text);
         }
 
         .desktop-nav {
@@ -161,6 +315,7 @@
             font-size: 12px;
             font-weight: 700;
             white-space: nowrap;
+            border-radius: 5px;
         }
 
         .desktop-nav .win7-btn i{
@@ -176,8 +331,9 @@
             border-radius: 10px;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, var(--btn-c1) 0%, var(--btn-c2) 35%, var(--btn-c3) 70%, var(--btn-c4) 100%);
+            border: 1px solid var(--btn-border);
+            color: var(--btn-text);
         }
 
         .mobile-sidebar {
@@ -186,7 +342,7 @@
             right: -100%;
             width: min(86%, 330px);
             height: 100%;
-            background: rgba(10, 10, 10, 0.98);
+            background: var(--panel2);
             backdrop-filter: blur(20px);
             z-index: 3000;
             transition: 0.3s ease-in-out;
@@ -197,6 +353,18 @@
         }
 
         .mobile-sidebar.active { right: 0; }
+
+        .mobile-sidebar.list .menu-grid{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-sidebar.grid .menu-grid{
+            display:grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
 
         .sidebar-head{
             display:flex;
@@ -216,9 +384,9 @@
             width: 40px;
             height: 40px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.10);
-            background: linear-gradient(to bottom, #333, #111);
-            color: #fff;
+            border: 1px solid var(--btn-border);
+            background: linear-gradient(135deg, var(--btn-c1) 0%, var(--btn-c2) 35%, var(--btn-c3) 70%, var(--btn-c4) 100%);
+            color: var(--btn-text);
             cursor: pointer;
             font-size: 22px;
             line-height: 1;
@@ -233,6 +401,17 @@
             margin-top: 16px;
             padding-right: 2px;
         }
+
+        .menu-scroll-area {
+            max-height: calc(100vh - 94px);
+            overscroll-behavior: contain;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #000;
+        }
+
+        .menu-scroll-area::-webkit-scrollbar { width: 6px; }
+        .menu-scroll-area::-webkit-scrollbar-track { background: #000; }
+        .menu-scroll-area::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
         .menu-grid{
             display:grid;
@@ -249,6 +428,23 @@
             width: 100%;
             font-size: 12px;
             font-weight: 700;
+        }
+
+        .mobile-sidebar.list .sidebar-btn{
+            min-height: 58px;
+            padding: 12px 14px;
+            flex-direction: row;
+            gap: 10px;
+            text-align: left;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .mobile-sidebar.list .sidebar-btn i{
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+            margin-bottom: 0;
         }
 
         .sidebar-btn i{
@@ -328,15 +524,29 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
             width: 100%;
-            max-width: 450px;
+            max-width: 460px;
+        }
+
+        .home-action {
+            min-height: 58px;
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 11px;
+            flex-direction: column;
+            gap: 6px;
+            border-radius: 12px;
+        }
+
+        .home-action i {
+            font-size: 15px;
         }
 
         .card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #222;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             padding: 15px;
             border-radius: 10px;
             cursor: pointer;
@@ -352,8 +562,8 @@
         }
 
         .card:hover {
-            background: rgba(0, 168, 255, 0.1);
-            border-color: #00a8ff;
+            background: var(--card-hover-bg);
+            border-color: var(--card-hover-border);
             transform: scale(1.02);
         }
 
@@ -375,11 +585,22 @@
             line-height: 1.5;
         }
 
+        .setting-block{
+            margin-bottom: 18px;
+        }
+
+        .block-title{
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
         .setting-grid{
             display:grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
-            max-width: 700px;
+            max-width: 900px;
         }
 
         .setting-card{
@@ -426,6 +647,131 @@
             line-height: 1.4;
         }
 
+        .custom-panel{
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .toggle-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-text{
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .switch{
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 30px;
+            flex: 0 0 auto;
+        }
+
+        .switch input{
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider{
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #444;
+            transition: .2s;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .slider:before{
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+
+        .switch input:checked + .slider{
+            background-color: #00a8ff;
+        }
+
+        .switch input:checked + .slider:before{
+            transform: translate(24px, -50%);
+        }
+
+        .custom-dropdown{
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height .28s ease, opacity .22s ease;
+        }
+
+        .custom-dropdown.open{
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .color-grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .accent-row{
+            display:grid;
+            grid-template-columns: minmax(0,1fr) auto;
+            gap: 12px;
+            align-items:end;
+        }
+
+        .accent-preview{
+            min-height: 42px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: linear-gradient(135deg, var(--accent), rgba(255,255,255,0.12));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .color-item{
+            display:flex;
+            flex-direction:column;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .color-item label{
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .color-item input[type="color"]{
+            width: 100%;
+            height: 42px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+        }
+
         .popup-overlay{
             position: fixed;
             inset: 0;
@@ -449,6 +795,26 @@
             box-shadow: 0 25px 80px rgba(0,0,0,0.55);
             padding: 18px;
             backdrop-filter: blur(18px);
+        }
+
+        .popup-scroll{
+            max-height: min(72vh, 520px);
+            overflow-y: auto;
+            padding-right: 4px;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #000;
+        }
+
+        .popup-scroll::-webkit-scrollbar{ width: 6px; }
+        .popup-scroll::-webkit-scrollbar-track{ background:#000; }
+        .popup-scroll::-webkit-scrollbar-thumb{ background:#333; border-radius: 10px; }
+
+        .terminal-frame-wrap{
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            background: #000;
         }
 
         .popup-card h3{
@@ -615,13 +981,9 @@
             .desktop-nav { display: none; }
             .hamburger { display: flex; }
 
-            main {
-                padding-bottom: 0;
-            }
+            main { padding-bottom: 0; }
 
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .grid { grid-template-columns: repeat(2, 1fr); }
 
             body.mobile-bottom-active main{
                 padding-bottom: 82px;
@@ -639,10 +1001,6 @@
                 border-top: 1px solid rgba(255,255,255,0.08);
                 backdrop-filter: blur(18px);
                 -webkit-backdrop-filter: blur(18px);
-            }
-
-            .mobile-bottom-nav .nav-grid{
-                grid-template-columns: repeat(5, 1fr);
             }
 
             .about-wrap{
@@ -682,9 +1040,426 @@
                 min-height: 132px;
             }
         }
+    
+        .source-panel{
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .source-summary{
+            display:flex;
+            flex-direction:column;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .source-summary b{ color: var(--text); }
+
+        .source-grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 10px;
+        }
+
+        .source-card{
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            padding: 14px;
+            cursor:pointer;
+            transition: .2s;
+            min-height: 98px;
+            display:flex;
+            flex-direction:column;
+            gap: 8px;
+            justify-content:center;
+        }
+
+        .source-card:hover{
+            transform: translateY(-2px);
+            border-color: rgba(0,168,255,0.45);
+        }
+
+        .source-card.active{
+            border-color: rgba(0,168,255,0.8);
+            box-shadow: 0 0 0 1px rgba(0,168,255,0.16);
+            background: rgba(0,168,255,0.10);
+        }
+
+        .source-card .topline{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+        }
+
+        .source-card .name{
+            font-weight:700;
+            font-size: 14px;
+        }
+
+        .source-card .tiny{
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .source-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight:700;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .source-badge.ok{ color:#9dffb0; border-color: rgba(157,255,176,0.35); }
+        .source-badge.fail{ color:#ffb2b2; border-color: rgba(255,178,178,0.35); }
+        .source-badge.warn{ color:#ffd98f; border-color: rgba(255,217,143,0.35); }
+
+        .content-shell{
+            height: 100%;
+            min-height: 0;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .source-host{
+            flex:1 1 auto;
+            min-height:0;
+            width:100%;
+            overflow:hidden;
+            border-radius: 0;
+        }
+
+        .render-frame,
+        .source-host iframe,
+        .source-host object,
+        .source-host embed{
+            width:100%;
+            height:100%;
+            border:none;
+            display:block;
+            background:#000;
+        }
+
+        .source-host .fallback-note{
+            padding: 18px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        #berita, #project, #sosmed, #pengaturan, #tentang, #debug{
+            overflow: hidden;
+        }
+
+        .debug-wrap{
+            height:100%;
+            min-height:0;
+            display:flex;
+            flex-direction:column;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .debug-head{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:space-between;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .debug-head h2{
+            font-size: 18px;
+        }
+
+        .terminal{
+            flex:1 1 auto;
+            min-height:0;
+            display:flex;
+            flex-direction:column;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow:hidden;
+            background: #050505;
+        }
+
+        .terminal-log{
+            flex:1 1 auto;
+            min-height:0;
+            overflow:auto;
+            padding: 14px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #d7ffd9;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .terminal-input-row{
+            display:flex;
+            gap: 10px;
+            padding: 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .terminal-input{
+            flex:1 1 auto;
+            min-width:0;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: #0b0b0b;
+            color: #f2f2f2;
+            padding: 12px 14px;
+            outline:none;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .terminal-input:focus{
+            border-color: rgba(0,168,255,0.7);
+            box-shadow: 0 0 0 1px rgba(0,168,255,0.16);
+        }
+
+        .terminal-actions{
+            display:flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .terminal-actions .win7-btn{
+            min-height: 44px;
+            padding: 0 12px;
+            font-size: 13px;
+        }
+
+        .settings-status{
+            display:grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .status-row{
+            display:flex;
+            flex-wrap:wrap;
+            gap: 10px;
+            align-items:center;
+            justify-content:space-between;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .status-row .left{
+            display:flex;
+            flex-direction:column;
+            gap: 4px;
+        }
+
+        .status-row .left .title{
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .status-row .left .desc{
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .tab-shell{
+            height:100%;
+            min-height:0;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .tab-scroll{
+            height:100%;
+            min-height:0;
+            overflow:auto;
+        }
+
+
+        .terminal-shell{
+            height: 100%;
+            min-height: 0;
+            display:flex;
+            flex-direction:column;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .terminal-toolbar{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:space-between;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .terminal-toolbar h2{
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .terminal-toolbar .mini{
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .terminal-pane{
+            flex:1 1 auto;
+            min-height:0;
+            display:flex;
+            flex-direction:column;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow:hidden;
+            background: #050505;
+        }
+
+        .terminal-output{
+            flex:1 1 auto;
+            min-height:0;
+            overflow:auto;
+            padding: 14px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #d7ffd9;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .terminal-input-row{
+            display:flex;
+            gap: 10px;
+            padding: 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .terminal-input{
+            flex:1 1 auto;
+            min-width:0;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: #0b0b0b;
+            color: #f2f2f2;
+            padding: 12px 14px;
+            outline:none;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .terminal-input:focus{
+            border-color: rgba(var(--accent-rgb, 0,168,255), 0.7);
+            box-shadow: 0 0 0 1px rgba(var(--accent-rgb, 0,168,255), 0.16);
+        }
+
+        .nano-shell{
+            height: 100%;
+            min-height: 0;
+            display:flex;
+            flex-direction:column;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .nano-head{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:space-between;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .nano-head h2{
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .nano-head .mini{
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .nano-editor{
+            flex:1 1 auto;
+            min-height:0;
+            display:flex;
+            flex-direction:column;
+            gap: 10px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #060606;
+            overflow:hidden;
+        }
+
+        .nano-editor textarea{
+            flex:1 1 auto;
+            min-height:0;
+            width:100%;
+            resize:none;
+            border:none;
+            outline:none;
+            background:#080808;
+            color:#f4f4f4;
+            padding: 14px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .nano-footer{
+            display:flex;
+            flex-wrap:wrap;
+            gap: 8px;
+            justify-content:space-between;
+            align-items:center;
+            padding: 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .nano-status{
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .nano-actions{
+            display:flex;
+            gap: 8px;
+            flex-wrap:wrap;
+        }
     </style>
 </head>
-<body>
+<body class="theme-default">
 
     <header class="aero-header">
         <div class="brand">
@@ -712,24 +1487,37 @@
                     <img src="https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg" alt="Avatar">
                     <h2>Halo, nama saya <b>Ahmad Rijani</b></h2>
                     <div class="grid">
-                        <div class="card" data-go="berita"><i class="fa fa-newspaper"></i><div>Berita</div></div>
-                        <div class="card" data-go="project"><i class="fa fa-folder-open"></i><div>Project</div></div>
-                        <div class="card" data-go="sosmed"><i class="fa fa-link"></i><div>Sosial Media & Link</div></div>
-                        <div class="card" data-go="lainnya"><i class="fa fa-ellipsis-h"></i><div>Lainnya</div></div>
+                        <div class="win7-btn home-action" data-go="berita"><i class="fa fa-newspaper"></i><span class="nav-label">Berita</span></div>
+                        <div class="win7-btn home-action" data-go="project"><i class="fa fa-folder-open"></i><span class="nav-label">Project</span></div>
+                        <div class="win7-btn home-action" data-go="sosmed"><i class="fa fa-link"></i><span class="nav-label">Sosial Media</span></div>
+                        <div class="win7-btn home-action" data-go="lainnya"><i class="fa fa-ellipsis-h"></i><span class="nav-label">Lainnya</span></div>
                     </div>
                 </div>
             </div>
 
+
             <div id="berita" class="tab-content">
-                <iframe src="Website_Utama/news.html" id="iframeBerita"></iframe>
+                <div class="tab-shell">
+                    <div class="tab-scroll">
+                        <div class="content-shell">
+                            <div class="source-host" id="hostBerita"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="project" class="tab-content">
-                <iframe src="Website_Utama/project.html" id="iframeProject"></iframe>
+                <div class="tab-shell">
+                    <div class="tab-scroll">
+                        <div class="content-shell">
+                            <div class="source-host" id="hostProject"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="sosmed" class="tab-content">
-                <iframe src="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" id="iframeSosmed"></iframe>
+                <iframe src="https://ahmadrijani.github.io/ahmadrijaniofficial/Semua.link/link.html" id="iframeSosmed" class="render-frame"></iframe>
             </div>
 
             <div id="tentang" class="tab-content">
@@ -743,45 +1531,27 @@
                                 <p>Content Creator • Blogger • Game Developer</p>
 
                                 <div class="kotak">
-                                    <p>
-                                        Halo, nama saya Ahmad Rijani. Saya adalah content creator, blogger, dan game developer
-                                        yang aktif di TikTok, Instagram, dan YouTube dengan nama
-                                        <b>@ahmadrijaniofficial</b>.
-                                    </p>
-
-                                    <p>
-                                        Saya juga membuat website ini sendiri sebagai project pribadi.
-                                    </p>
+                                    <p>Halo, nama saya Ahmad Rijani. Saya adalah content creator, blogger, dan game developer yang aktif di TikTok, Instagram, dan YouTube dengan nama <b>@ahmadrijaniofficial</b>.</p>
+                                    <p>Saya juga membuat website ini sendiri sebagai project pribadi.</p>
                                 </div>
 
                                 <div class="kotak">
                                     <h3>ERO4 Entertainment</h3>
-                                    <p>
-                                        ERO4 Entertainment berfokus pada konten di YouTube, Instagram, dan TikTok.
-                                        Di sini saya membuat dan membagikan konten hiburan serta karya digital.
-                                    </p>
+                                    <p>ERO4 Entertainment berfokus pada konten di YouTube, Instagram, dan TikTok. Di sini saya membuat dan membagikan konten hiburan serta karya digital.</p>
                                 </div>
 
                                 <div class="kotak">
                                     <h3>ERO4 Studio</h3>
-                                    <p>
-                                        ERO4 Studio adalah bagian yang fokus pada game development.
-                                        Di sini saya membuat, mengembangkan, dan bereksperimen dengan project game.
-                                    </p>
+                                    <p>ERO4 Studio adalah bagian yang fokus pada game development. Di sini saya membuat, mengembangkan, dan bereksperimen dengan project game.</p>
                                 </div>
 
                                 <div class="kotak">
                                     <h3>Jason Game Dev</h3>
-                                    <p>
-                                        Jason Game Dev adalah channel YouTube khusus untuk game development
-                                        dan proses pembuatan game yang saya kembangkan.
-                                    </p>
+                                    <p>Jason Game Dev adalah channel YouTube khusus untuk game development dan proses pembuatan game yang saya kembangkan.</p>
                                 </div>
 
                                 <div class="kotak">
-                                    <p>
-                                        *Kalau mau cek sosmed pindah aja ke tab <b>Sosial Media</b>
-                                    </p>
+                                    <p>*Kalau mau cek sosmed pindah aja ke tab <b>Sosial Media</b></p>
                                 </div>
                             </div>
                         </div>
@@ -791,49 +1561,159 @@
 
             <div id="pengaturan" class="tab-content">
                 <div class="settings-wrap">
-                    <div class="settings-title">Setelan Navigasi</div>
+                    <div class="settings-title">Setelan Tampilan</div>
                     <div class="settings-desc">
-                        Pilih tampilan menu saat layar mengecil. Default-nya tetap navigasi bawah.
+                        Tema background ada 4. Saat pilih <b>Custom</b>, warna tema bisa diatur dan semua tombol akan ikut menyesuaikan warna latar, tapi gradasinya tetap aktif.
                     </div>
 
-                    <div class="setting-grid">
-                        <div class="setting-card" data-mode="bottom">
-                            <i class="fa fa-layer-group"></i>
-                            <div class="label">Navigasi Bawah</div>
-                            <div class="sub">Tombol ada di bawah layar, enak dipakai di HP.</div>
-                        </div>
+                    <div class="setting-block">
+                        <div class="block-title">Tema Background</div>
+                        <div class="setting-grid">
+                            <div class="setting-card" data-theme="default">
+                                <i class="fa fa-circle"></i>
+                                <div class="label">Default</div>
+                                <div class="sub">Tema asli, tidak diubah.</div>
+                            </div>
 
-                        <div class="setting-card" data-mode="hamburger">
-                            <i class="fa fa-bars"></i>
-                            <div class="label">Hamburger</div>
-                            <div class="sub">Menu disembunyikan di tombol garis tiga.</div>
+                            <div class="setting-card" data-theme="abu">
+                                <i class="fa fa-circle-half-stroke"></i>
+                                <div class="label">Abu</div>
+                                <div class="sub">Warna latar abu gelap.</div>
+                            </div>
+
+                            <div class="setting-card" data-theme="hitam">
+                                <i class="fa fa-moon"></i>
+                                <div class="label">Hitam</div>
+                                <div class="sub">Latar hitam pekat.</div>
+                            </div>
+
+                            <div class="setting-card" data-theme="custom">
+                                <i class="fa fa-wand-magic-sparkles"></i>
+                                <div class="label">Custom</div>
+                                <div class="sub">Warna tema bebas diatur.</div>
+                            </div>
                         </div>
                     </div>
+
+
+                    <div class="setting-block">
+                        <div class="block-title">Warna Aksen</div>
+                        <div class="settings-desc" style="margin-bottom: 10px;">
+                            Warna aksen mengatur highlight tombol, garis aktif, dan elemen penting. Default-nya biru, tapi bisa diganti.
+                        </div>
+                        <div class="custom-panel">
+                            <div class="accent-row">
+                                <div class="color-item" style="margin:0;">
+                                    <label for="warnaAksen">Pilih warna aksen</label>
+                                    <input type="color" id="warnaAksen" value="#00a8ff">
+                                </div>
+                                <div>
+                                    <div class="accent-preview" aria-hidden="true"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-block" id="hamburgerLayoutBlock">
+                        <div class="block-title">Tampilan Hamburger</div>
+                        <div class="settings-desc" style="margin-bottom: 10px;">
+                            Pengaturan ini hanya dipakai saat mode hamburger aktif. Default-nya list.
+                        </div>
+                        <div class="setting-grid">
+                            <div class="setting-card" data-layout="list">
+                                <i class="fa fa-list"></i>
+                                <div class="label">List</div>
+                                <div class="sub">Tombol memanjang ke bawah.</div>
+                            </div>
+
+                            <div class="setting-card" data-layout="grid">
+                                <i class="fa fa-border-all"></i>
+                                <div class="label">Grid</div>
+                                <div class="sub">Tombol dibuat kotak 2 kolom.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-block" id="customThemeBlock">
+                        <div class="block-title">Warna Tema Custom</div>
+                        <div class="custom-panel">
+                            <div class="settings-desc" style="margin-bottom: 10px;">
+                                Warna tombol akan otomatis mengikuti warna tema yang dipilih.
+                            </div>
+
+                            <div class="color-grid">
+                                <div class="color-item">
+                                    <label for="warnaCustomBg">Background</label>
+                                    <input type="color" id="warnaCustomBg" value="#000000">
+                                </div>
+                                <div class="color-item">
+                                    <label for="warnaCustomPanel">Panel</label>
+                                    <input type="color" id="warnaCustomPanel" value="#0f0f0f">
+                                </div>
+                                <div class="color-item">
+                                    <label for="warnaCustomAccent">Accent</label>
+                                    <input type="color" id="warnaCustomAccent" value="#00a8ff">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="nano" class="tab-content">
+                <div class="nano-shell">
+                    <div class="nano-head">
+                        <div>
+                            <h2>Nano Editor</h2>
+                            <div class="mini" id="nanoFileLabel">root:/</div>
+                        </div>
+                        <div class="terminal-actions">
+                            <div class="win7-btn" id="btnNanoSave"><i class="fa fa-floppy-disk"></i><span>Save</span></div>
+                            <div class="win7-btn" id="btnNanoBack"><i class="fa fa-terminal"></i><span>Terminal</span></div>
+                        </div>
+                    </div>
+                    <div class="nano-editor">
+                        <textarea id="nanoTextarea" spellcheck="false" placeholder="Tulis isi file di sini..."></textarea>
+                        <div class="nano-footer">
+                            <div class="nano-status" id="nanoStatus">Siap</div>
+                            <div class="nano-actions">
+                                <div class="win7-btn" id="btnNanoReload"><i class="fa fa-rotate-right"></i><span>Reload</span></div>
+                                <div class="win7-btn" id="btnNanoDelete"><i class="fa fa-trash"></i><span>Hapus</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="debug" class="tab-content">
+                <div class="terminal-frame-wrap">
+                    <iframe src="TERMINAL.html" class="render-frame" title="Terminal terpisah"></iframe>
                 </div>
             </div>
         </div>
     </main>
 
     <div class="overlay" id="overlay"></div>
+    <input type="file" id="importDataInput" accept="application/json,.json" style="display:none;">
 
     <div class="popup-overlay" id="navPopup" aria-hidden="true">
         <div class="popup-card" role="dialog" aria-modal="true" aria-labelledby="navPopupTitle">
             <h3 id="navPopupTitle">Mau ke mana?</h3>
-            <p>Pilih tujuan yang ingin dibuka.</p>
-            <div class="popup-actions">
-                <div class="win7-btn" id="openSetelanBtn"><i class="fa fa-gear"></i><span>Setelan</span></div>
-                <div class="win7-btn" id="openTentangBtn"><i class="fa fa-user"></i><span>Tentang Saya</span></div>
-                <div class="win7-btn" id="closePopupBtn"><i class="fa fa-xmark"></i><span>Batal</span></div>
+            <p>Pilih tujuan dari menu ini.</p>
+            <div class="popup-scroll">
+                <div class="popup-actions">
+                    <div class="win7-btn" id="openSetelanBtn"><i class="fa fa-gear"></i><span>Setelan</span></div>
+                    <div class="win7-btn" id="openDebugBtn"><i class="fa fa-terminal"></i><span>Terminal</span></div>
+                    <div class="win7-btn" id="openTentangBtn"><i class="fa fa-user"></i><span>Tentang Saya</span></div>
+                    <div class="win7-btn" id="closePopupBtn"><i class="fa fa-xmark"></i><span>Batal</span></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="mobile-sidebar" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-sidebar list" id="mobileMenu" aria-hidden="true">
         <div class="sidebar-head">
             <h3>Menu</h3>
-            <button class="close-btn" id="closeSidebarBtn" type="button" aria-label="Tutup menu">
-                &times;
-            </button>
+            <button class="close-btn" id="closeSidebarBtn" type="button" aria-label="Tutup menu">&times;</button>
         </div>
 
         <div class="menu-scroll-area">
@@ -888,141 +1768,877 @@
     </nav>
 
     <script>
-        const STORAGE_KEY = "navModeMobile";
-        const DEFAULT_MODE = "bottom";
+        const STORAGE_KEY = {
+            NAV_MODE: "navModeMobile",
+            HAMBURGER_LAYOUT: "hamburgerLayout",
+            THEME_MODE: "themeMode",
+            CUSTOM_BG: "customThemeBg",
+            CUSTOM_PANEL: "customThemePanel",
+            CUSTOM_ACCENT: "customThemeAccent",
+            ACCENT_COLOR: "accentColor",
+            SOURCE_MODE: "sourceMode",
+            FS_STATE: "debianFsState"
+        };
+
+        const DEFAULTS = {
+            NAV_MODE: "bottom",
+            HAMBURGER_LAYOUT: "list",
+            THEME_MODE: "default",
+            CUSTOM_BG: "#000000",
+            CUSTOM_PANEL: "#0f0f0f",
+            CUSTOM_ACCENT: "#00a8ff",
+            ACCENT_COLOR: "#00a8ff",
+            SOURCE_MODE: "embed"
+        };
+
+        const SOURCE_CONFIG = {
+            berita: {
+                title: "Berita",
+                local: "Website_Utama/news.html",
+                remote: "https://ahmadrijani.github.io/ahmadrijaniofficial/Website_Utama/news.html"
+            },
+            project: {
+                title: "Project",
+                local: "Website_Utama/project.html",
+                remote: "https://ahmadrijani.github.io/ahmadrijaniofficial/Website_Utama/project.html"
+            }
+        };
+
+        const TAB_ORDER = ["beranda", "berita", "project", "sosmed", "pengaturan", "tentang", "debug", "nano"];
+
+        const state = {
+            sources: {
+                berita: { ok: null, source: "", label: "", modeUsed: "" },
+                project: { ok: null, source: "", label: "", modeUsed: "" }
+            }
+        };
 
         const mobileMenu = document.getElementById("mobileMenu");
         const navPopup = document.getElementById("navPopup");
         const openSetelanBtn = document.getElementById("openSetelanBtn");
         const openTentangBtn = document.getElementById("openTentangBtn");
+        const openDebugBtn = document.getElementById("openDebugBtn");
         const closePopupBtn = document.getElementById("closePopupBtn");
         const mobileBottomNav = document.getElementById("mobileBottomNav");
         const hamburgerBtn = document.getElementById("hamburgerBtn");
         const overlay = document.getElementById("overlay");
         const closeSidebarBtn = document.getElementById("closeSidebarBtn");
+        const customThemeBlock = document.getElementById("customThemeBlock");
+        const warnaCustomBg = document.getElementById("warnaCustomBg");
+        const warnaCustomPanel = document.getElementById("warnaCustomPanel");
+        const warnaCustomAccent = document.getElementById("warnaCustomAccent");
+        const warnaAksen = document.getElementById("warnaAksen");
+        const nanoFileLabel = document.getElementById("nanoFileLabel");
+        const nanoTextarea = document.getElementById("nanoTextarea");
+        const nanoStatus = document.getElementById("nanoStatus");
+        const btnNanoSave = document.getElementById("btnNanoSave");
+        const btnNanoBack = document.getElementById("btnNanoBack");
+        const btnNanoReload = document.getElementById("btnNanoReload");
+        const btnNanoDelete = document.getElementById("btnNanoDelete");
+        const btnExportData = document.getElementById("btnExportData");
+        const btnImportData = document.getElementById("btnImportData");
+        const importDataInput = document.getElementById("importDataInput");
+        const hamburgerLayoutBlock = document.getElementById("hamburgerLayoutBlock");
+        const modeAktifLabel = document.getElementById("modeAktifLabel");
+        const beritaSourceLabel = document.getElementById("beritaSourceLabel");
+        const projectSourceLabel = document.getElementById("projectSourceLabel");
+        const popupModeLabel = document.getElementById("popupModeLabel");
+        const popupBeritaLabel = document.getElementById("popupBeritaLabel");
+        const popupProjectLabel = document.getElementById("popupProjectLabel");
+        const globalSourceNotice = document.getElementById("globalSourceNotice");
+        const sourceStatusList = document.getElementById("sourceStatusList");
+        const terminalLog = document.getElementById("terminalLog");
+        const terminalInput = document.getElementById("terminalInput");
+        const btnTerminalRun = document.getElementById("btnTerminalRun");
+        const btnDebugHelp = document.getElementById("btnDebugHelp");
+        const btnDebugStatus = document.getElementById("btnDebugStatus");
+        const btnDebugClear = document.getElementById("btnDebugClear");
 
-        function getSavedMode() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            return (saved === "hamburger" || saved === "bottom") ? saved : DEFAULT_MODE;
+        function getSaved(key, fallback) {
+            const value = localStorage.getItem(key);
+            return value === null ? fallback : value;
         }
 
-        function setSavedMode(mode) {
-            localStorage.setItem(STORAGE_KEY, mode);
-            applyNavMode();
-            updateSettingsUI();
+        function setSaved(key, value) {
+            localStorage.setItem(key, value);
         }
 
         function isMobile() {
             return window.matchMedia("(max-width: 768px)").matches;
         }
 
-        function applyNavMode() {
-            const mode = getSavedMode();
-            const mobile = isMobile();
+        function getTheme() {
+            return getSaved(STORAGE_KEY.THEME_MODE, DEFAULTS.THEME_MODE);
+        }
 
+        function getSourceMode() {
+            const saved = getSaved(STORAGE_KEY.SOURCE_MODE, DEFAULTS.SOURCE_MODE);
+            return ["iframe", "object", "embed", "fetch", "ajax", "webview", "portal"].includes(saved) ? saved : DEFAULTS.SOURCE_MODE;
+        }
+
+        function getNavMode() {
+            const saved = getSaved(STORAGE_KEY.NAV_MODE, DEFAULTS.NAV_MODE);
+            return (saved === "hamburger" || saved === "bottom") ? saved : DEFAULTS.NAV_MODE;
+        }
+
+        function getHamburgerLayout() {
+            const saved = getSaved(STORAGE_KEY.HAMBURGER_LAYOUT, DEFAULTS.HAMBURGER_LAYOUT);
+            return (saved === "grid" || saved === "list") ? saved : DEFAULTS.HAMBURGER_LAYOUT;
+        }
+
+        function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
+        function hexToRgb(hex) {
+            const v = hex.replace("#", "").trim();
+            const full = v.length === 3 ? v.split("").map(ch => ch + ch).join("") : v;
+            const int = parseInt(full, 16);
+            if (Number.isNaN(int)) return { r: 0, g: 0, b: 0 };
+            return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
+        }
+        function rgbToHex(r, g, b) {
+            const toHex = (n) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+        function mixHex(a, b, amount) {
+            const x = hexToRgb(a), y = hexToRgb(b);
+            return rgbToHex(x.r + (y.r - x.r) * amount, x.g + (y.g - x.g) * amount, x.b + (y.b - x.b) * amount);
+        }
+        function luminance(hex) {
+            const { r, g, b } = hexToRgb(hex);
+            const srgb = [r, g, b].map(v => {
+                const c = v / 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+        }
+        function contrastColor(hex) { return luminance(hex) > 0.45 ? "#111111" : "#f5f5f5"; }
+
+        function normalizeAccentColor(color) {
+            const c = (color || "").trim();
+            return /^#([0-9a-fA-F]{3}){1,2}$/.test(c) ? c : DEFAULTS.ACCENT_COLOR;
+        }
+
+        function accentToRgb(color) {
+            const { r, g, b } = hexToRgb(normalizeAccentColor(color));
+            return `${r},${g},${b}`;
+        }
+
+        function defaultFsState() {
+            return {
+                cwd: "/",
+                prevCwd: "/",
+                files: {},
+                dirs: ["/"],
+                nanoPath: null,
+                nanoSaved: true
+            };
+        }
+
+        function loadFsState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY.FS_STATE);
+                if (!raw) return defaultFsState();
+                const parsed = JSON.parse(raw);
+                return {
+                    ...defaultFsState(),
+                    ...parsed,
+                    files: parsed.files || {},
+                    dirs: Array.isArray(parsed.dirs) && parsed.dirs.length ? parsed.dirs : ["/"]
+                };
+            } catch (e) {
+                return defaultFsState();
+            }
+        }
+
+        function saveFsState() {
+            localStorage.setItem(STORAGE_KEY.FS_STATE, JSON.stringify(fsState));
+        }
+
+        let fsState = loadFsState();
+        let nanoDirty = false;
+        let nanoCurrentPath = null;
+
+        function normalizePath(input, base = fsState.cwd) {
+            const raw = (input || "").trim();
+            if (!raw || raw === ".") return base || "/";
+            let path = raw.startsWith("/") ? raw : ((base || "/").replace(/\/$/, "") + "/" + raw);
+            const parts = [];
+            path.split("/").forEach(part => {
+                if (!part || part === ".") return;
+                if (part === "..") parts.pop();
+                else parts.push(part);
+            });
+            return "/" + parts.join("/");
+        }
+
+        function parentDir(path) {
+            const p = normalizePath(path || "/");
+            if (p === "/") return "/";
+            const parts = p.split("/").filter(Boolean);
+            parts.pop();
+            return parts.length ? "/" + parts.join("/") : "/";
+        }
+
+        function basename(path) {
+            const parts = normalizePath(path || "/").split("/").filter(Boolean);
+            return parts[parts.length - 1] || "/";
+        }
+
+        function dirChildren(dir) {
+            const current = normalizePath(dir || "/");
+            const prefix = current === "/" ? "/" : current.replace(/\/$/, "") + "/";
+            const dirs = new Set();
+            const files = [];
+            fsState.dirs.forEach(d => {
+                const nd = normalizePath(d);
+                if (nd !== current && parentDir(nd) === current) dirs.add(basename(nd));
+            });
+            Object.keys(fsState.files).forEach(filePath => {
+                const nf = normalizePath(filePath);
+                if (parentDir(nf) === current) files.push(basename(nf));
+            });
+            return { dirs: [...dirs].sort(), files: files.sort() };
+        }
+
+        function ensureDir(path) {
+            const normalized = normalizePath(path);
+            if (!fsState.dirs.includes(normalized)) fsState.dirs.push(normalized);
+            saveFsState();
+        }
+
+        function existsPath(path) {
+            const normalized = normalizePath(path);
+            return fsState.dirs.includes(normalized) || Object.prototype.hasOwnProperty.call(fsState.files, normalized);
+        }
+
+        function touchFile(path, content = "") {
+            const normalized = normalizePath(path);
+            fsState.files[normalized] = content;
+            saveFsState();
+            return normalized;
+        }
+
+        function deleteFile(path) {
+            const normalized = normalizePath(path);
+            if (Object.prototype.hasOwnProperty.call(fsState.files, normalized)) {
+                delete fsState.files[normalized];
+                saveFsState();
+                return true;
+            }
+            return false;
+        }
+
+        function listPath(path = fsState.cwd) {
+            const current = normalizePath(path);
+            const { dirs, files } = dirChildren(current);
+            const lines = [];
+            if (!dirs.length && !files.length) return "(kosong)";
+            dirs.forEach(d => lines.push(`${d}/`));
+            files.forEach(f => lines.push(f));
+            return lines.join("    ");
+        }
+
+        function setNanoStatus(msg) {
+            if (nanoStatus) nanoStatus.textContent = msg;
+        }
+
+        function openNano(path) {
+            const normalized = normalizePath(path || "untitled.txt");
+            if (parentDir(normalized) !== fsState.cwd) {
+                // allow explicit path, but keep it simple
+            }
+            if (!existsPath(normalized)) {
+                touchFile(normalized, "");
+            }
+            fsState.nanoPath = normalized;
+            fsState.nanoSaved = true;
+            nanoCurrentPath = normalized;
+            if (nanoFileLabel) nanoFileLabel.textContent = normalized;
+            if (nanoTextarea) nanoTextarea.value = fsState.files[normalized] || "";
+            setNanoStatus(`Membuka ${normalized}`);
+            saveFsState();
+            openTab("nano");
+        }
+
+        function saveNanoFile() {
+            if (!nanoCurrentPath) {
+                setNanoStatus("Tidak ada file aktif");
+                return;
+            }
+            fsState.files[nanoCurrentPath] = nanoTextarea.value;
+            fsState.nanoSaved = true;
+            nanoDirty = false;
+            saveFsState();
+            setNanoStatus(`Tersimpan: ${nanoCurrentPath}`);
+            log(`nano save ${nanoCurrentPath}`);
+        }
+
+        function updateNanoDirtyState() {
+            if (!nanoCurrentPath) return;
+            fsState.nanoSaved = !nanoDirty;
+            setNanoStatus(nanoDirty ? "Belum disimpan" : "Tersimpan");
+            saveFsState();
+        }
+
+        function exportFsData() {
+            const data = {
+                version: 1,
+                savedAt: new Date().toISOString(),
+                fs: fsState,
+                settings: {
+                    theme: getTheme(),
+                    navMode: getNavMode(),
+                    hamburgerLayout: getHamburgerLayout(),
+                    customBg: getSaved(STORAGE_KEY.CUSTOM_BG, DEFAULTS.CUSTOM_BG),
+                    customPanel: getSaved(STORAGE_KEY.CUSTOM_PANEL, DEFAULTS.CUSTOM_PANEL),
+                    customAccent: getSaved(STORAGE_KEY.CUSTOM_ACCENT, DEFAULTS.CUSTOM_ACCENT),
+                    accentColor: getSaved(STORAGE_KEY.ACCENT_COLOR, DEFAULTS.ACCENT_COLOR),
+                    sourceMode: getSourceMode()
+                }
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "website-data.json";
+            a.click();
+            URL.revokeObjectURL(url);
+            log("export data selesai");
+        }
+
+        async function importFsData(file) {
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                const nextFs = data.fs || data;
+                fsState = {
+                    ...defaultFsState(),
+                    ...nextFs,
+                    files: nextFs.files || {},
+                    dirs: Array.isArray(nextFs.dirs) && nextFs.dirs.length ? nextFs.dirs : ["/"]
+                };
+                saveFsState();
+                if (data.settings) {
+                    if (data.settings.theme) setSaved(STORAGE_KEY.THEME_MODE, data.settings.theme);
+                    if (data.settings.navMode) setSaved(STORAGE_KEY.NAV_MODE, data.settings.navMode);
+                    if (data.settings.hamburgerLayout) setSaved(STORAGE_KEY.HAMBURGER_LAYOUT, data.settings.hamburgerLayout);
+                    if (data.settings.customBg) setSaved(STORAGE_KEY.CUSTOM_BG, data.settings.customBg);
+                    if (data.settings.customPanel) setSaved(STORAGE_KEY.CUSTOM_PANEL, data.settings.customPanel);
+                    if (data.settings.customAccent) setSaved(STORAGE_KEY.CUSTOM_ACCENT, data.settings.customAccent);
+                    if (data.settings.accentColor) setSaved(STORAGE_KEY.ACCENT_COLOR, data.settings.accentColor);
+                    if (data.settings.sourceMode) setSaved(STORAGE_KEY.SOURCE_MODE, data.settings.sourceMode);
+                }
+                applyTheme();
+                applyNavMode();
+                updateSettingsUI();
+                renderManagedSources();
+                if (fsState.nanoPath && fsState.files[fsState.nanoPath] != null) {
+                    nanoCurrentPath = fsState.nanoPath;
+                    if (nanoFileLabel) nanoFileLabel.textContent = nanoCurrentPath;
+                    if (nanoTextarea) nanoTextarea.value = fsState.files[nanoCurrentPath] || "";
+                }
+                log("import data berhasil");
+            } catch (e) {
+                log("import data gagal");
+            }
+        }
+
+        async function pingHost() {
+            const target = "https://www.gstatic.com/generate_204";
+            const started = performance.now();
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 7000);
+            try {
+                await fetch(target, { method: "GET", mode: "no-cors", cache: "no-store", signal: controller.signal });
+                const ms = Math.round(performance.now() - started);
+                log(`ping OK ${ms} ms`);
+            } catch (e) {
+                log("ping gagal");
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        function setThemeVars(bg, panel, accent) {
+            document.documentElement.style.setProperty("--bg", bg);
+            document.documentElement.style.setProperty("--panel", panel);
+            document.documentElement.style.setProperty("--panel2", mixHex(panel, "#000000", 0.18));
+            document.documentElement.style.setProperty("--line", mixHex(accent, "#ffffff", 0.82));
+            document.documentElement.style.setProperty("--text", contrastColor(bg));
+            document.documentElement.style.setProperty("--muted", mixHex(contrastColor(bg), bg, 0.35));
+            document.documentElement.style.setProperty("--accent", accent);
+            document.documentElement.style.setProperty("--accent-rgb", accentToRgb(accent));
+            document.documentElement.style.setProperty("--card-bg", mixHex(panel, "#ffffff", 0.03));
+            document.documentElement.style.setProperty("--card-border", mixHex(bg, "#ffffff", 0.86));
+            document.documentElement.style.setProperty("--card-hover-bg", mixHex(accent, bg, 0.12));
+            document.documentElement.style.setProperty("--card-hover-border", accent);
+        }
+
+        function buildButtonPalette(bg, panel, accent) {
+            const c1 = mixHex(panel, accent, 0.22);
+            const c2 = mixHex(panel, bg, 0.28);
+            const c3 = mixHex(bg, "#000000", 0.45);
+            const c4 = mixHex(bg, "#000000", 0.72);
+            const active1 = mixHex(accent, panel, 0.62);
+            const active2 = mixHex(accent, bg, 0.28);
+            const active3 = mixHex(bg, accent, 0.18);
+            const active4 = mixHex(bg, "#000000", 0.8);
+            const text = contrastColor(c2);
+            const activeText = contrastColor(active2);
+            document.documentElement.style.setProperty("--btn-c1", c1);
+            document.documentElement.style.setProperty("--btn-c2", c2);
+            document.documentElement.style.setProperty("--btn-c3", c3);
+            document.documentElement.style.setProperty("--btn-c4", c4);
+            document.documentElement.style.setProperty("--btn-text", text);
+            document.documentElement.style.setProperty("--btn-border", mixHex(panel, accent, 0.50));
+            document.documentElement.style.setProperty("--btn-shadow", mixHex(bg, "#000000", 0.85));
+            document.documentElement.style.setProperty("--btn-active-c1", active1);
+            document.documentElement.style.setProperty("--btn-active-c2", active2);
+            document.documentElement.style.setProperty("--btn-active-c3", active3);
+            document.documentElement.style.setProperty("--btn-active-c4", active4);
+            document.documentElement.style.setProperty("--btn-active-text", activeText);
+            document.documentElement.style.setProperty("--btn-active-border", accent);
+        }
+
+        function applyTheme() {
+            const theme = getTheme();
+            document.body.classList.remove("theme-default", "theme-abu", "theme-hitam", "theme-custom");
+            let bg = "#000000", panel = "#0f0f0f", accent = normalizeAccentColor(getSaved(STORAGE_KEY.ACCENT_COLOR, DEFAULTS.ACCENT_COLOR));
+            if (theme === "abu") {
+                document.body.classList.add("theme-abu"); bg = "#1a1a1a"; panel = "#242424"; accent = normalizeAccentColor(getSaved(STORAGE_KEY.ACCENT_COLOR, "#7ec8ff"));
+            } else if (theme === "hitam") {
+                document.body.classList.add("theme-hitam"); bg = "#000000"; panel = "#070707"; accent = normalizeAccentColor(getSaved(STORAGE_KEY.ACCENT_COLOR, DEFAULTS.ACCENT_COLOR));
+            } else if (theme === "custom") {
+                document.body.classList.add("theme-custom");
+                bg = getSaved(STORAGE_KEY.CUSTOM_BG, DEFAULTS.CUSTOM_BG);
+                panel = getSaved(STORAGE_KEY.CUSTOM_PANEL, DEFAULTS.CUSTOM_PANEL);
+                accent = normalizeAccentColor(getSaved(STORAGE_KEY.ACCENT_COLOR, getSaved(STORAGE_KEY.CUSTOM_ACCENT, DEFAULTS.CUSTOM_ACCENT)));
+            } else {
+                document.body.classList.add("theme-default");
+            }
+            setThemeVars(bg, panel, accent);
+            buildButtonPalette(bg, panel, accent);
+        }
+
+        function applyHamburgerLayout() {
+            const layout = getHamburgerLayout();
+            mobileMenu.classList.remove("list", "grid");
+            mobileMenu.classList.add(layout);
+        }
+
+        function applyNavMode() {
+            const mode = getNavMode();
+            const mobile = isMobile();
             mobileBottomNav.classList.toggle("show", mobile && mode === "bottom");
             hamburgerBtn.style.display = (mobile && mode === "hamburger") ? "flex" : "none";
             document.body.classList.toggle("mobile-bottom-active", mobile && mode === "bottom");
-
-            if (!mobile || mode === "bottom") {
-                closeSidebar();
-            }
+            if (!mobile || mode === "bottom") closeSidebar();
+            applyHamburgerLayout();
+            updateSettingsUI();
         }
 
-        function openSidebar() {
-            mobileMenu.classList.add("active");
-            overlay.classList.add("active");
-            mobileMenu.setAttribute("aria-hidden", "false");
-        }
-
-        function closeSidebar() {
-            mobileMenu.classList.remove("active");
-            overlay.classList.remove("active");
-            mobileMenu.setAttribute("aria-hidden", "true");
-        }
-
-        function openPopup() {
-            navPopup.classList.add("active");
-            navPopup.setAttribute("aria-hidden", "false");
-        }
-
-        function closePopup() {
-            navPopup.classList.remove("active");
-            navPopup.setAttribute("aria-hidden", "true");
-        }
+        function openSidebar() { mobileMenu.classList.add("active"); overlay.classList.add("active"); mobileMenu.setAttribute("aria-hidden", "false"); }
+        function closeSidebar() { mobileMenu.classList.remove("active"); overlay.classList.remove("active"); mobileMenu.setAttribute("aria-hidden", "true"); }
+        function openPopup() { navPopup.classList.add("active"); navPopup.setAttribute("aria-hidden", "false"); }
+        function closePopup() { navPopup.classList.remove("active"); navPopup.setAttribute("aria-hidden", "true"); }
 
         function setHashForTab(tabName) {
-            const hashMap = {
-                beranda: "#beranda",
-                berita: "#berita",
-                project: "#project",
-                sosmed: "#sosmed",
-                pengaturan: "#setelan",
-                tentang: "#tentang"
-            };
+            const hashMap = { beranda: "#beranda", berita: "#berita", project: "#project", sosmed: "#sosmed", pengaturan: "#setelan", tentang: "#tentang", debug: "#debug", nano: "#nano" };
             const nextHash = hashMap[tabName] || "";
-            if (nextHash && window.location.hash !== nextHash) {
-                history.replaceState(null, "", nextHash);
-            }
+            if (nextHash && window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
+        }
+
+        function hideAllTabs() {
+            document.querySelectorAll(".tab-content").forEach(tab => tab.style.display = "none");
+            document.querySelectorAll(".win7-btn[data-tab], .win7-btn[data-go]").forEach(btn => btn.classList.remove("active"));
         }
 
         function openTab(tabName) {
-            const tabcontent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-
+            hideAllTabs();
             const targetTab = document.getElementById(tabName);
             if (targetTab) targetTab.style.display = "block";
-
-            document.querySelectorAll(".win7-btn[data-tab]").forEach(btn => btn.classList.remove("active"));
-            document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(btn => btn.classList.add("active"));
-
-            closeSidebar();
-            closePopup();
-            setHashForTab(tabName);
-
-            setTimeout(() => {
-                const iframe = targetTab ? targetTab.querySelector("iframe") : null;
-                if (iframe) patchIframeLinks(iframe);
-            }, 100);
+            document.querySelectorAll(`.win7-btn[data-tab="${tabName}"], .win7-btn[data-go="${tabName}"]`).forEach(btn => btn.classList.add("active"));
+            document.querySelectorAll(`.sidebar-btn[data-tab="${tabName}"], .nav-item[data-tab="${tabName}"]`).forEach(btn => btn.classList.add("active"));
+            closeSidebar(); closePopup(); setHashForTab(tabName);
+            if (tabName === "debug") focusDebugInput();
         }
 
-        function triggerNav(tabName) {
-            openTab(tabName);
-        }
+        function triggerNav(tabName) { openTab(tabName); }
 
         function patchIframeLinks(iframe) {
             try {
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
                 if (!doc) return;
-
-                const updateLinks = () => {
-                    doc.querySelectorAll("a").forEach(a => {
-                        a.target = "_top";
-                        a.rel = "noopener noreferrer";
-                    });
-                };
-
+                const updateLinks = () => { doc.querySelectorAll("a").forEach(a => { a.target = "_top"; a.rel = "noopener noreferrer"; }); };
                 updateLinks();
-
                 const observer = new MutationObserver(updateLinks);
-                observer.observe(doc.body, {
-                    childList: true,
-                    subtree: true
-                });
-
+                observer.observe(doc.body, { childList: true, subtree: true });
                 iframe.__linkObserver = observer;
-            } catch (e) {
-                // Kalau beda domain, browser akan blok akses.
-            }
+            } catch (e) {}
+        }
+
+        function shortLabelForMode(mode) {
+            return {
+                iframe: "Iframe",
+                object: "Object",
+                embed: "Embed",
+                fetch: "Fetch",
+                ajax: "Ajax",
+                webview: "WebView",
+                portal: "Portal"
+            }[mode] || "Iframe";
+        }
+
+        function sourceLabel(mode, resolved) {
+            const origin = resolved === "local" ? "Lokal" : "Link";
+            return `${origin} (${shortLabelForMode(mode)})`;
+        }
+
+        function setGlobalNotice(text, kind = "ok") {
+            if (!globalSourceNotice) return;
+            globalSourceNotice.className = `source-badge ${kind}`;
+            globalSourceNotice.textContent = text;
+        }
+
+        function updateSourceUI() {
+            const mode = getSourceMode();
+            const berita = state.sources.berita;
+            const project = state.sources.project;
+            if (modeAktifLabel) modeAktifLabel.textContent = mode;
+            if (popupModeLabel) popupModeLabel.textContent = mode;
+            if (beritaSourceLabel) beritaSourceLabel.textContent = berita.label || sourceLabel(mode, "link");
+            if (projectSourceLabel) projectSourceLabel.textContent = project.label || sourceLabel(mode, "link");
+            if (popupBeritaLabel) popupBeritaLabel.textContent = berita.label || sourceLabel(mode, "link");
+            if (popupProjectLabel) popupProjectLabel.textContent = project.label || sourceLabel(mode, "link");
+
+            setGlobalNotice(`Mode aktif: ${mode}`, "warn");
+
+            if (!sourceStatusList) return;
+            sourceStatusList.innerHTML = ["berita", "project"].map(key => {
+                const item = state.sources[key];
+                const ok = item.ok === true;
+                const bad = item.ok === false;
+                const badgeClass = ok ? "ok" : bad ? "fail" : "warn";
+                const badgeText = ok ? "berhasil" : bad ? "gagal" : "menunggu";
+                return `
+                    <div class="status-row">
+                        <div class="left">
+                            <div class="title">${SOURCE_CONFIG[key].title}</div>
+                            <div class="desc">${item.label || sourceLabel(mode, "link")}</div>
+                        </div>
+                        <div class="source-badge ${badgeClass}">${badgeText}</div>
+                    </div>`;
+            }).join("");
         }
 
         function updateSettingsUI() {
-            const mode = getSavedMode();
-            document.querySelectorAll(".setting-card[data-mode]").forEach(card => {
-                card.classList.toggle("active", card.getAttribute("data-mode") === mode);
-            });
+            const theme = getTheme();
+            const navMode = getNavMode();
+            const layout = getHamburgerLayout();
+            const mode = getSourceMode();
+            document.querySelectorAll(".setting-card[data-theme]").forEach(card => card.classList.toggle("active", card.getAttribute("data-theme") === theme));
+            document.querySelectorAll(".setting-card[data-navmode]").forEach(card => card.classList.toggle("active", card.getAttribute("data-navmode") === navMode));
+            document.querySelectorAll(".setting-card[data-layout]").forEach(card => card.classList.toggle("active", card.getAttribute("data-layout") === layout));
+            document.querySelectorAll(".source-card[data-source-mode]").forEach(card => card.classList.toggle("active", card.getAttribute("data-source-mode") === mode));
+            customThemeBlock.style.display = theme === "custom" ? "block" : "none";
+            hamburgerLayoutBlock.style.display = navMode === "hamburger" ? "block" : "none";
+            warnaCustomBg.value = getSaved(STORAGE_KEY.CUSTOM_BG, DEFAULTS.CUSTOM_BG);
+            warnaCustomPanel.value = getSaved(STORAGE_KEY.CUSTOM_PANEL, DEFAULTS.CUSTOM_PANEL);
+            warnaCustomAccent.value = getSaved(STORAGE_KEY.CUSTOM_ACCENT, DEFAULTS.CUSTOM_ACCENT);
+            if (warnaAksen) warnaAksen.value = getSaved(STORAGE_KEY.ACCENT_COLOR, DEFAULTS.ACCENT_COLOR);
+            updateSourceUI();
+        }
+
+        function setTheme(theme) { setSaved(STORAGE_KEY.THEME_MODE, theme); applyTheme(); updateSettingsUI(); }
+        function setNavMode(mode) { setSaved(STORAGE_KEY.NAV_MODE, mode); applyNavMode(); }
+        function setHamburgerLayout(layout) { setSaved(STORAGE_KEY.HAMBURGER_LAYOUT, layout); applyHamburgerLayout(); updateSettingsUI(); }
+        function saveCustomThemeColors() {
+            setSaved(STORAGE_KEY.CUSTOM_BG, warnaCustomBg.value);
+            setSaved(STORAGE_KEY.CUSTOM_PANEL, warnaCustomPanel.value);
+            setSaved(STORAGE_KEY.CUSTOM_ACCENT, warnaCustomAccent.value);
+            if (getTheme() === "custom") setSaved(STORAGE_KEY.ACCENT_COLOR, warnaCustomAccent.value);
+            applyTheme();
+        }
+
+        function saveAccentColor() {
+            if (!warnaAksen) return;
+            setSaved(STORAGE_KEY.ACCENT_COLOR, warnaAksen.value);
+            applyTheme();
+            updateSettingsUI();
+        }
+        function setSourceMode(mode) { setSaved(STORAGE_KEY.SOURCE_MODE, mode); updateSettingsUI(); renderManagedSources(); log(`mode -> ${mode}`); }
+
+        function log(message) {
+            if (!terminalLog) return;
+            const time = new Date().toLocaleTimeString("id-ID", { hour12: false });
+            terminalLog.textContent += `[${time}] ${message}
+`;
+            terminalLog.scrollTop = terminalLog.scrollHeight;
+        }
+
+        function clearLog() { if (terminalLog) terminalLog.textContent = ""; }
+
+        function showHelp() {
+            log("help  : tampilkan perintah");
+            log("ls    : lihat isi folder");
+            log("cd    : pindah folder, cd - kembali");
+            log("cd-   : alias kembali ke folder sebelumnya");
+            log("mkdir : buat folder baru");
+            log("nano  : buka editor teks");
+            log("export data : unduh data lokal");
+            log("import data : impor data lokal");
+            log("ping  : tes koneksi");
+            log("status: lihat status sumber");
+            log("source: lihat mode sumber aktif");
+            log("mode iframe|object|embed|fetch|ajax|webview|portal");
+            log("move 1..7 / tab beranda|berita|project|sosmed|pengaturan|tentang|debug|nano");
+            log("open berita|project|sosmed|pengaturan|tentang|debug|nano");
+            log("clear : bersihkan log");
+        }
+
+        function showStatus() {
+            const mode = getSourceMode();
+            log(`cwd   : ${fsState.cwd}`);
+            log(`mode  : ${mode}`);
+            log(`berita : ${state.sources.berita.label || sourceLabel(mode, "link")} | ${state.sources.berita.ok === true ? "berhasil" : state.sources.berita.ok === false ? "gagal" : "menunggu"}`);
+            log(`project: ${state.sources.project.label || sourceLabel(mode, "link")} | ${state.sources.project.ok === true ? "berhasil" : state.sources.project.ok === false ? "gagal" : "menunggu"}`);
+        }
+
+        async function executeCommand(raw) {
+            const line = (raw || "").trim();
+            if (!line) return;
+            log(`root@site:${fsState.cwd}# ${line}`);
+            const parts = line.split(/\s+/);
+            const cmd = parts[0].toLowerCase();
+            const arg = parts.slice(1).join(" ").trim();
+            const tabs = { 1: "beranda", 2: "berita", 3: "project", 4: "sosmed", 5: "pengaturan", 6: "tentang", 7: "debug", 8: "nano" };
+
+            if (cmd === "help") return showHelp();
+            if (cmd === "status") return showStatus();
+            if (cmd === "source") return log(`mode sumber: ${getSourceMode()}`);
+            if (cmd === "clear") return clearLog();
+
+            if (cmd === "ls" || cmd === "dir") {
+                log(listPath(fsState.cwd));
+                return;
+            }
+
+            if (cmd === "pwd") {
+                log(fsState.cwd);
+                return;
+            }
+
+            if (cmd === "cd" || cmd === "cd-") {
+                const targetRaw = cmd === "cd-" ? "-" : arg;
+                if (!targetRaw) {
+                    log(fsState.cwd);
+                    return;
+                }
+                let nextDir = fsState.cwd;
+                if (targetRaw === "-") {
+                    nextDir = fsState.prevCwd || "/";
+                } else {
+                    nextDir = normalizePath(targetRaw, fsState.cwd);
+                }
+                if (fsState.dirs.includes(nextDir)) {
+                    fsState.prevCwd = fsState.cwd;
+                    fsState.cwd = nextDir;
+                    saveFsState();
+                    log(fsState.cwd);
+                } else {
+                    log("folder tidak ditemukan");
+                }
+                return;
+            }
+
+            if (cmd === "mkdir") {
+                if (!arg) {
+                    log("pakai: mkdir nama-folder");
+                    return;
+                }
+                const nextDir = normalizePath(arg, fsState.cwd);
+                if (existsPath(nextDir)) {
+                    log("folder sudah ada");
+                    return;
+                }
+                ensureDir(nextDir);
+                log(`folder dibuat: ${nextDir}`);
+                return;
+            }
+
+            if (cmd === "nano") {
+                if (!arg) {
+                    log("pakai: nano nama-file");
+                    return;
+                }
+                openNano(arg);
+                log(`buka nano: ${normalizePath(arg, fsState.cwd)}`);
+                return;
+            }
+
+            if (cmd === "ping") {
+                await pingHost();
+                return;
+            }
+
+            if (cmd === "export" && (arg === "data" || !arg)) {
+                exportFsData();
+                return;
+            }
+
+            if (cmd === "import" && (arg === "data" || !arg)) {
+                if (importDataInput) importDataInput.click();
+                return;
+            }
+
+            if (cmd === "move" || cmd === "tab") {
+                const nextTab = tabs[arg] || arg.toLowerCase();
+                if (TAB_ORDER.includes(nextTab)) {
+                    openTab(nextTab);
+                    log(`pindah tab -> ${nextTab}`);
+                } else {
+                    log("tab tidak dikenal");
+                }
+                return;
+            }
+
+            if (cmd === "open") {
+                const nextTab = tabs[arg] || arg.toLowerCase();
+                if (TAB_ORDER.includes(nextTab)) {
+                    openTab(nextTab);
+                    log(`buka -> ${nextTab}`);
+                } else {
+                    log("tujuan tidak dikenal");
+                }
+                return;
+            }
+
+            log("perintah tidak dikenal. ketik help");
+        }
+
+        function focusDebugInput() {
+
+            if (terminalInput) setTimeout(() => terminalInput.focus(), 50);
+        }
+
+        async function canAccessLocal(url) {
+            try {
+                const res = await fetch(url, { cache: "no-store" });
+                return res.ok;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function fallbackToIframe(wrap, sourceUrl) {
+            if (!wrap) return;
+            wrap.innerHTML = "";
+            const iframe = document.createElement("iframe");
+            iframe.className = "render-frame";
+            iframe.src = sourceUrl;
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            wrap.appendChild(iframe);
+        }
+
+        function createFrameContainer(mode, sourceUrl, html) {
+            const wrap = document.createElement("div");
+            wrap.style.width = "100%";
+            wrap.style.height = "100%";
+            wrap.style.minHeight = "0";
+
+            if (mode === "object") {
+                const obj = document.createElement("object");
+                obj.data = sourceUrl;
+                obj.type = "text/html";
+                obj.className = "render-frame";
+                obj.onerror = () => { wrap.innerHTML = '<div class="fallback-note">Mode object gagal, kembali ke iframe.</div>'; fallbackToIframe(wrap, sourceUrl); };
+                wrap.appendChild(obj);
+                return wrap;
+            }
+
+            if (mode === "embed") {
+                const emb = document.createElement("embed");
+                emb.src = sourceUrl;
+                emb.type = "text/html";
+                emb.className = "render-frame";
+                emb.onerror = () => { wrap.innerHTML = '<div class="fallback-note">Mode embed gagal, kembali ke iframe.</div>'; fallbackToIframe(wrap, sourceUrl); };
+                wrap.appendChild(emb);
+                return wrap;
+            }
+
+            if (mode === "fetch" || mode === "ajax") {
+                const frame = document.createElement("iframe");
+                frame.className = "render-frame";
+                frame.setAttribute("sandbox", "allow-forms allow-modals allow-popups allow-scripts allow-same-origin");
+                if (html) {
+                    const base = `<base href="${sourceUrl}">`;
+                    frame.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8">${base}<meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;background:#000;">${html}</body></html>`;
+                } else {
+                    frame.src = sourceUrl;
+                }
+                frame.onerror = () => fallbackToIframe(wrap, sourceUrl);
+                wrap.appendChild(frame);
+                return wrap;
+            }
+
+            if (mode === "webview" || mode === "portal") {
+                const frame = document.createElement("iframe");
+                frame.className = "render-frame";
+                frame.src = sourceUrl;
+                frame.onerror = () => fallbackToIframe(wrap, sourceUrl);
+                wrap.appendChild(frame);
+                return wrap;
+            }
+
+            const iframe = document.createElement("iframe");
+            iframe.className = "render-frame";
+            iframe.src = sourceUrl;
+            iframe.onerror = () => fallbackToIframe(wrap, sourceUrl);
+            wrap.appendChild(iframe);
+            return wrap;
+        }
+
+        async function renderOne(key) {
+            const cfg = SOURCE_CONFIG[key];
+            const host = document.getElementById(key === "berita" ? "hostBerita" : "hostProject");
+            if (!host) return;
+            host.innerHTML = '<div class="fallback-note">Memeriksa sumber...</div>';
+            const mode = getSourceMode();
+            const localOk = await canAccessLocal(cfg.local);
+            const sourceUrl = localOk ? cfg.local : cfg.remote;
+            const resolved = localOk ? "local" : "link";
+            let html = "";
+            let modeToUse = mode;
+            let ok = true;
+            if (mode === "fetch" || mode === "ajax") {
+                try {
+                    const res = await fetch(sourceUrl, { cache: "no-store" });
+                    if (!res.ok) throw new Error("fetch failed");
+                    html = await res.text();
+                } catch (e) {
+                    ok = false;
+                    modeToUse = "iframe";
+                }
+            }
+
+            host.innerHTML = "";
+            const wrap = createFrameContainer(modeToUse, sourceUrl, html);
+            host.appendChild(wrap);
+
+            const label = sourceLabel(modeToUse, resolved);
+            state.sources[key] = { ok, source: sourceUrl, label, modeUsed: modeToUse };
+            if (!ok) {
+                log(`${cfg.title}: mode ${mode} gagal, kembali ke iframe`);
+                setGlobalNotice(`${cfg.title}: fallback ke iframe`, "fail");
+            } else {
+                log(`${cfg.title}: ${label}`);
+            }
+            updateSourceUI();
+        }
+
+        async function renderManagedSources() {
+            await Promise.all([renderOne("berita"), renderOne("project")]);
+            updateSourceUI();
         }
 
         function initIframePatches() {
@@ -1031,87 +2647,120 @@
             });
         }
 
+        function wireDebug() {
+            const run = () => executeCommand(terminalInput.value);
+            btnTerminalRun?.addEventListener("click", run);
+            terminalInput?.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") run();
+            });
+            btnDebugHelp?.addEventListener("click", () => { showHelp(); focusDebugInput(); });
+            btnDebugStatus?.addEventListener("click", () => { showStatus(); focusDebugInput(); });
+            btnDebugClear?.addEventListener("click", () => { clearLog(); focusDebugInput(); });
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             initIframePatches();
-
-            const iframeBerita = document.getElementById("iframeBerita");
-            const iframeProject = document.getElementById("iframeProject");
-            if (iframeBerita) patchIframeLinks(iframeBerita);
-            if (iframeProject) patchIframeLinks(iframeProject);
+            wireDebug();
 
             document.querySelectorAll("[data-tab]").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const tab = btn.getAttribute("data-tab");
-                    openTab(tab);
-                });
+                btn.addEventListener("click", () => openTab(btn.getAttribute("data-tab")));
             });
 
             document.querySelectorAll("[data-nav]").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const nav = btn.getAttribute("data-nav");
-                    if (nav === "lainnya") {
-                        openPopup();
-                    }
-                });
+                btn.addEventListener("click", () => { if (btn.getAttribute("data-nav") === "lainnya") openPopup(); });
             });
 
             document.querySelectorAll("[data-go]").forEach(card => {
                 card.addEventListener("click", () => {
                     const target = card.getAttribute("data-go");
-                    if (target === "lainnya") {
-                        openPopup();
-                    } else {
-                        triggerNav(target);
-                    }
+                    if (target === "lainnya") openPopup();
+                    else triggerNav(target);
                 });
             });
 
-            document.querySelectorAll(".setting-card[data-mode]").forEach(card => {
-                card.addEventListener("click", () => {
-                    setSavedMode(card.getAttribute("data-mode"));
-                });
+            document.querySelectorAll("[data-theme]").forEach(card => {
+                card.addEventListener("click", () => setTheme(card.getAttribute("data-theme")));
             });
 
-            openSetelanBtn.addEventListener("click", () => {
-                closePopup();
-                openTab("pengaturan");
+            document.querySelectorAll("[data-navmode]").forEach(card => {
+                card.addEventListener("click", () => setNavMode(card.getAttribute("data-navmode")));
             });
 
-            openTentangBtn.addEventListener("click", () => {
-                closePopup();
-                openTab("tentang");
+            document.querySelectorAll("[data-layout]").forEach(card => {
+                card.addEventListener("click", () => setHamburgerLayout(card.getAttribute("data-layout")));
             });
 
+            document.querySelectorAll("[data-source-mode]").forEach(card => {
+                card.addEventListener("click", () => setSourceMode(card.getAttribute("data-source-mode")));
+            });
+
+            [warnaCustomBg, warnaCustomPanel, warnaCustomAccent].forEach(input => input.addEventListener("input", saveCustomThemeColors));
+            warnaAksen?.addEventListener("input", saveAccentColor);
+
+            btnExportData?.addEventListener("click", exportFsData);
+            btnImportData?.addEventListener("click", () => importDataInput?.click());
+            importDataInput?.addEventListener("change", async () => {
+                const file = importDataInput.files && importDataInput.files[0];
+                if (file) await importFsData(file);
+                importDataInput.value = "";
+            });
+
+            btnNanoSave?.addEventListener("click", saveNanoFile);
+            btnNanoBack?.addEventListener("click", () => openTab("debug"));
+            btnNanoReload?.addEventListener("click", () => {
+                if (!nanoCurrentPath) return;
+                if (nanoTextarea) nanoTextarea.value = fsState.files[nanoCurrentPath] || "";
+                nanoDirty = false;
+                updateNanoDirtyState();
+                setNanoStatus(`Dimuat ulang: ${nanoCurrentPath}`);
+            });
+            btnNanoDelete?.addEventListener("click", () => {
+                if (!nanoCurrentPath) return;
+                const removed = deleteFile(nanoCurrentPath);
+                if (removed) {
+                    if (nanoTextarea) nanoTextarea.value = "";
+                    nanoDirty = false;
+                    setNanoStatus(`Dihapus: ${nanoCurrentPath}`);
+                    log(`hapus file: ${nanoCurrentPath}`);
+                    nanoCurrentPath = null;
+                    fsState.nanoPath = null;
+                    if (nanoFileLabel) nanoFileLabel.textContent = "root:/";
+                    saveFsState();
+                }
+            });
+
+            nanoTextarea?.addEventListener("input", () => {
+                nanoDirty = true;
+                updateNanoDirtyState();
+            });
+
+            openSetelanBtn.addEventListener("click", () => { closePopup(); openTab("pengaturan"); });
+            openTentangBtn.addEventListener("click", () => { closePopup(); openTab("tentang"); });
+            openDebugBtn.addEventListener("click", () => { closePopup(); openTab("debug"); });
             closePopupBtn.addEventListener("click", closePopup);
-            navPopup.addEventListener("click", (e) => {
-                if (e.target === navPopup) closePopup();
-            });
+            navPopup.addEventListener("click", (e) => { if (e.target === navPopup) closePopup(); });
 
             hamburgerBtn.addEventListener("click", openSidebar);
             overlay.addEventListener("click", closeSidebar);
             closeSidebarBtn.addEventListener("click", closeSidebar);
-
             window.addEventListener("resize", applyNavMode);
 
-            updateSettingsUI();
+            applyTheme();
             applyNavMode();
+            updateSettingsUI();
+            renderManagedSources();
 
             const initialHash = (window.location.hash || "").toLowerCase();
-            const hashMap = {
-                "#beranda": "beranda",
-                "#berita": "berita",
-                "#project": "project",
-                "#sosmed": "sosmed",
-                "#setelan": "pengaturan",
-                "#pengaturan": "pengaturan",
-                "#tentang": "tentang"
-            };
+            const hashMap = { "#beranda": "beranda", "#berita": "berita", "#project": "project", "#sosmed": "sosmed", "#setelan": "pengaturan", "#pengaturan": "pengaturan", "#tentang": "tentang", "#debug": "debug", "#nano": "nano" };
+            if (hashMap[initialHash]) openTab(hashMap[initialHash]); else setHashForTab("beranda");
 
-            if (hashMap[initialHash]) {
-                openTab(hashMap[initialHash]);
-            } else {
-                setHashForTab("beranda");
-            }
+            // bootstrap filesystem defaults
+            if (!fsState.dirs.includes("/")) fsState.dirs.unshift("/");
+            if (!fsState.cwd) fsState.cwd = "/";
+            saveFsState();
+
+            log("terminal siap");
+            log("ketik help untuk daftar perintah");
         });
     </script>
 </body>
