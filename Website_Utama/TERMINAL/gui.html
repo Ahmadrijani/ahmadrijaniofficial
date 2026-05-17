@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>GUI Debian Desktop</title>
+  <style>
+    :root{
+      --taskbarH:52px;
+      --line:rgba(255,255,255,.10);
+      --text:#e9eefc;
+      --muted:#a8b2d6;
+      --accent:#67a7ff;
+      --accent2:#8d5bff;
+      --danger:#ff6b7a;
+      --shadow:0 18px 50px rgba(0,0,0,.42);
+      --wallpaper: radial-gradient(circle at 20% 10%, rgba(103,167,255,.18), transparent 24%), radial-gradient(circle at 80% 20%, rgba(141,91,255,.12), transparent 26%), linear-gradient(160deg,#0b1020,#05060a);
+    }
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Segoe UI, Poppins, Arial, sans-serif;color:var(--text);background:var(--wallpaper)}
+    button,input,select,textarea{font:inherit}
+    .desktop{position:fixed; inset:0 0 var(--taskbarH) 0; padding:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); align-content:start; gap:12px; overflow:auto; user-select:none}
+    .icon{display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px 6px; border-radius:14px; cursor:pointer; transition:.15s ease; text-align:center}
+    .icon:hover{background:rgba(255,255,255,.06)}
+    .icon .ico{width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06)); border:1px solid rgba(255,255,255,.11); box-shadow:var(--shadow); font-size:22px}
+    .icon .name{font-size:12px; line-height:1.2; word-break:break-word; color:#eef3ff}
+
+    .taskbar{position:fixed; left:0; right:0; bottom:0; height:var(--taskbarH); background:linear-gradient(180deg, rgba(20,24,38,.72), rgba(10,12,18,.92)); border-top:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:10px; padding:0 10px; backdrop-filter: blur(18px)}
+    .startBtn,.taskBtn,.sysBtn{height:40px; border:none; color:var(--text); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10); border-radius:14px; cursor:pointer; padding:0 12px; display:inline-flex; align-items:center; gap:8px}
+    .startBtn:hover,.taskBtn:hover,.sysBtn:hover{background:rgba(255,255,255,.12)}
+    .taskBtn.active{background:rgba(103,167,255,.22); border-color:rgba(103,167,255,.55)}
+    .taskList{display:flex; gap:8px; flex:1; overflow:auto; scrollbar-width:none}
+    .taskList::-webkit-scrollbar{display:none}
+    .sysArea{display:flex; align-items:center; gap:8px; margin-left:auto}
+    .clock,.battery,.net{font-size:12px; color:var(--text); opacity:.95; white-space:nowrap}
+
+    .startMenu{position:fixed; left:10px; bottom:calc(var(--taskbarH) + 10px); width:min(390px, calc(100vw - 20px)); border-radius:22px; border:1px solid rgba(255,255,255,.12); background:rgba(15,18,28,.92); box-shadow:var(--shadow); backdrop-filter: blur(20px); overflow:hidden; display:none; z-index:40}
+    .startMenu.open{display:block}
+    .startTop{padding:14px 14px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .startTop h1{margin:0; font-size:18px}
+    .startTop .sub{color:var(--muted); font-size:12px; margin-top:4px}
+    .startSearch{width:100%; margin-top:10px; border-radius:14px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); color:var(--text); padding:11px 12px; outline:none}
+    .startGrid{display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px}
+    .startItem{border-radius:14px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:var(--text); padding:12px; text-align:left; cursor:pointer; display:flex; gap:10px; align-items:center}
+    .startItem:hover{background:rgba(255,255,255,.10)}
+    .startItem .si{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.10)}
+    .startItem .st{font-size:13px;font-weight:700}
+    .startItem .ss{font-size:11px;color:var(--muted); margin-top:2px}
+    .startFooter{padding:12px 14px 14px; display:flex; gap:8px; justify-content:space-between; border-top:1px solid rgba(255,255,255,.08)}
+    .miniBtn{border:none; border-radius:12px; padding:10px 12px; cursor:pointer; color:var(--text); background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08)}
+
+    .window{position:fixed; left:120px; top:70px; width:760px; height:520px; min-width:360px; min-height:240px; background:rgba(12,15,24,.92); border:1px solid rgba(255,255,255,.12); border-radius:20px; box-shadow:var(--shadow); backdrop-filter: blur(22px); overflow:hidden; display:none; z-index:20}
+    .window.open{display:flex; flex-direction:column}
+    .titlebar{height:46px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 12px 0 14px; border-bottom:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); cursor:grab}
+    .titleLeft{display:flex; align-items:center; gap:10px; min-width:0}
+    .appDot{width:12px;height:12px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow:0 0 16px rgba(103,167,255,.5)}
+    .titleText{font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .titleBtns{display:flex; gap:8px}
+    .winBtn{width:34px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer}
+    .winBtn:hover{background:rgba(255,255,255,.12)}
+    .winBtn.close:hover{background:rgba(255,107,122,.22); border-color:rgba(255,107,122,.48)}
+    .content{flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden}
+    .resizeHandle{position:absolute; right:0; bottom:0; width:18px; height:18px; cursor:nwse-resize; background:linear-gradient(135deg, transparent 0 42%, rgba(255,255,255,.18) 42% 48%, transparent 48% 60%, rgba(255,255,255,.18) 60% 66%, transparent 66%)}
+
+    .fmLayout{display:grid; grid-template-columns:240px 1fr; min-height:0; height:100%}
+    .sidebar{border-right:1px solid rgba(255,255,255,.08); padding:12px; overflow:auto; background:rgba(255,255,255,.03)}
+    .mainPane{display:flex; flex-direction:column; min-width:0; min-height:0}
+    .crumbs{display:flex; gap:8px; flex-wrap:wrap; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03)}
+    .crumb{background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08); color:var(--text); border-radius:999px; padding:6px 10px; font-size:12px; cursor:pointer}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .tool{height:34px; border-radius:12px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); color:var(--text); cursor:pointer; padding:0 10px}
+    .tool:hover{background:rgba(255,255,255,.10)}
+    .pathBar{flex:1; min-width:220px; height:34px; border-radius:12px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05); color:var(--muted); padding:0 10px; display:flex; align-items:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+    .fileList{flex:1; min-height:0; overflow:auto; padding:12px; display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px}
+    .item{padding:10px; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); cursor:pointer; min-height:88px; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center; text-align:center}
+    .item:hover{background:rgba(255,255,255,.09)}
+    .item.selected{outline:2px solid rgba(103,167,255,.55); background:rgba(103,167,255,.12)}
+    .item .big{font-size:26px}
+    .item .label{font-size:12px; word-break:break-word}
+    .sidebarCard{padding:12px; border-radius:16px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); margin-bottom:10px}
+    .sidebarCard h3{margin:0 0 8px; font-size:13px}
+    .tree{display:flex; flex-direction:column; gap:6px}
+    .treeBtn{border:none; text-align:left; cursor:pointer; padding:9px 10px; border-radius:12px; background:rgba(255,255,255,.06); color:var(--text)}
+    .treeBtn:hover{background:rgba(255,255,255,.10)}
+    .treeBtn.active{background:rgba(103,167,255,.20); border:1px solid rgba(103,167,255,.30)}
+
+    .desktopWindowInner{display:flex; flex-direction:column; min-height:0; height:100%}
+    .terminalFrame{width:100%; height:100%; border:none; background:#000; flex:1}
+    .textBox{width:100%; min-height:0; flex:1; resize:none; border:none; outline:none; background:#0a0d14; color:var(--text); padding:14px; line-height:1.55}
+    .editorBar,.appstudioBar,.settingsBar{display:flex; gap:8px; flex-wrap:wrap; padding:10px 12px; border-top:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03)}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .field{display:flex; flex-direction:column; gap:6px}
+    .field label{font-size:12px; color:var(--muted)}
+    .field input,.field select,.field textarea{border-radius:12px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); color:var(--text); padding:10px 12px; outline:none}
+    .field textarea{min-height:120px; resize:vertical}
+    .smallNote{font-size:12px; color:var(--muted); line-height:1.5}
+
+    .preview{flex:1 1 auto; min-height:0; display:none; flex-direction:column; gap:10px}
+    .preview.active{display:flex}
+    .previewHead{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:16px; border:1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); flex:0 0 auto}
+    .previewHead h2{font-size:18px; margin-bottom:4px}
+    .previewBody{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; border-radius:18px; border:1px solid var(--line); overflow:hidden; background:#050505}
+    .previewFrame{width:100%; height:100%; border:none; background:#fff; flex:1 1 auto; min-height:0}
+    .previewText{flex:1 1 auto; min-height:0; width:100%; resize:none; border:none; outline:none; background:#080808; color:#f4f4f4; padding:14px; font-family:Consolas, 'Courier New', monospace; font-size:14px; line-height:1.65; white-space:pre-wrap}
+    .previewFoot{display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center; padding:12px; border-top:1px solid var(--line); background:rgba(255,255,255,.02)}
+
+    .dialogMask{position:fixed; inset:0; background:rgba(0,0,0,.52); display:none; z-index:80; align-items:center; justify-content:center; padding:20px}
+    .dialogMask.open{display:flex}
+    .dialog{width:min(500px,100%); border-radius:20px; background:rgba(15,18,28,.96); border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow); padding:16px}
+    .dialog h2{margin:0 0 8px; font-size:18px}
+    .dialog p{margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.5}
+    .dialog input,.dialog select{width:100%; height:42px; border-radius:13px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); color:var(--text); padding:0 12px; outline:none}
+    .dialogActions{display:flex; justify-content:flex-end; gap:8px; margin-top:12px}
+
+    .hidden{display:none !important}
+    .maximized{left:0 !important; top:0 !important; width:100vw !important; height:calc(100vh - var(--taskbarH)) !important; border-radius:0 !important}
+    @media (max-width:720px){
+      .fmLayout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .grid2{grid-template-columns:1fr}
+      .startGrid{grid-template-columns:1fr}
+      .topbar{align-items:flex-start; flex-direction:column}
+      .actions{justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop" id="desktop"></div>
+
+  <div class="startMenu" id="startMenu">
+    <div class="startTop">
+      <h1>Start</h1>
+      <div class="sub">Debian desktop integration</div>
+      <input class="startSearch" id="startSearch" placeholder="Cari app atau folder..." spellcheck="false" />
+    </div>
+    <div class="startGrid" id="startGrid"></div>
+    <div class="startFooter">
+      <button class="miniBtn" id="btnOpenRecycle">Recycle Bin</button>
+      <button class="miniBtn" id="btnOpenSettings">Settings</button>
+      <button class="miniBtn" id="btnLogout">Logout</button>
+    </div>
+  </div>
+
+  <div class="taskbar">
+    <button class="startBtn" id="btnStart">⊞ Start</button>
+    <div class="taskList" id="taskList"></div>
+    <div class="sysArea">
+      <div class="net" id="netStat">Online</div>
+      <div class="battery" id="batteryStat">100%</div>
+      <div class="clock" id="clockStat">00:00</div>
+    </div>
+  </div>
+
+  <div class="window open" id="winFileManager" data-app="filemanager" style="left:80px; top:70px; width:860px; height:560px; z-index:22;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText">File Manager</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="fmLayout">
+        <div class="sidebar">
+          <div class="sidebarCard">
+            <h3>Quick Access</h3>
+            <div class="tree" id="quickTree"></div>
+          </div>
+          <div class="sidebarCard">
+            <h3>Status</h3>
+            <div id="statusBox" style="font-size:12px;color:var(--muted);line-height:1.6"></div>
+          </div>
+        </div>
+        <div class="mainPane">
+          <div class="crumbs" id="crumbs"></div>
+          <div class="toolbar">
+            <button class="tool" id="btnUp">Up</button>
+            <button class="tool" id="btnNewFolder">New Folder</button>
+            <button class="tool" id="btnNewFile">New File</button>
+            <button class="tool" id="btnImportFile">Import File</button>
+            <button class="tool" id="btnRename">Rename</button>
+            <button class="tool" id="btnDelete">Delete</button>
+            <button class="tool" id="btnRefresh">Refresh</button>
+            <div class="pathBar" id="pathBar"></div>
+          </div>
+          <div class="fileList" id="fileList"></div>
+        </div>
+      </div>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <div class="window" id="winTerminal" data-app="terminal" style="left:160px; top:94px; width:860px; height:560px; z-index:23;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText">Terminal</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content desktopWindowInner">
+      <iframe class="terminalFrame" src="TERMINAL.html" title="Terminal App"></iframe>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <div class="window" id="winRecycle" data-app="recycle" style="left:220px; top:120px; width:760px; height:520px; z-index:21;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText">Recycle Bin</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="toolbar">
+        <button class="tool" id="btnRestore">Restore</button>
+        <button class="tool" id="btnEmptyBin">Empty Bin</button>
+        <div class="pathBar">File yang dihapus sementara disimpan di sini</div>
+      </div>
+      <div class="fileList" id="recycleList"></div>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <div class="window" id="winEditor" data-app="editor" style="left:260px; top:110px; width:760px; height:560px; z-index:24;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText" id="editorTitle">Editor</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content desktopWindowInner">
+      <textarea class="textBox" id="editorText" spellcheck="false" placeholder="Tulis isi file..."></textarea>
+      <div class="editorBar">
+        <button class="tool" id="btnSaveText">Save</button>
+        <button class="tool" id="btnSaveAs">Save As</button>
+        <button class="tool" id="btnRunEditor">Run</button>
+        <button class="tool" id="btnCloseEditor">Close</button>
+      </div>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <div class="window" id="winPreview" data-app="preview" style="left:300px; top:130px; width:820px; height:600px; z-index:25;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText" id="previewTitle">Preview</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content desktopWindowInner">
+      <iframe class="terminalFrame" id="previewFrame" title="Preview App"></iframe>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <div class="window" id="winAppStudio" data-app="appstudio" style="left:180px; top:110px; width:940px; height:640px; z-index:26;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText">App Studio</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content desktopWindowInner" style="padding:12px; gap:10px; overflow:auto;">
+      <div class="grid2">
+        <div class="field"><label>Nama aplikasi</label><input id="studioNama" placeholder="My App"></div>
+        <div class="field"><label>Nama file output</label><input id="studioFile" placeholder="myapp.ero4"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>HTML</label><textarea id="studioHtml" placeholder="Isi HTML"></textarea></div>
+        <div class="field"><label>CSS</label><textarea id="studioCss" placeholder="Isi CSS"></textarea></div>
+      </div>
+      <div class="field"><label>JavaScript</label><textarea id="studioJs" placeholder="Isi JavaScript"></textarea></div>
+      <div class="smallNote">Format <b>.ero4</b> disimpan sebagai paket JSON dan saat dijalankan akan dibuka di iframe.</div>
+      <div class="appstudioBar">
+        <button class="tool" id="btnStudioSaveEro4">Save .ero4</button>
+        <button class="tool" id="btnStudioSaveHtml">Save .html</button>
+        <button class="tool" id="btnStudioSaveJs">Save .js</button>
+        <button class="tool" id="btnStudioPreview">Preview Run</button>
+      </div>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <div class="window" id="winSettings" data-app="settings" style="left:260px; top:120px; width:860px; height:580px; z-index:27;">
+    <div class="titlebar">
+      <div class="titleLeft"><div class="appDot"></div><div class="titleText">Settings</div></div>
+      <div class="titleBtns">
+        <button class="winBtn" data-action="minimize">—</button>
+        <button class="winBtn" data-action="maximize">▢</button>
+        <button class="winBtn close" data-action="close">✕</button>
+      </div>
+    </div>
+    <div class="content desktopWindowInner" style="padding:12px; gap:12px; overflow:auto;">
+      <div class="sidebarCard">
+        <h3>Wallpaper</h3>
+        <div class="grid2">
+          <div class="field">
+            <label>Pilih wallpaper</label>
+            <select id="wallpaperPreset">
+              <option value="aurora">Aurora</option>
+              <option value="deep">Deep Space</option>
+              <option value="sunset">Sunset</option>
+              <option value="green">Green Glass</option>
+              <option value="image">Image Upload</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Wallpaper image URL</label>
+            <input id="wallpaperUrl" placeholder="https://..." />
+          </div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="tool" id="btnApplyWallpaper">Apply Wallpaper</button>
+          <button class="tool" id="btnWallpaperFile">Upload Image</button>
+        </div>
+      </div>
+
+      <div class="sidebarCard">
+        <h3>Network KW</h3>
+        <div class="grid2">
+          <div class="field"><label>Mode jaringan</label><select id="netMode"><option value="online">Online</option><option value="offline">Offline</option><option value="kw">KW</option></select></div>
+          <div class="field"><label>Nama jaringan</label><input id="netSsid" placeholder="Ero4Net" /></div>
+        </div>
+        <div class="grid2" style="margin-top:10px;">
+          <div class="field"><label>Signal 0-100</label><input id="netSignal" type="number" min="0" max="100" value="100" /></div>
+          <div class="field"><label>IP tampilan</label><input id="netIp" placeholder="192.168.1.10" /></div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="tool" id="btnSaveNetwork">Save Network</button>
+          <button class="tool" id="btnFakeReconnect">Reconnect KW</button>
+        </div>
+      </div>
+
+      <div class="sidebarCard">
+        <h3>Import File</h3>
+        <div class="smallNote">Pakai tombol di File Manager atau sini untuk upload file ke folder aktif. File teks akan disimpan sebagai isi file, file lain akan disimpan sebagai data URL pendek.</div>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="tool" id="btnImportFromSettings">Import File</button>
+        </div>
+      </div>
+
+      <div class="settingsBar">
+        <button class="tool" id="btnResetWallpaper">Reset Wallpaper</button>
+        <button class="tool" id="btnResetNetwork">Reset Network</button>
+      </div>
+    </div>
+    <div class="resizeHandle" data-resize="1"></div>
+  </div>
+
+  <input type="file" id="importInput" hidden />
+  <input type="file" id="wallpaperInput" accept="image/*" hidden />
+
+  <div class="dialogMask" id="dialogMask">
+    <div class="dialog">
+      <h2 id="dialogTitle">Dialog</h2>
+      <p id="dialogText">...</p>
+      <select id="dialogSelect" class="hidden"></select>
+      <input id="dialogInput" type="text" spellcheck="false" />
+      <div class="dialogActions">
+        <button class="miniBtn" id="dialogCancel">Batal</button>
+        <button class="miniBtn" id="dialogOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FS_KEY = "debianFsStateV3";
+    const ACCOUNT_KEY = "debianTerminalAccountV3";
+    const RECYCLE_KEY = "debianRecycleBinV1";
+    const WALL_KEY = "ero4WallpaperV1";
+    const NET_KEY = "ero4NetSettingsV1";
+
+    const desktop = document.getElementById('desktop');
+    const startMenu = document.getElementById('startMenu');
+    const startGrid = document.getElementById('startGrid');
+    const startSearch = document.getElementById('startSearch');
+    const btnStart = document.getElementById('btnStart');
+    const taskList = document.getElementById('taskList');
+    const clockStat = document.getElementById('clockStat');
+    const batteryStat = document.getElementById('batteryStat');
+    const netStat = document.getElementById('netStat');
+    const statusBox = document.getElementById('statusBox');
+    const pathBar = document.getElementById('pathBar');
+    const crumbs = document.getElementById('crumbs');
+    const fileList = document.getElementById('fileList');
+    const quickTree = document.getElementById('quickTree');
+    const recycleList = document.getElementById('recycleList');
+    const btnUp = document.getElementById('btnUp');
+    const btnNewFolder = document.getElementById('btnNewFolder');
+    const btnNewFile = document.getElementById('btnNewFile');
+    const btnImportFile = document.getElementById('btnImportFile');
+    const btnRename = document.getElementById('btnRename');
+    const btnDelete = document.getElementById('btnDelete');
+    const btnRefresh = document.getElementById('btnRefresh');
+    const btnRestore = document.getElementById('btnRestore');
+    const btnEmptyBin = document.getElementById('btnEmptyBin');
+    const btnOpenRecycle = document.getElementById('btnOpenRecycle');
+    const btnOpenSettings = document.getElementById('btnOpenSettings');
+    const btnLogout = document.getElementById('btnLogout');
+    const winFileManager = document.getElementById('winFileManager');
+    const winTerminal = document.getElementById('winTerminal');
+    const winRecycle = document.getElementById('winRecycle');
+    const winEditor = document.getElementById('winEditor');
+    const winPreview = document.getElementById('winPreview');
+    const winAppStudio = document.getElementById('winAppStudio');
+    const winSettings = document.getElementById('winSettings');
+    const editorTitle = document.getElementById('editorTitle');
+    const editorText = document.getElementById('editorText');
+    const btnSaveText = document.getElementById('btnSaveText');
+    const btnSaveAs = document.getElementById('btnSaveAs');
+    const btnRunEditor = document.getElementById('btnRunEditor');
+    const btnCloseEditor = document.getElementById('btnCloseEditor');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewFrame = document.getElementById('previewFrame');
+    const studioNama = document.getElementById('studioNama');
+    const studioFile = document.getElementById('studioFile');
+    const studioHtml = document.getElementById('studioHtml');
+    const studioCss = document.getElementById('studioCss');
+    const studioJs = document.getElementById('studioJs');
+    const btnStudioSaveEro4 = document.getElementById('btnStudioSaveEro4');
+    const btnStudioSaveHtml = document.getElementById('btnStudioSaveHtml');
+    const btnStudioSaveJs = document.getElementById('btnStudioSaveJs');
+    const btnStudioPreview = document.getElementById('btnStudioPreview');
+    const wallpaperPreset = document.getElementById('wallpaperPreset');
+    const wallpaperUrl = document.getElementById('wallpaperUrl');
+    const btnApplyWallpaper = document.getElementById('btnApplyWallpaper');
+    const btnWallpaperFile = document.getElementById('btnWallpaperFile');
+    const btnResetWallpaper = document.getElementById('btnResetWallpaper');
+    const netMode = document.getElementById('netMode');
+    const netSsid = document.getElementById('netSsid');
+    const netSignal = document.getElementById('netSignal');
+    const netIp = document.getElementById('netIp');
+    const btnSaveNetwork = document.getElementById('btnSaveNetwork');
+    const btnFakeReconnect = document.getElementById('btnFakeReconnect');
+    const btnResetNetwork = document.getElementById('btnResetNetwork');
+    const btnImportFromSettings = document.getElementById('btnImportFromSettings');
+    const dialogMask = document.getElementById('dialogMask');
+    const dialogTitle = document.getElementById('dialogTitle');
+    const dialogText = document.getElementById('dialogText');
+    const dialogSelect = document.getElementById('dialogSelect');
+    const dialogInput = document.getElementById('dialogInput');
+    const dialogCancel = document.getElementById('dialogCancel');
+    const dialogOk = document.getElementById('dialogOk');
+    const importInput = document.getElementById('importInput');
+    const wallpaperInput = document.getElementById('wallpaperInput');
+
+    const APP_INFO = [
+      { id:'filemanager', title:'File Manager', icon:'📁', subtitle:'Kelola folder, file, import' },
+      { id:'terminal', title:'Terminal', icon:'🖥️', subtitle:'Buka TERMINAL.html' },
+      { id:'appstudio', title:'App Studio', icon:'🧪', subtitle:'Buat HTML, JS, .ero4' },
+      { id:'settings', title:'Settings', icon:'⚙️', subtitle:'Wallpaper & jaringan KW' },
+      { id:'recycle', title:'Recycle Bin', icon:'🗑️', subtitle:'Lihat file yang dihapus' },
+      { id:'editor', title:'Text Editor', icon:'📝', subtitle:'Edit isi file' }
+    ];
+    const QUICK_PATHS = ['/', '/home', '/root', '/etc', '/usr', '/var', '/tmp'];
+    const ROOT_FOLDERS = ['/', '/bin', '/boot', '/dev', '/etc', '/etc/apt', '/home', '/lib', '/media', '/mnt', '/opt', '/proc', '/root', '/run', '/sbin', '/srv', '/sys', '/tmp', '/usr', '/var', '/usr/bin', '/usr/local', '/usr/share', '/var/log'];
+
+    let fsState = loadFs();
+    let account = loadAccount();
+    let recycleBin = loadRecycle();
+    let wallpaperState = loadWallpaper();
+    let networkState = loadNetwork();
+    let currentPath = fsState.cwd || (account?.isRoot ? '/root' : (account?.username ? `/home/${account.username}` : '/'));
+    let selectedFullPath = null;
+    let selectedType = null;
+    let zTop = 30;
+    let editorFilePath = null;
+    let previewCurrentPath = null;
+    let dialogMode = 'text';
+    let activeImportTarget = 'fm';
+
+    function loadFs(){ try { return JSON.parse(localStorage.getItem(FS_KEY)) || defaultFs(); } catch { return defaultFs(); } }
+    function loadAccount(){ try { return JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || null; } catch { return null; } }
+    function loadRecycle(){ try { return JSON.parse(localStorage.getItem(RECYCLE_KEY)) || []; } catch { return []; } }
+    function loadWallpaper(){ try { return JSON.parse(localStorage.getItem(WALL_KEY)) || { preset:'aurora', url:'', imageData:'' }; } catch { return { preset:'aurora', url:'', imageData:'' }; } }
+    function loadNetwork(){ try { return JSON.parse(localStorage.getItem(NET_KEY)) || { mode:'online', ssid:'Ero4Net', signal:100, ip:'192.168.1.10' }; } catch { return { mode:'online', ssid:'Ero4Net', signal:100, ip:'192.168.1.10' }; } }
+    function saveFs(){ localStorage.setItem(FS_KEY, JSON.stringify(fsState)); }
+    function saveRecycle(){ localStorage.setItem(RECYCLE_KEY, JSON.stringify(recycleBin)); }
+    function saveWallpaper(){ localStorage.setItem(WALL_KEY, JSON.stringify(wallpaperState)); applyWallpaper(); }
+    function saveNetwork(){ localStorage.setItem(NET_KEY, JSON.stringify(networkState)); applyNetwork(); }
+    function defaultFs(){
+      return {
+        cwd:'/', prevCwd:'/',
+        files:{ '/etc/apt/sources.list':'deb http://deb.debian.org/debian bookworm main contrib non-free\ndeb http://security.debian.org/debian-security bookworm-security main contrib non-free\ndeb http://deb.debian.org/debian bookworm-updates main contrib non-free\n' },
+        dirs:[...ROOT_FOLDERS], nanoPath:null, nanoSaved:true, packages:[], aptUpdatedAt:null, lastLoginAt:null
+      };
+    }
+    function norm(p, base=currentPath){
+      const raw = (p||'').trim();
+      if(!raw || raw === '.') return base || '/';
+      let path = raw.startsWith('/') ? raw : ((base || '/').replace(/\/$/,'') + '/' + raw);
+      const parts=[];
+      path.split('/').forEach(part=>{ if(!part || part==='.') return; if(part==='..') parts.pop(); else parts.push(part); });
+      return '/' + parts.join('/');
+    }
+    function baseName(path){ const parts = norm(path).split('/').filter(Boolean); return parts[parts.length-1] || '/'; }
+    function parentDir(path){ const p = norm(path); if(p === '/') return '/'; const parts = p.split('/').filter(Boolean); parts.pop(); return parts.length ? '/' + parts.join('/') : '/'; }
+    function exists(path){ const n = norm(path); return fsState.dirs.includes(n) || Object.prototype.hasOwnProperty.call(fsState.files, n); }
+    function ensureDir(path){ const n = norm(path); if(!fsState.dirs.includes(n)) fsState.dirs.push(n); saveFs(); }
+    function ensureRoot(){ ROOT_FOLDERS.forEach(d=>{ if(!fsState.dirs.includes(d)) fsState.dirs.push(d); }); if(!fsState.files['/etc/apt/sources.list']) fsState.files['/etc/apt/sources.list'] = defaultFs().files['/etc/apt/sources.list']; saveFs(); }
+    function time(){ return new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}); }
+    function dateStr(){ return new Date().toLocaleDateString('id-ID', {weekday:'short', day:'2-digit', month:'short'}); }
+    function isRoot(){ return Boolean(account?.isRoot || account?.username === 'root'); }
+
+    function applyWallpaper(){
+      if (wallpaperState.imageData) {
+        document.body.style.background = `url(${wallpaperState.imageData}) center/cover no-repeat fixed`;
+        return;
+      }
+      const map = {
+        aurora:'radial-gradient(circle at 20% 10%, rgba(103,167,255,.18), transparent 24%), radial-gradient(circle at 80% 20%, rgba(141,91,255,.12), transparent 26%), linear-gradient(160deg,#0b1020,#05060a)',
+        deep:'radial-gradient(circle at 50% 10%, rgba(100,180,255,.12), transparent 20%), linear-gradient(180deg,#0a1024,#05060a)',
+        sunset:'radial-gradient(circle at 20% 15%, rgba(255,147,111,.16), transparent 25%), radial-gradient(circle at 80% 25%, rgba(255,102,153,.16), transparent 22%), linear-gradient(160deg,#2a1230,#06060a)',
+        green:'radial-gradient(circle at 20% 10%, rgba(98,230,167,.16), transparent 24%), radial-gradient(circle at 70% 20%, rgba(103,167,255,.10), transparent 26%), linear-gradient(160deg,#0d2018,#05060a)'
+      };
+      document.body.style.background = map[wallpaperState.preset] || map.aurora;
+    }
+    function applyNetwork(){
+      if (networkState.mode === 'offline') netStat.textContent = 'Offline';
+      else if (networkState.mode === 'kw') netStat.textContent = `${networkState.ssid || 'KW'} • ${networkState.signal || 0}%`;
+      else netStat.textContent = 'Online';
+    }
+    applyWallpaper();
+    applyNetwork();
+
+    function refreshSystem(){
+      clockStat.textContent = `${dateStr()} ${time()}`;
+      batteryStat.textContent = `${80 + Math.floor(Math.random()*20)}%`;
+      applyNetwork();
+      statusBox.innerHTML = `User: <b>${account?.username || 'guest'}</b><br>Mode: <b>${isRoot() ? 'root' : 'user'}</b><br>Folder aktif: <b>${currentPath}</b><br>File: <b>${Object.keys(fsState.files).length}</b><br>Folder: <b>${fsState.dirs.length}</b><br>Recycle: <b>${recycleBin.length}</b><br>Wallpaper: <b>${wallpaperState.preset || 'aurora'}</b><br>Net: <b>${networkState.mode}</b>`;
+    }
+    setInterval(refreshSystem, 1000);
+    refreshSystem();
+
+    function openWindow(win){ win.classList.add('open'); win.style.zIndex = ++zTop; bringToFront(win); registerTask(win); }
+    function closeWindow(win){ win.classList.remove('open'); unregisterTask(win); }
+    function minimizeWindow(win){ win.classList.remove('open'); unregisterTask(win); }
+    function maximizeWindow(win){ win.classList.toggle('maximized'); win.style.zIndex = ++zTop; }
+    function bringToFront(win){ win.style.zIndex = ++zTop; }
+    function registerTask(win){
+      const id = win.dataset.app;
+      let btn = taskList.querySelector(`[data-task="${id}"]`);
+      if(!btn){ btn = document.createElement('button'); btn.className='taskBtn'; btn.dataset.task=id; btn.onclick = ()=> openWindow(win); taskList.appendChild(btn); }
+      btn.textContent = win.querySelector('.titleText')?.textContent || id;
+      btn.classList.toggle('active', win.classList.contains('open'));
+    }
+    function unregisterTask(win){ const id = win.dataset.app; const btn = taskList.querySelector(`[data-task="${id}"]`); if(btn) btn.classList.remove('active'); }
+
+    function renderDesktop(){
+      desktop.innerHTML = '';
+      const items = [
+        ['File Manager','📁',()=>openWindow(winFileManager)],
+        ['Terminal','🖥️',()=>openWindow(winTerminal)],
+        ['App Studio','🧪',()=>openWindow(winAppStudio)],
+        ['Settings','⚙️',()=>openWindow(winSettings)],
+        ['Recycle Bin','🗑️',()=>openWindow(winRecycle)],
+        ['Home','🏠',()=>{ currentPath = account?.username ? `/home/${account.username}` : '/'; renderAll(); openWindow(winFileManager); }],
+        ['Root','🔐',()=>{ currentPath = '/root'; renderAll(); openWindow(winFileManager); }]
+      ];
+      items.forEach(([name, icon, onClick])=>{
+        const d = document.createElement('div');
+        d.className='icon';
+        d.innerHTML = `<div class="ico">${icon}</div><div class="name">${name}</div>`;
+        d.onclick = onClick;
+        desktop.appendChild(d);
+      });
+    }
+
+    function fileTypeIcon(name, isDir, trashed=false){
+      if(trashed) return '🗑️';
+      if(isDir) return '📁';
+      const ext = (name.split('.').pop() || '').toLowerCase();
+      if(['png','jpg','jpeg','gif','webp'].includes(ext)) return '🖼️';
+      if(['mp4','webm','mkv','mov'].includes(ext)) return '🎞️';
+      if(['mp3','wav','ogg'].includes(ext)) return '🎵';
+      if(['html','htm'].includes(ext)) return '🌐';
+      if(['js','ts','css','json','py','sh','c','cpp','ero4'].includes(ext)) return '🧩';
+      return '📄';
+    }
+    function childrenOf(path){
+      const current = norm(path);
+      const dirs = fsState.dirs.filter(d => d !== current && parentDir(d) === current).map(d => ({name:baseName(d), path:d, type:'dir'}));
+      const files = Object.keys(fsState.files).filter(f => parentDir(f) === current).map(f => ({name:baseName(f), path:f, type:'file'}));
+      return [...dirs.sort((a,b)=>a.name.localeCompare(b.name)), ...files.sort((a,b)=>a.name.localeCompare(b.name))];
+    }
+    function renderCrumbs(){
+      crumbs.innerHTML='';
+      const parts = norm(currentPath).split('/').filter(Boolean);
+      const root = document.createElement('button');
+      root.className='crumb';
+      root.textContent='/';
+      root.onclick=()=>{ currentPath='/'; selectedFullPath=selectedType=null; renderAll(); };
+      crumbs.appendChild(root);
+      let acc='';
+      parts.forEach(p=>{
+        acc += '/' + p;
+        const c=document.createElement('button');
+        c.className='crumb';
+        c.textContent=p;
+        c.onclick=()=>{ currentPath=acc; selectedFullPath=selectedType=null; renderAll(); };
+        crumbs.appendChild(c);
+      });
+    }
+    function renderQuickTree(){
+      quickTree.innerHTML='';
+      QUICK_PATHS.forEach(p=>{
+        const btn=document.createElement('button');
+        btn.className='treeBtn' + (norm(p)===norm(currentPath) ? ' active' : '');
+        btn.textContent=p;
+        btn.onclick=()=>{ currentPath=p; selectedFullPath=selectedType=null; renderAll(); };
+        quickTree.appendChild(btn);
+      });
+    }
+    function renderFileList(){
+      fileList.innerHTML='';
+      pathBar.textContent=currentPath;
+      const items = childrenOf(currentPath);
+      if(!items.length){
+        const empty=document.createElement('div');
+        empty.style.color='var(--muted)';
+        empty.style.padding='8px';
+        empty.textContent='(kosong)';
+        fileList.appendChild(empty);
+        return;
+      }
+      items.forEach(it=>{
+        const el=document.createElement('div');
+        el.className='item' + (selectedFullPath===it.path ? ' selected' : '');
+        el.innerHTML=`<div class="big">${fileTypeIcon(it.name, it.type==='dir')}</div><div class="label">${it.name}</div>`;
+        el.onclick=()=>{ selectedFullPath=it.path; selectedType=it.type; renderFileList(); };
+        el.ondblclick=()=>{ if(it.type==='dir'){ currentPath=it.path; selectedFullPath=selectedType=null; renderAll(); } else runFile(it.path); };
+        fileList.appendChild(el);
+      });
+    }
+    function renderRecycle(){
+      recycleList.innerHTML='';
+      if(!recycleBin.length){
+        const e=document.createElement('div');
+        e.style.color='var(--muted)';
+        e.style.padding='8px';
+        e.textContent='(kosong)';
+        recycleList.appendChild(e);
+        return;
+      }
+      recycleBin.forEach((it, idx)=>{
+        const el=document.createElement('div');
+        el.className='item';
+        el.innerHTML=`<div class="big">${fileTypeIcon(it.name, false, true)}</div><div class="label">${it.name}</div>`;
+        el.onclick=()=>{ selectedFullPath=it.path; selectedType='trash'; renderRecycle(); };
+        el.ondblclick=()=>restoreTrashIndex(idx);
+        recycleList.appendChild(el);
+      });
+    }
+    function renderStartMenu(){
+      startGrid.innerHTML='';
+      const query=(startSearch.value||'').toLowerCase().trim();
+      APP_INFO.filter(a=>!query || a.title.toLowerCase().includes(query) || a.subtitle.toLowerCase().includes(query)).forEach(app=>{
+        const btn=document.createElement('button');
+        btn.className='startItem';
+        btn.innerHTML=`<div class="si">${app.icon}</div><div><div class="st">${app.title}</div><div class="ss">${app.subtitle}</div></div>`;
+        btn.onclick=()=>openApp(app.id);
+        startGrid.appendChild(btn);
+      });
+    }
+    function openApp(id){
+      startMenu.classList.remove('open');
+      if(id==='filemanager') openWindow(winFileManager);
+      if(id==='terminal') openWindow(winTerminal);
+      if(id==='recycle'){ openWindow(winRecycle); renderRecycle(); }
+      if(id==='editor') openEditor('/etc/apt/sources.list');
+      if(id==='appstudio') openWindow(winAppStudio);
+      if(id==='settings') openWindow(winSettings);
+      renderAll();
+    }
+
+    function getFile(path){ const v = fsState.files[norm(path)]; if(v && typeof v === 'object') return JSON.stringify(v, null, 2); return v ?? ''; }
+    function setFile(path, value){ fsState.files[norm(path)] = value; saveFs(); }
+    function createFolder(path){ ensureDir(path); }
+    function removePath(path){
+      const n = norm(path);
+      if(Object.prototype.hasOwnProperty.call(fsState.files, n)){
+        recycleBin.push({kind:'file', name:baseName(n), path:n, content:fsState.files[n], deletedAt:Date.now()});
+        delete fsState.files[n]; saveFs(); saveRecycle(); return true;
+      }
+      if(fsState.dirs.includes(n) && n !== '/'){
+        const hasChildren = childrenOf(n).length > 0;
+        if(hasChildren) return 'folder-not-empty';
+        fsState.dirs = fsState.dirs.filter(d=>d!==n); saveFs(); return true;
+      }
+      return false;
+    }
+    function restoreTrashIndex(idx){
+      const it = recycleBin[idx];
+      if(!it) return;
+      fsState.files[it.path] = it.content;
+      recycleBin.splice(idx,1);
+      saveFs(); saveRecycle(); renderAll();
+    }
+    function emptyBin(){ recycleBin = []; saveRecycle(); renderRecycle(); refreshSystem(); }
+
+    function askDialog(title, text, value='', opts={}){
+      dialogTitle.textContent = title;
+      dialogText.textContent = text;
+      dialogInput.classList.toggle('hidden', opts.hideInput || false);
+      dialogSelect.classList.toggle('hidden', !(opts.items && opts.items.length));
+      dialogInput.value = value;
+      dialogSelect.innerHTML = '';
+      if(opts.items && opts.items.length){
+        opts.items.forEach(x=>{
+          const o=document.createElement('option');
+          o.value = x.value;
+          o.textContent = x.label;
+          dialogSelect.appendChild(o);
+        });
+        if(opts.value) dialogSelect.value = opts.value;
+      }
+      dialogMask.classList.add('open');
+      dialogMode = opts.items ? 'select' : 'text';
+      return new Promise(resolve=>{
+        const cleanup = (res)=>{
+          dialogMask.classList.remove('open');
+          dialogOk.onclick = null;
+          dialogCancel.onclick = null;
+          resolve(res);
+        };
+        dialogOk.onclick = ()=> cleanup(dialogMode === 'select' ? dialogSelect.value : dialogInput.value.trim());
+        dialogCancel.onclick = ()=> cleanup(null);
+      });
+    }
+
+    async function newFolder(){
+      const name = await askDialog('New Folder', 'Masukkan nama folder baru. Folder akan dibuat di folder aktif.', 'folder_baru');
+      if(!name) return;
+      const path = norm(name, currentPath);
+      if(exists(path)) return alert('Nama sudah ada');
+      createFolder(path);
+      renderAll();
+    }
+    async function newFile(){
+      const name = await askDialog('New File', 'Masukkan nama file baru. File akan dibuat di folder aktif.', 'file_baru.txt');
+      if(!name) return;
+      const path = norm(name, currentPath);
+      if(exists(path)) return alert('Nama sudah ada');
+      setFile(path, '');
+      renderAll();
+      openEditor(path);
+    }
+    async function importFileToCurrentFolder(){
+      activeImportTarget = 'fm';
+      importInput.click();
+    }
+    async function renameSelected(){
+      if(!selectedFullPath) return alert('Pilih file atau folder dulu');
+      const oldPath = selectedFullPath;
+      const name = await askDialog('Rename', 'Masukkan nama baru.', baseName(oldPath));
+      if(!name) return;
+      const newPath = norm(name, parentDir(oldPath));
+      if(exists(newPath)) return alert('Nama tujuan sudah dipakai');
+      if(selectedType === 'file'){
+        fsState.files[newPath] = fsState.files[oldPath];
+        delete fsState.files[oldPath];
+      } else if(selectedType === 'dir'){
+        fsState.dirs = fsState.dirs.map(d => d === oldPath ? newPath : d);
+        const oldPrefix = oldPath + '/';
+        const newPrefix = newPath + '/';
+        Object.keys(fsState.files).forEach(fp=>{
+          if(fp.startsWith(oldPrefix)){
+            fsState.files[newPrefix + fp.slice(oldPrefix.length)] = fsState.files[fp];
+            delete fsState.files[fp];
+          }
+        });
+      }
+      selectedFullPath=selectedType=null;
+      saveFs(); renderAll();
+    }
+    async function deleteSelected(){
+      if(!selectedFullPath) return alert('Pilih item dulu');
+      const ok = confirm('Hapus item ini? File akan masuk recycle bin, folder kosong bisa dihapus langsung.');
+      if(!ok) return;
+      const res = removePath(selectedFullPath);
+      if(res === 'folder-not-empty') return alert('Folder tidak kosong');
+      selectedFullPath=selectedType=null;
+      renderAll();
+    }
+
+    function buildPreviewHtml(content, kind, title){
+      if(kind === 'ero4'){
+        let pack = null;
+        try { pack = JSON.parse(content); } catch { pack = { html:'', css:'', js:'', nama:title }; }
+        const html = pack.html || '';
+        const css = pack.css || '';
+        const js = pack.js || '';
+        const nm = pack.nama || title;
+        return `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${nm}</title><style>${css}</style></head><body>${html}<script>${js}<\/script></body></html>`;
+      }
+      if(kind === 'js'){
+        return `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title><style>body{font-family:Segoe UI,sans-serif;padding:16px;background:#111;color:#e9eefc} pre{white-space:pre-wrap;}</style></head><body><div id="app"></div><script>${content}<\/script></body></html>`;
+      }
+      return content;
+    }
+
+    function runFile(path){
+      const normalized = norm(path, currentPath);
+      if(!Object.prototype.hasOwnProperty.call(fsState.files, normalized)) return alert('file tidak ditemukan');
+      const raw = fsState.files[normalized];
+      const ext = normalized.split('.').pop().toLowerCase();
+      previewCurrentPath = normalized;
+      previewTitle.textContent = `Preview — ${normalized}`;
+      openWindow(winPreview);
+      previewFrame.srcdoc = buildPreviewHtml(typeof raw === 'string' ? raw : JSON.stringify(raw, null, 2), ext, baseName(normalized));
+      return true;
+    }
+
+    function openEditor(path){
+      editorFilePath = norm(path, currentPath);
+      editorTitle.textContent = `Editor — ${editorFilePath}`;
+      editorText.value = getFile(editorFilePath);
+      openWindow(winEditor);
+    }
+    async function saveEditor(){
+      if(!editorFilePath){
+        const p = await askDialog('Save', 'Masukkan nama file tujuan.', 'catatan.txt');
+        if(!p) return;
+        editorFilePath = norm(p, currentPath);
+      }
+      setFile(editorFilePath, editorText.value);
+      refreshSystem();
+      renderAll();
+      alert('Tersimpan');
+    }
+    async function saveEditorAs(){
+      const p = await askDialog('Save As', 'Masukkan nama file baru.', baseName(editorFilePath || 'file_baru.txt'));
+      if(!p) return;
+      editorFilePath = norm(p, currentPath);
+      setFile(editorFilePath, editorText.value);
+      editorTitle.textContent = `Editor — ${editorFilePath}`;
+      renderAll();
+    }
+
+    async function saveStudio(type){
+      const nama = (studioNama.value || '').trim() || 'Aplikasi';
+      let out = (studioFile.value || '').trim();
+      if(!out) out = type === 'js' ? 'app.js' : (type === 'html' ? 'app.html' : 'app.ero4');
+      if(type === 'ero4' && !/\.ero4$/i.test(out)) out = out.replace(/\.(html?|js)$/i, '') + '.ero4';
+      if(type === 'html' && !/\.html?$/i.test(out)) out = out.replace(/\.(ero4|js)$/i, '') + '.html';
+      if(type === 'js' && !/\.js$/i.test(out)) out = out.replace(/\.(ero4|html?)$/i, '') + '.js';
+      const target = norm(out, currentPath);
+      let content = '';
+      if(type === 'ero4') content = JSON.stringify({ nama, html: studioHtml.value || '', css: studioCss.value || '', js: studioJs.value || '' }, null, 2);
+      else if(type === 'html') content = `<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>${nama}</title>
+<style>${studioCss.value || ''}</style>
+</head>
+<body>
+${studioHtml.value || ''}
+<script>${studioJs.value || ''}<\/script>
+</body>
+</html>`;
+      else content = studioJs.value || '';
+      setFile(target, content);
+      renderAll();
+      runFile(target);
+    }
+
+    async function importFileFromPicker(file){
+      if(!file) return;
+      const name = file.name || 'imported.txt';
+      const target = norm(name, currentPath);
+      const isText = /\.(html?|css|js|json|txt|md|csv|xml|svg|ero4)$/i.test(name) || (file.type || '').startsWith('text/') || file.type === 'application/json' || file.type === 'application/javascript';
+      if(isText){
+        const text = await file.text();
+        setFile(target, text);
+      }else{
+        const data = await file.arrayBuffer();
+        const bytes = new Uint8Array(data);
+        let bin = '';
+        for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+        const b64 = btoa(bin);
+        setFile(target, `data:${file.type || 'application/octet-stream'};base64,${b64}`);
+      }
+      renderAll();
+    }
+
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    function renderAll(){
+      ensureRoot();
+      renderDesktop();
+      renderCrumbs();
+      renderQuickTree();
+      renderFileList();
+      renderRecycle();
+      renderStartMenu();
+      refreshSystem();
+      [winFileManager, winTerminal, winRecycle, winEditor, winPreview, winAppStudio, winSettings].forEach(registerTask);
+    }
+
+    btnStart.onclick = ()=> startMenu.classList.toggle('open');
+    document.addEventListener('click', (e)=>{ if(!startMenu.contains(e.target) && e.target !== btnStart) startMenu.classList.remove('open'); });
+    startSearch.addEventListener('input', renderStartMenu);
+
+    btnUp.onclick = ()=>{ currentPath = parentDir(currentPath); selectedFullPath=selectedType=null; renderAll(); };
+    btnNewFolder.onclick = newFolder;
+    btnNewFile.onclick = newFile;
+    btnImportFile.onclick = importFileToCurrentFolder;
+    btnRename.onclick = renameSelected;
+    btnDelete.onclick = deleteSelected;
+    btnRefresh.onclick = renderAll;
+    btnRestore.onclick = ()=>{ if(selectedType !== 'trash') return alert('Pilih item di recycle bin dulu'); const idx = recycleBin.findIndex(x => x.path === selectedFullPath); if(idx >= 0) restoreTrashIndex(idx); };
+    btnEmptyBin.onclick = ()=>{ if(confirm('Kosongkan recycle bin?')) emptyBin(); };
+    btnOpenRecycle.onclick = ()=>{ startMenu.classList.remove('open'); openWindow(winRecycle); renderRecycle(); };
+    btnOpenSettings.onclick = ()=>{ startMenu.classList.remove('open'); openWindow(winSettings); };
+    btnLogout.onclick = ()=>{ localStorage.removeItem(ACCOUNT_KEY); location.reload(); };
+
+    btnSaveText.onclick = saveEditor;
+    btnSaveAs.onclick = saveEditorAs;
+    btnRunEditor.onclick = ()=>{ if(editorFilePath) runFile(editorFilePath); };
+    btnCloseEditor.onclick = ()=> closeWindow(winEditor);
+
+    btnStudioSaveEro4.onclick = ()=> saveStudio('ero4');
+    btnStudioSaveHtml.onclick = ()=> saveStudio('html');
+    btnStudioSaveJs.onclick = ()=> saveStudio('js');
+    btnStudioPreview.onclick = ()=>{
+      const temp = JSON.stringify({ nama: studioNama.value || 'App', html: studioHtml.value || '', css: studioCss.value || '', js: studioJs.value || '' }, null, 2);
+      previewTitle.textContent = `Preview — ${studioNama.value || 'App'}`;
+      openWindow(winPreview);
+      previewFrame.srcdoc = buildPreviewHtml(temp, 'ero4', studioNama.value || 'App');
+    };
+
+    btnApplyWallpaper.onclick = ()=>{
+      wallpaperState.preset = wallpaperPreset.value;
+      wallpaperState.url = wallpaperUrl.value.trim();
+      wallpaperState.imageData = wallpaperState.preset === 'image' ? wallpaperState.imageData : '';
+      if(wallpaperState.preset !== 'image') wallpaperState.imageData = '';
+      saveWallpaper();
+      renderAll();
+    };
+    btnWallpaperFile.onclick = ()=> wallpaperInput.click();
+    wallpaperInput.addEventListener('change', ()=>{
+      const file = wallpaperInput.files && wallpaperInput.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        wallpaperState.preset = 'image';
+        wallpaperState.imageData = reader.result;
+        wallpaperState.url = '';
+        saveWallpaper();
+        wallpaperPreset.value = 'image';
+        wallpaperUrl.value = '';
+        renderAll();
+      };
+      reader.readAsDataURL(file);
+      wallpaperInput.value = '';
+    });
+    btnResetWallpaper.onclick = ()=>{
+      wallpaperState = { preset:'aurora', url:'', imageData:'' };
+      wallpaperPreset.value = 'aurora';
+      wallpaperUrl.value = '';
+      saveWallpaper();
+      renderAll();
+    };
+
+    btnSaveNetwork.onclick = ()=>{
+      networkState.mode = netMode.value;
+      networkState.ssid = netSsid.value.trim() || 'Ero4Net';
+      networkState.signal = Math.max(0, Math.min(100, parseInt(netSignal.value || '0', 10)));
+      networkState.ip = netIp.value.trim() || '192.168.1.10';
+      saveNetwork();
+      refreshSystem();
+      alert('Network disimpan');
+    };
+    btnFakeReconnect.onclick = ()=>{
+      networkState.mode = 'kw';
+      networkState.signal = Math.min(100, Math.max(0, (parseInt(netSignal.value || '0',10) || 0) + 10));
+      netMode.value = 'kw';
+      netSignal.value = String(networkState.signal);
+      saveNetwork();
+      refreshSystem();
+      alert('KW reconnect selesai');
+    };
+    btnResetNetwork.onclick = ()=>{
+      networkState = { mode:'online', ssid:'Ero4Net', signal:100, ip:'192.168.1.10' };
+      netMode.value='online';
+      netSsid.value='Ero4Net';
+      netSignal.value='100';
+      netIp.value='192.168.1.10';
+      saveNetwork();
+      refreshSystem();
+    };
+    btnImportFromSettings.onclick = ()=>{ activeImportTarget = 'settings'; importInput.click(); };
+
+    function attachTitlebarHandlers(win){
+      const titlebar = win.querySelector('.titlebar');
+      const resize = win.querySelector('[data-resize="1"]');
+      let drag = null;
+      let resizing = null;
+      titlebar.addEventListener('mousedown', (e)=>{
+        if(e.target.closest('button')) return;
+        bringToFront(win);
+        const r = win.getBoundingClientRect();
+        drag = {x:e.clientX, y:e.clientY, left:r.left, top:r.top};
+        titlebar.style.cursor='grabbing';
+      });
+      document.addEventListener('mousemove', (e)=>{
+        if(drag && !win.classList.contains('maximized')){
+          const dx = e.clientX - drag.x;
+          const dy = e.clientY - drag.y;
+          win.style.left = Math.max(0, drag.left + dx) + 'px';
+          win.style.top = Math.max(0, drag.top + dy) + 'px';
+        }
+        if(resizing && !win.classList.contains('maximized')){
+          const dx = e.clientX - resizing.x;
+          const dy = e.clientY - resizing.y;
+          win.style.width = Math.max(360, resizing.w + dx) + 'px';
+          win.style.height = Math.max(240, resizing.h + dy) + 'px';
+        }
+      });
+      document.addEventListener('mouseup', ()=>{ drag=null; resizing=null; titlebar.style.cursor='grab'; });
+      if(resize){
+        resize.addEventListener('mousedown', (e)=>{
+          e.preventDefault(); e.stopPropagation();
+          bringToFront(win);
+          const r = win.getBoundingClientRect();
+          resizing = {x:e.clientX, y:e.clientY, w:r.width, h:r.height};
+        });
+      }
+      win.querySelectorAll('[data-action]').forEach(btn=>{
+        btn.onclick = ()=>{
+          const a = btn.dataset.action;
+          if(a==='close') closeWindow(win);
+          if(a==='minimize') minimizeWindow(win);
+          if(a==='maximize') maximizeWindow(win);
+        };
+      });
+      win.addEventListener('mousedown', ()=> bringToFront(win));
+    }
+    [winFileManager, winTerminal, winRecycle, winEditor, winPreview, winAppStudio, winSettings].forEach(attachTitlebarHandlers);
+
+    function openEditorFromSelection(){ if(!selectedFullPath || selectedType === 'dir') return; openEditor(selectedFullPath); }
+
+    function showFileHelp(){
+      alert([
+        'help',
+        'refresh',
+        'open_file <file>',
+        'gui',
+        'ls / dir',
+        'cd',
+        'mkdir',
+        'nano',
+        'del',
+        'rem',
+        'apt update',
+        'apt install',
+        'export zip',
+        'import zip'
+      ].join('\n'));
+    }
+
+    btnOpenSettings.addEventListener('click', ()=> openWindow(winSettings));
+    document.getElementById('btnHelp').onclick = showFileHelp;
+    document.getElementById('btnStatus').onclick = refreshSystem;
+    document.getElementById('btnClear').onclick = ()=> console.clear();
+    document.getElementById('btnExportZip').onclick = ()=> alert('Export ZIP tetap lewat terminal.');
+    document.getElementById('btnImportZip').onclick = ()=> importInput.click();
+
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') startMenu.classList.remove('open');
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n'){ e.preventDefault(); newFolder(); }
+    });
+
+    function ensureSystemFields(){
+      wallpaperPreset.value = wallpaperState.imageData ? 'image' : (wallpaperState.preset || 'aurora');
+      wallpaperUrl.value = wallpaperState.url || '';
+      netMode.value = networkState.mode || 'online';
+      netSsid.value = networkState.ssid || 'Ero4Net';
+      netSignal.value = String(networkState.signal ?? 100);
+      netIp.value = networkState.ip || '192.168.1.10';
+    }
+
+    importInput.addEventListener('change', async ()=>{
+      const file = importInput.files && importInput.files[0];
+      if(!file) return;
+      await importFileFromPicker(file);
+      importInput.value='';
+    });
+
+    function populateStudioFromFile(path){
+      const n = norm(path, currentPath);
+      const ext = n.split('.').pop().toLowerCase();
+      const text = getFile(n);
+      if(ext === 'ero4'){
+        try{
+          const pack = JSON.parse(text);
+          studioNama.value = pack.nama || baseName(n);
+          studioHtml.value = pack.html || '';
+          studioCss.value = pack.css || '';
+          studioJs.value = pack.js || '';
+          studioFile.value = n;
+        }catch{
+          studioNama.value = baseName(n);
+          studioHtml.value = '';
+          studioCss.value = '';
+          studioJs.value = '';
+          studioFile.value = n;
+        }
+      } else if(ext === 'html' || ext === 'htm'){
+        studioNama.value = baseName(n);
+        studioHtml.value = text;
+        studioCss.value = '';
+        studioJs.value = '';
+        studioFile.value = n.replace(/\.html?$/i, '.ero4');
+      } else if(ext === 'js'){
+        studioNama.value = baseName(n);
+        studioHtml.value = '<div id="app"></div>';
+        studioCss.value = '';
+        studioJs.value = text;
+        studioFile.value = n.replace(/\.js$/i, '.ero4');
+      }
+    }
+
+    function logToast(msg){ console.log(msg); }
+
+    ensureRoot();
+    if(account?.username && !account.isRoot) ensureDir(`/home/${account.username}`);
+    if(account?.isRoot) currentPath = '/root';
+    if(account?.username && !account.isRoot) currentPath = `/home/${account.username}`;
+    if(!fsState.cwd) fsState.cwd = currentPath;
+    saveFs();
+    ensureSystemFields();
+    applyWallpaper();
+    applyNetwork();
+    renderAll();
+    refreshSystem();
+
+    if(account?.username){
+      logToast(`masuk sebagai ${account.username}`);
+    }
+
+    window.ero4Gui = { runFile, openEditor, populateStudioFromFile };
+  </script>
+</body>
+</html>
