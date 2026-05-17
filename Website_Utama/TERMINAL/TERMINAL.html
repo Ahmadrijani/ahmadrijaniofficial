@@ -1,1 +1,1172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Debian Terminal</title>
+  <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/Ahmadrijani/ahmadrijaniofficial/refs/heads/main/Image/KUNING_MINUM.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root{
+      --bg:#050505;
+      --line:rgba(255,255,255,.08);
+      --text:#eaeaea;
+      --muted:#a9a9a9;
+      --accent:#00a8ff;
+      --green:#c7ffcf;
+    }
+    html, body { height:100%; }
+    body{
+      font-family: Poppins, Arial, sans-serif;
+      background: radial-gradient(circle at top, #141414 0, #070707 40%, #000 100%);
+      color: var(--text);
+      overflow:hidden;
+    }
+    .shell{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      padding: 12px;
+      gap: 10px;
+    }
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: 0 8px 24px rgba(0,0,0,.28);
+      flex: 0 0 auto;
+    }
+    .title{ font-size:18px; line-height:1.2; font-weight:700; }
+    .mini{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+      margin-top:4px;
+      font-family: Consolas, 'Courier New', monospace;
+    }
+    .actions{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(135deg, #2d2d2d 0%, #1c1c1c 55%, #111 100%);
+      color:#f4f4f4;
+      border-radius: 11px;
+      min-height: 40px;
+      padding: 0 12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+      font-weight:700;
+    }
+    .btn:hover{ border-color: var(--accent); }
+    .btn.small{
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 12px;
+      border-radius: 9px;
+      background: transparent;
+    }
 
+    .terminalWrap{
+      flex:1 1 auto;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      border-radius:18px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      background: #040404;
+      box-shadow: 0 12px 28px rgba(0,0,0,.35);
+    }
+    .output{
+      flex:1 1 auto;
+      min-height:0;
+      overflow:auto;
+      padding:14px 14px 6px 14px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size:13px;
+      line-height:1.65;
+      color:var(--green);
+      white-space:pre-wrap;
+      word-break:break-word;
+      scrollbar-width: thin;
+      scrollbar-color: #333 #000;
+    }
+    .output::-webkit-scrollbar{ width:6px; }
+    .output::-webkit-scrollbar-track{ background:#000; }
+    .output::-webkit-scrollbar-thumb{ background:#333; border-radius:10px; }
+
+    .inputDock{
+      flex: 0 0 auto;
+      background: #040404;
+      border-top:1px solid rgba(255,255,255,.06);
+      padding: 8px 14px 12px 14px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .prompt{
+      font-family: Consolas, 'Courier New', monospace;
+      font-size:13px;
+      color:#d6d6d6;
+      white-space:nowrap;
+      flex: 0 0 auto;
+    }
+    .input{
+      flex:1 1 auto;
+      min-width:0;
+      border:none;
+      background:transparent;
+      color:#f2f2f2;
+      padding: 0;
+      outline:none;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 13px;
+      box-shadow:none;
+    }
+    .input::placeholder{ color:#8c8c8c; }
+    .input:focus{ box-shadow:none; }
+
+    .screen{
+      position:fixed;
+      inset:0;
+      background: radial-gradient(circle at top, #161616 0, #070707 55%, #000 100%);
+      z-index:50;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+    .screen.hidden{ display:none; }
+    .loginCard{
+      width:min(620px, 100%);
+      border:1px solid var(--line);
+      border-radius:20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: 0 16px 40px rgba(0,0,0,.45);
+      padding:18px;
+    }
+    .loginHead h1{ font-size:22px; margin-bottom:4px; }
+    .loginHead p{ font-size:12px; color:var(--muted); line-height:1.5; }
+    .loginGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:16px;
+    }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    .field label{ font-size:12px; color:var(--muted); }
+    .field input{
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#080808;
+      color:#f2f2f2;
+      padding: 12px 14px;
+      outline:none;
+      font-family: Poppins, Arial, sans-serif;
+      font-size:14px;
+    }
+    .field input:focus{ border-color: var(--accent); }
+    .loginActions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; justify-content:flex-end; }
+    .note{ margin-top:10px; font-size:12px; color:var(--muted); line-height:1.5; }
+
+    .nano{ flex:1 1 auto; min-height:0; display:none; flex-direction:column; gap:10px; }
+    .nano.active{ display:flex; }
+    .nanoHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      flex: 0 0 auto;
+    }
+    .nanoHead h2{ font-size:18px; margin-bottom:4px; }
+    .nanoBody{
+      flex:1 1 auto;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      border-radius:18px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      background:#050505;
+    }
+    textarea{
+      flex:1 1 auto;
+      min-height:0;
+      width:100%;
+      resize:none;
+      border:none;
+      outline:none;
+      background:#080808;
+      color:#f4f4f4;
+      padding:14px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size:14px;
+      line-height:1.65;
+    }
+    .nanoFoot{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px;
+      border-top:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+    .status{ font-size:12px; color:var(--muted); }
+    .hidden{ display:none !important; }
+
+    .preview{ flex:1 1 auto; min-height:0; display:none; flex-direction:column; gap:10px; }
+    .preview.active{ display:flex; }
+    .previewHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      flex: 0 0 auto;
+    }
+    .previewHead h2{ font-size:18px; margin-bottom:4px; }
+    .previewBody{
+      flex:1 1 auto;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      border-radius:18px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      background:#050505;
+    }
+    .previewFrame{
+      width:100%;
+      height:100%;
+      border:none;
+      background:#fff;
+      flex:1 1 auto;
+      min-height:0;
+    }
+    .previewText{
+      flex:1 1 auto;
+      min-height:0;
+      width:100%;
+      resize:none;
+      border:none;
+      outline:none;
+      background:#080808;
+      color:#f4f4f4;
+      padding:14px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size:14px;
+      line-height:1.65;
+      white-space:pre-wrap;
+    }
+    .previewFoot{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px;
+      border-top:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+
+    @media (max-width: 720px){
+      .loginGrid{ grid-template-columns: 1fr; }
+      .topbar{ align-items:flex-start; flex-direction:column; }
+      .actions{ justify-content:flex-start; }
+      .inputDock{ gap:6px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginScreen" class="screen">
+    <div class="loginCard">
+      <div class="loginHead">
+        <h1>Debian Terminal Login</h1>
+        <p>Buat akun dulu sebelum masuk ke terminal. Prompt akan mengikuti user biasa atau root. Formatnya mirip shell Debian asli: <b>user@debian:/folder$</b> atau <b>root@debian:/folder#</b>.</p>
+      </div>
+      <div class="loginGrid">
+        <div class="field">
+          <label for="userName">Nama pengguna</label>
+          <input id="userName" type="text" placeholder="contoh: tess" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="passWord">Password</label>
+          <input id="passWord" type="password" placeholder="buat password" spellcheck="false" autocomplete="off">
+        </div>
+      </div>
+      <div class="loginActions">
+        <div class="btn" id="btnCreateAccount"><i class="fa fa-user-plus"></i><span>Buat Akun</span></div>
+        <div class="btn" id="btnUseSaved"><i class="fa fa-right-to-bracket"></i><span>Masuk Akun Tersimpan</span></div>
+        <div class="btn" id="btnLoginRoot"><i class="fa fa-shield-halved"></i><span>Masuk Root</span></div>
+      </div>
+      <div class="note">Akun dan data terminal disimpan di browser. Export tersedia ke ZIP, lalu bisa diimport lagi kapan saja.</div>
+    </div>
+  </div>
+
+  <div class="shell">
+    <div class="topbar">
+      <div>
+        <div class="title">Debian Terminal</div>
+        <div class="mini" id="summary">debian$user:/</div>
+      </div>
+      <div class="actions">
+        <div class="btn" id="btnHelp"><i class="fa fa-circle-question"></i><span>Help</span></div>
+        <div class="btn" id="btnStatus"><i class="fa fa-signal"></i><span>Status</span></div>
+        <div class="btn" id="btnExportZip"><i class="fa fa-file-zipper"></i><span>Export ZIP</span></div>
+        <div class="btn" id="btnImportZip"><i class="fa fa-upload"></i><span>Import</span></div>
+        <div class="btn" id="btnClear"><i class="fa fa-trash"></i><span>Clear</span></div>
+      </div>
+    </div>
+
+    <div class="terminalWrap" id="terminalWrap">
+      <div class="output" id="log"></div>
+      <div class="inputDock">
+        <div class="prompt" id="prompt">user@debian:/home/user$</div>
+        <input class="input" id="input" type="text" spellcheck="false" autocomplete="off" placeholder="ketik help">
+        <div class="btn small" id="btnRun"><i class="fa fa-play"></i><span>Run</span></div>
+      </div>
+    </div>
+
+    <div class="nano" id="nanoView">
+      <div class="nanoHead">
+        <div>
+          <h2>Nano Editor</h2>
+          <div class="mini" id="nanoLabel">/</div>
+        </div>
+        <div class="actions">
+          <div class="btn" id="btnNanoSave"><i class="fa fa-floppy-disk"></i><span>Save</span></div>
+          <div class="btn" id="btnNanoBack"><i class="fa fa-terminal"></i><span>Terminal</span></div>
+        </div>
+      </div>
+      <div class="nanoBody">
+        <textarea id="nanoText" spellcheck="false" placeholder="Tulis isi file di sini..."></textarea>
+        <div class="nanoFoot">
+          <div class="status" id="nanoStatus">Siap</div>
+          <div class="actions">
+            <div class="btn" id="btnNanoReload"><i class="fa fa-rotate-right"></i><span>Reload</span></div>
+            <div class="btn" id="btnNanoDelete"><i class="fa fa-trash"></i><span>Hapus</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview" id="previewView">
+      <div class="previewHead">
+        <div>
+          <h2>File Preview</h2>
+          <div class="mini" id="previewLabel">/</div>
+        </div>
+        <div class="actions">
+          <div class="btn" id="btnPreviewBack"><i class="fa fa-terminal"></i><span>Terminal</span></div>
+          <div class="btn" id="btnPreviewClose"><i class="fa fa-xmark"></i><span>Tutup</span></div>
+        </div>
+      </div>
+      <div class="previewBody">
+        <iframe class="previewFrame hidden" id="previewFrame"></iframe>
+        <textarea class="previewText hidden" id="previewText" spellcheck="false" readonly></textarea>
+        <div class="previewFoot">
+          <div class="status" id="previewStatus">Siap</div>
+          <div class="actions">
+            <div class="btn" id="btnPreviewRefresh"><i class="fa fa-rotate-right"></i><span>Refresh</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="importInput" accept="application/zip,application/json,.zip,.json" hidden>
+
+  <script>
+    const STORAGE_KEY = "debianFsStateV3";
+    const ACCOUNT_KEY = "debianTerminalAccountV3";
+    const HOST_NAME = "debian";
+
+    const loginScreen = document.getElementById("loginScreen");
+    const userNameEl = document.getElementById("userName");
+    const passWordEl = document.getElementById("passWord");
+    const btnCreateAccount = document.getElementById("btnCreateAccount");
+    const btnUseSaved = document.getElementById("btnUseSaved");
+    const btnLoginRoot = document.getElementById("btnLoginRoot");
+
+    const logEl = document.getElementById("log");
+    const inputEl = document.getElementById("input");
+    const promptEl = document.getElementById("prompt");
+    const summaryEl = document.getElementById("summary");
+    const btnRun = document.getElementById("btnRun");
+    const btnHelp = document.getElementById("btnHelp");
+    const btnStatus = document.getElementById("btnStatus");
+    const btnClear = document.getElementById("btnClear");
+    const btnExportZip = document.getElementById("btnExportZip");
+    const btnImportZip = document.getElementById("btnImportZip");
+    const importInput = document.getElementById("importInput");
+
+    const terminalWrap = document.getElementById("terminalWrap");
+    const nanoView = document.getElementById("nanoView");
+    const nanoLabel = document.getElementById("nanoLabel");
+    const nanoText = document.getElementById("nanoText");
+    const nanoStatus = document.getElementById("nanoStatus");
+    const btnNanoSave = document.getElementById("btnNanoSave");
+    const btnNanoBack = document.getElementById("btnNanoBack");
+    const btnNanoReload = document.getElementById("btnNanoReload");
+    const btnNanoDelete = document.getElementById("btnNanoDelete");
+
+    const previewView = document.getElementById("previewView");
+    const previewLabel = document.getElementById("previewLabel");
+    const previewFrame = document.getElementById("previewFrame");
+    const previewText = document.getElementById("previewText");
+    const previewStatus = document.getElementById("previewStatus");
+    const btnPreviewBack = document.getElementById("btnPreviewBack");
+    const btnPreviewClose = document.getElementById("btnPreviewClose");
+    const btnPreviewRefresh = document.getElementById("btnPreviewRefresh");
+
+    const DEFAULT_DIRS = [
+      "/","/bin","/boot","/dev","/etc","/etc/apt","/home","/lib","/media","/mnt","/opt","/proc","/root","/run","/sbin","/srv","/sys","/tmp","/usr","/var","/usr/bin","/usr/local","/usr/share","/var/log"
+    ];
+
+    let account = loadAccount();
+    let fsState = loadFs();
+    let nanoCurrentPath = null;
+    let nanoDirty = false;
+    let commandHistory = [];
+    let historyIndex = -1;
+    let previewCurrentPath = null;
+
+    function makeDefaultSourcesList() {
+      return [
+        "deb http://deb.debian.org/debian bookworm main contrib non-free",
+        "deb http://security.debian.org/debian-security bookworm-security main contrib non-free",
+        "deb http://deb.debian.org/debian bookworm-updates main contrib non-free",
+        ""
+      ].join("\n");
+    }
+
+    function defaultFsState() {
+      const username = account?.username || "user";
+      const isRoot = Boolean(account?.isRoot);
+      return {
+        cwd: isRoot ? "/root" : `/home/${username}`,
+        prevCwd: "/",
+        files: { "/etc/apt/sources.list": makeDefaultSourcesList() },
+        dirs: [...DEFAULT_DIRS],
+        nanoPath: null,
+        nanoSaved: true,
+        packages: [],
+        aptUpdatedAt: null,
+        lastLoginAt: null
+      };
+    }
+
+    function loadAccount() {
+      try {
+        const raw = localStorage.getItem(ACCOUNT_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.username) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    }
+
+    function saveAccount(next) {
+      account = next;
+      localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
+      updatePrompt();
+    }
+
+    function loadFs() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultFsState();
+        const parsed = JSON.parse(raw);
+        const base = defaultFsState();
+        return {
+          ...base,
+          ...parsed,
+          files: parsed.files || base.files,
+          dirs: Array.isArray(parsed.dirs) && parsed.dirs.length ? parsed.dirs : base.dirs,
+          packages: Array.isArray(parsed.packages) ? parsed.packages : [],
+          aptUpdatedAt: parsed.aptUpdatedAt || null,
+          lastLoginAt: parsed.lastLoginAt || null
+        };
+      } catch {
+        return defaultFsState();
+      }
+    }
+
+    function saveFs() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(fsState));
+    }
+
+    function isRootUser() {
+      return Boolean(account?.isRoot || account?.username === "root");
+    }
+
+    function getPromptSymbol() {
+      return isRootUser() ? "#" : "$";
+    }
+
+    function updatePrompt() {
+      const username = account?.username || "user";
+      const cwd = fsState.cwd || "/";
+      const shellUser = isRootUser() ? "root" : username;
+      promptEl.textContent = `${shellUser}@${HOST_NAME}:${cwd}${getPromptSymbol()}`;
+      summaryEl.textContent = `${HOST_NAME}$${shellUser}:${cwd}`;
+    }
+
+    function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
+
+    function normalizePath(input, base = fsState.cwd) {
+      const raw = (input || "").trim();
+      if (!raw || raw === ".") return base || "/";
+      let path = raw.startsWith("/") ? raw : ((base || "/").replace(/\/$/, "") + "/" + raw);
+      const parts = [];
+      path.split("/").forEach(part => {
+        if (!part || part === ".") return;
+        if (part === "..") parts.pop();
+        else parts.push(part);
+      });
+      return "/" + parts.join("/");
+    }
+
+    function parentDir(path) {
+      const p = normalizePath(path || "/");
+      if (p === "/") return "/";
+      const parts = p.split("/").filter(Boolean);
+      parts.pop();
+      return parts.length ? "/" + parts.join("/") : "/";
+    }
+
+    function basename(path) {
+      const parts = normalizePath(path || "/").split("/").filter(Boolean);
+      return parts[parts.length - 1] || "/";
+    }
+
+    function ensureDir(path) {
+      const normalized = normalizePath(path);
+      if (!fsState.dirs.includes(normalized)) fsState.dirs.push(normalized);
+      saveFs();
+    }
+
+    function existsPath(path) {
+      const normalized = normalizePath(path);
+      return fsState.dirs.includes(normalized) || Object.prototype.hasOwnProperty.call(fsState.files, normalized);
+    }
+
+    function deleteFile(path) {
+      const normalized = normalizePath(path);
+      if (Object.prototype.hasOwnProperty.call(fsState.files, normalized)) {
+        delete fsState.files[normalized];
+        saveFs();
+        return true;
+      }
+      return false;
+    }
+
+    function touchFile(path, content = "") {
+      const normalized = normalizePath(path);
+      fsState.files[normalized] = content;
+      saveFs();
+      return normalized;
+    }
+
+    function renameFile(oldPath, newPath) {
+      const oldN = normalizePath(oldPath);
+      const newN = normalizePath(newPath);
+      if (!Object.prototype.hasOwnProperty.call(fsState.files, oldN)) return { ok: false, reason: "file lama tidak ditemukan" };
+      if (existsPath(newN)) return { ok: false, reason: "nama tujuan sudah dipakai" };
+      fsState.files[newN] = fsState.files[oldN];
+      delete fsState.files[oldN];
+      if (fsState.nanoPath === oldN) fsState.nanoPath = newN;
+      saveFs();
+      return { ok: true, from: oldN, to: newN };
+    }
+
+    function listPath(path = fsState.cwd) {
+      const current = normalizePath(path);
+      const dirs = [];
+      const files = [];
+      fsState.dirs.forEach(d => {
+        const nd = normalizePath(d);
+        if (nd !== current && parentDir(nd) === current) dirs.push(basename(nd) + "/");
+      });
+      Object.keys(fsState.files).forEach(filePath => {
+        const nf = normalizePath(filePath);
+        if (parentDir(nf) === current) files.push(basename(nf));
+      });
+      const out = [...dirs.sort(), ...files.sort()];
+      return out.length ? out.join("    ") : "(kosong)";
+    }
+
+    function timeNow() {
+      return new Date().toLocaleTimeString("id-ID", { hour12: false });
+    }
+
+    function log(msg) {
+      logEl.textContent += `[${timeNow()}] ${msg}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function clearLog() {
+      logEl.textContent = "";
+    }
+
+    function showHelp() {
+      log("help           : tampilkan perintah");
+      log("ls / dir       : lihat isi folder");
+      log("pwd            : lihat folder aktif");
+      log("cd <folder>    : pindah folder");
+      log("cd-            : kembali ke folder sebelumnya");
+      log("mkdir <nama>   : buat folder baru");
+      log("cat <file>     : lihat isi file");
+      log("rem lama baru  : rename file");
+      log("del <file>     : hapus file");
+      log("nano <file>    : buka editor teks");
+      log("open_file <f>  : buka file, html tampil di iframe");
+      log("ip a           : lihat network interfaces");
+      log("ifconfig       : lihat network interfaces");
+      log("refresh        : muat ulang data dari storage");
+      log("apt update     : update daftar paket");
+      log("apt install    : install paket");
+      log("sources.list   : tampilkan file sources.list");
+      log("export zip     : unduh data ke ZIP");
+      log("import zip     : impor data");
+      log("ping [host]    : test koneksi berbasis HTTP");
+      log("gui            : buka gui.html");
+      log("status         : lihat status");
+      log("clear          : bersihkan log");
+    }
+
+    function showStatus() {
+      log(`user  : ${account?.username || "-"}`);
+      log(`root  : ${isRootUser() ? "ya" : "tidak"}`);
+      log(`cwd   : ${fsState.cwd}`);
+      log(`folder: ${fsState.dirs.length}`);
+      log(`file  : ${Object.keys(fsState.files).length}`);
+      log(`nano  : ${fsState.nanoPath || "-"}`);
+      log(`apt   : ${fsState.aptUpdatedAt ? "updated" : "not updated"}`);
+      log(`pkg   : ${fsState.packages.length ? fsState.packages.join(", ") : "(belum ada)"}`);
+    }
+
+    function networkInterfacesText() {
+      return [
+        "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default",
+        "    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00",
+        "    inet 127.0.0.1/8 scope host lo",
+        "       valid_lft forever preferred_lft forever",
+        "    inet6 ::1/128 scope host",
+        "       valid_lft forever preferred_lft forever",
+        "",
+        "2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default",
+        "    link/ether 52:54:00:12:34:56 brd ff:ff:ff:ff:ff:ff",
+        "    inet 192.168.1.20/24 brd 192.168.1.255 scope global eth0",
+        "       valid_lft 86342sec preferred_lft 86342sec",
+        "    inet6 fe80::5054:ff:fe12:3456/64 scope link",
+        "       valid_lft forever preferred_lft forever"
+      ].join("\n");
+    }
+
+    function openTerminalView() {
+      nanoView.classList.remove("active");
+      previewView.classList.remove("active");
+      terminalWrap.classList.remove("hidden");
+      setTimeout(() => inputEl.focus(), 30);
+    }
+
+    function openNano(path) {
+      const normalized = normalizePath(path, fsState.cwd);
+      if (!Object.prototype.hasOwnProperty.call(fsState.files, normalized)) {
+        fsState.files[normalized] = "";
+        saveFs();
+      }
+      nanoCurrentPath = normalized;
+      fsState.nanoPath = normalized;
+      nanoLabel.textContent = normalized;
+      nanoText.value = fsState.files[normalized] || "";
+      nanoDirty = false;
+      nanoStatus.textContent = "Siap";
+      terminalWrap.classList.add("hidden");
+      previewView.classList.remove("active");
+      nanoView.classList.add("active");
+      setTimeout(() => nanoText.focus(), 30);
+    }
+
+    function saveNanoFile() {
+      if (!nanoCurrentPath) {
+        nanoStatus.textContent = "Tidak ada file aktif";
+        return;
+      }
+      fsState.files[nanoCurrentPath] = nanoText.value;
+      fsState.nanoSaved = true;
+      nanoDirty = false;
+      saveFs();
+      nanoStatus.textContent = `Tersimpan: ${nanoCurrentPath}`;
+      log(`nano save ${nanoCurrentPath}`);
+    }
+
+    function updateNanoDirty() {
+      nanoStatus.textContent = nanoDirty ? "Belum disimpan" : "Tersimpan";
+      fsState.nanoSaved = !nanoDirty;
+      saveFs();
+    }
+
+    async function pingHost(target) {
+      const urlRaw = (target || "https://www.gstatic.com/generate_204").trim();
+      const url = /^https?:\/\//i.test(urlRaw) ? urlRaw : `https://${urlRaw}`;
+      const started = performance.now();
+      try {
+        await fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" });
+        const ms = Math.round(performance.now() - started);
+        log(`64 bytes from ${urlRaw} time=${ms} ms`);
+      } catch {
+        log(`request timeout for ${urlRaw}`);
+      }
+    }
+
+    function exportFileName() {
+      const user = (account?.username || "user").replace(/[^a-z0-9_-]/gi, "_");
+      return `${user}_debian_data.zip`;
+    }
+
+    async function exportZip() {
+      const payload = { version: 3, savedAt: new Date().toISOString(), account, fs: fsState };
+      if (window.JSZip) {
+        const zip = new JSZip();
+        zip.file("account.json", JSON.stringify(account, null, 2));
+        zip.file("fs.json", JSON.stringify(fsState, null, 2));
+        const blob = await zip.generateAsync({ type: "blob" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = exportFileName();
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        log("export ZIP selesai");
+        return;
+      }
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = exportFileName().replace(/\.zip$/i, ".json");
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      log("JSZip tidak tersedia, fallback ke JSON");
+    }
+
+    async function importData(file) {
+      try {
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (ext === 'zip' && window.JSZip) {
+          const zip = await JSZip.loadAsync(await file.arrayBuffer());
+          const accountFile = zip.file('account.json');
+          const fsFile = zip.file('fs.json');
+          const accountText = accountFile ? await accountFile.async('string') : null;
+          const fsText = fsFile ? await fsFile.async('string') : null;
+          if (accountText) {
+            account = JSON.parse(accountText);
+            localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
+          }
+          if (fsText) {
+            const parsedFs = JSON.parse(fsText);
+            fsState = {
+              ...defaultFsState(),
+              ...parsedFs,
+              files: parsedFs.files || defaultFsState().files,
+              dirs: Array.isArray(parsedFs.dirs) && parsedFs.dirs.length ? parsedFs.dirs : defaultFsState().dirs,
+              packages: Array.isArray(parsedFs.packages) ? parsedFs.packages : [],
+              aptUpdatedAt: parsedFs.aptUpdatedAt || null,
+              lastLoginAt: parsedFs.lastLoginAt || null
+            };
+            saveFs();
+          }
+        } else {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          const nextAccount = data.account || account || { username: 'user', password: '', isRoot: false };
+          const nextFs = data.fs || data;
+          account = nextAccount;
+          localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
+          fsState = {
+            ...defaultFsState(),
+            ...nextFs,
+            files: nextFs.files || defaultFsState().files,
+            dirs: Array.isArray(nextFs.dirs) && nextFs.dirs.length ? nextFs.dirs : defaultFsState().dirs,
+            packages: Array.isArray(nextFs.packages) ? nextFs.packages : [],
+            aptUpdatedAt: nextFs.aptUpdatedAt || null,
+            lastLoginAt: nextFs.lastLoginAt || null
+          };
+          saveFs();
+        }
+        updatePrompt();
+        if (fsState.nanoPath && Object.prototype.hasOwnProperty.call(fsState.files, fsState.nanoPath)) {
+          nanoCurrentPath = fsState.nanoPath;
+          nanoLabel.textContent = nanoCurrentPath;
+          nanoText.value = fsState.files[nanoCurrentPath] || '';
+        }
+        log('import berhasil');
+      } catch {
+        log('import gagal');
+      }
+    }
+
+    function enterAccount(username, password, asRoot = false) {
+      const cleanUser = (username || '').trim().toLowerCase().replace(/\s+/g, '');
+      if (!cleanUser) {
+        alert('Isi nama pengguna dulu.');
+        return;
+      }
+      const isRoot = asRoot || cleanUser === 'root';
+      const resolvedUser = isRoot ? 'root' : cleanUser;
+      saveAccount({ username: resolvedUser, password: password || '', isRoot });
+      fsState.cwd = isRoot ? '/root' : `/home/${resolvedUser}`;
+      fsState.prevCwd = '/';
+      fsState.lastLoginAt = new Date().toISOString();
+      ensureDir(`/home/${cleanUser}`);
+      ensureDir('/root');
+      ensureDir('/etc/apt');
+      if (!fsState.files['/etc/apt/sources.list']) {
+        fsState.files['/etc/apt/sources.list'] = makeDefaultSourcesList();
+      }
+      saveFs();
+      loginScreen.classList.add('hidden');
+      updatePrompt();
+      log(`login berhasil sebagai ${resolvedUser}`);
+      log('ketik help untuk daftar perintah');
+      inputEl.focus();
+    }
+
+    function promptAndLog(rawLine) {
+      const line = (rawLine || '').trim();
+      if (!line) return;
+      commandHistory.push(line);
+      historyIndex = commandHistory.length;
+      log(`${promptEl.textContent} ${line}`);
+      inputEl.value = '';
+      return line;
+    }
+
+    function showFilePreview(path) {
+      const normalized = normalizePath(path, fsState.cwd);
+      if (!Object.prototype.hasOwnProperty.call(fsState.files, normalized)) {
+        log('file tidak ditemukan');
+        return;
+      }
+
+      previewCurrentPath = normalized;
+      previewLabel.textContent = normalized;
+      const content = fsState.files[normalized] || '';
+      const isHtml = /\.(html?|htm)$/i.test(normalized);
+
+      terminalWrap.classList.add('hidden');
+      nanoView.classList.remove('active');
+      previewView.classList.add('active');
+
+      if (isHtml) {
+        previewFrame.classList.remove('hidden');
+        previewText.classList.add('hidden');
+        previewFrame.srcdoc = content;
+        previewStatus.textContent = 'HTML dibuka di iframe';
+      } else {
+        previewFrame.classList.add('hidden');
+        previewText.classList.remove('hidden');
+        previewText.value = content || '(kosong)';
+        previewStatus.textContent = 'Teks dibuka';
+      }
+
+      setTimeout(() => previewView.scrollTop = 0, 10);
+    }
+
+    function closePreviewView() {
+      previewView.classList.remove('active');
+      terminalWrap.classList.remove('hidden');
+      setTimeout(() => inputEl.focus(), 30);
+    }
+
+    function reloadAllState() {
+      account = loadAccount();
+      fsState = loadFs();
+      if (!fsState.cwd) {
+        fsState.cwd = account?.isRoot ? '/root' : (account?.username ? `/home/${account.username}` : '/');
+      }
+      if (!fsState.files['/etc/apt/sources.list']) fsState.files['/etc/apt/sources.list'] = makeDefaultSourcesList();
+      updatePrompt();
+      saveFs();
+      log('refresh selesai');
+    }
+
+    async function executeCommand(raw) {
+      const line = promptAndLog(raw);
+      if (!line) return;
+
+      const parts = line.split(/\s+/);
+      const cmd = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(' ').trim();
+
+      if (cmd === 'help') return showHelp();
+      if (cmd === 'status') return showStatus();
+      if (cmd === 'clear') return clearLog();
+      if (cmd === 'refresh') return reloadAllState();
+      if (cmd === 'pwd') return log(fsState.cwd);
+      if (cmd === 'ping') return pingHost(arg || 'https://www.gstatic.com/generate_204');
+      if (cmd === 'export' && (arg === 'zip' || arg === 'data' || !arg)) return exportZip();
+      if (cmd === 'import' && (arg === 'zip' || arg === 'data' || !arg)) return importInput.click();
+      if (cmd === 'gui') {
+        log('membuka gui.html');
+        window.location.href = 'gui.html';
+        return;
+      }
+      if (cmd === 'open_file') {
+        if (!arg) return log('pakai: open_file nama-file');
+        return showFilePreview(arg);
+      }
+
+      if (cmd === 'ip') {
+        const sub = (parts[1] || "").toLowerCase();
+        if (sub === 'a' || sub === 'addr' || sub === 'address' || !sub) {
+          return log(networkInterfacesText());
+        }
+        return log('pakai: ip a');
+      }
+
+      if (cmd === 'ifconfig' || cmd === 'network' || cmd === 'interfaces' || cmd === 'net') {
+        return log(networkInterfacesText());
+      }
+
+      if (cmd === 'ls' || cmd === 'dir') return log(listPath(fsState.cwd));
+
+      if (cmd === 'cd' || cmd === 'cd-') {
+        const targetRaw = cmd === 'cd-' ? '-' : arg;
+        if (!targetRaw) return log(fsState.cwd);
+        const nextDir = targetRaw === '-' ? (fsState.prevCwd || '/') : normalizePath(targetRaw, fsState.cwd);
+        if (fsState.dirs.includes(nextDir)) {
+          fsState.prevCwd = fsState.cwd;
+          fsState.cwd = nextDir;
+          saveFs();
+          updatePrompt();
+          return log(fsState.cwd);
+        }
+        return log('folder tidak ditemukan');
+      }
+
+      if (cmd === 'mkdir') {
+        if (!arg) return log('pakai: mkdir nama-folder');
+        const nextDir = normalizePath(arg, fsState.cwd);
+        if (existsPath(nextDir)) return log('folder sudah ada');
+        ensureDir(nextDir);
+        return log(`folder dibuat: ${nextDir}`);
+      }
+
+      if (cmd === 'cat') {
+        if (!arg) return log('pakai: cat nama-file');
+        const filePath = normalizePath(arg, fsState.cwd);
+        if (!Object.prototype.hasOwnProperty.call(fsState.files, filePath)) return log('file tidak ditemukan');
+        const content = fsState.files[filePath] || '';
+        log(`--- ${filePath} ---\n${content || '(kosong)'}`);
+        return;
+      }
+
+      if (cmd === 'rem') {
+        const firstSpace = arg.indexOf(' ');
+        if (firstSpace === -1) return log('pakai: rem nama-lama nama-baru');
+        const oldName = arg.slice(0, firstSpace).trim();
+        const newName = arg.slice(firstSpace + 1).trim();
+        if (!oldName || !newName) return log('pakai: rem nama-lama nama-baru');
+        const result = renameFile(oldName, newName);
+        if (result.ok) return log(`rename: ${result.from} -> ${result.to}`);
+        return log(result.reason || 'rename gagal');
+      }
+
+      if (cmd === 'del') {
+        if (!arg) return log('pakai: del nama-file');
+        const filePath = normalizePath(arg, fsState.cwd);
+        if (!Object.prototype.hasOwnProperty.call(fsState.files, filePath)) return log('file tidak ditemukan');
+        const removed = deleteFile(filePath);
+        if (removed) return log(`file dihapus: ${filePath}`);
+        return log('hapus gagal');
+      }
+
+      if (cmd === 'nano') {
+        if (!arg) return log('pakai: nano nama-file');
+        openNano(arg);
+        return log(`buka nano: ${normalizePath(arg, fsState.cwd)}`);
+      }
+
+      if (cmd === 'apt') {
+        const sub = parts[1]?.toLowerCase() || '';
+        if (sub === 'update') {
+          fsState.aptUpdatedAt = new Date().toISOString();
+          saveFs();
+          return log('reading package lists... done');
+        }
+        if (sub === 'install') {
+          const pkg = parts.slice(2).filter(Boolean).join(' ').trim();
+          if (!pkg) return log('pakai: apt install <nama-paket>');
+          const list = pkg.split(/\s+/).filter(Boolean);
+          const added = [];
+          list.forEach(p => {
+            if (!fsState.packages.includes(p)) {
+              fsState.packages.push(p);
+              added.push(p);
+            }
+          });
+          saveFs();
+          return log(added.length ? `menyiapkan instalasi: ${added.join(', ')}` : `paket sudah ada: ${list.join(', ')}`);
+        }
+        return log('pakai: apt update | apt install <paket>');
+      }
+
+      if (cmd === 'sources.list') {
+        const path = '/etc/apt/sources.list';
+        if (!Object.prototype.hasOwnProperty.call(fsState.files, path)) touchFile(path, makeDefaultSourcesList());
+        return log(`--- ${path} ---\n${fsState.files[path]}`);
+      }
+
+      if (cmd === 'root') return log('pakai login root dari layar awal');
+      log('perintah tidak dikenal. ketik help');
+    }
+
+    btnRun.addEventListener('click', () => executeCommand(inputEl.value));
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        executeCommand(inputEl.value);
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!commandHistory.length) return;
+        historyIndex = clamp(historyIndex - 1, 0, commandHistory.length - 1);
+        inputEl.value = commandHistory[historyIndex] || '';
+        setTimeout(() => inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length), 0);
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!commandHistory.length) return;
+        historyIndex = clamp(historyIndex + 1, 0, commandHistory.length);
+        inputEl.value = historyIndex >= commandHistory.length ? '' : (commandHistory[historyIndex] || '');
+        setTimeout(() => inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length), 0);
+      }
+    });
+
+    btnHelp.addEventListener('click', showHelp);
+    btnStatus.addEventListener('click', showStatus);
+    btnClear.addEventListener('click', clearLog);
+    btnExportZip.addEventListener('click', exportZip);
+    btnImportZip.addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', async () => {
+      const file = importInput.files && importInput.files[0];
+      if (file) await importData(file);
+      importInput.value = '';
+    });
+
+    btnNanoSave.addEventListener('click', saveNanoFile);
+    btnNanoBack.addEventListener('click', openTerminalView);
+    btnNanoReload.addEventListener('click', () => {
+      if (!nanoCurrentPath) return;
+      nanoText.value = fsState.files[nanoCurrentPath] || '';
+      nanoDirty = false;
+      updateNanoDirty();
+      nanoStatus.textContent = `Dimuat ulang: ${nanoCurrentPath}`;
+    });
+    btnNanoDelete.addEventListener('click', () => {
+      if (!nanoCurrentPath) return;
+      const removed = deleteFile(nanoCurrentPath);
+      if (removed) {
+        nanoText.value = '';
+        nanoDirty = false;
+        nanoCurrentPath = null;
+        fsState.nanoPath = null;
+        nanoLabel.textContent = '/';
+        nanoStatus.textContent = 'Dihapus';
+        saveFs();
+        log('hapus file');
+        openTerminalView();
+      }
+    });
+
+    nanoText.addEventListener('input', () => {
+      nanoDirty = true;
+      updateNanoDirty();
+    });
+
+    btnPreviewBack.addEventListener('click', openTerminalView);
+    btnPreviewClose.addEventListener('click', openTerminalView);
+    btnPreviewRefresh.addEventListener('click', () => {
+      if (!previewCurrentPath) return;
+      showFilePreview(previewCurrentPath);
+    });
+
+    btnCreateAccount.addEventListener('click', () => enterAccount(userNameEl.value, passWordEl.value, false));
+    btnUseSaved.addEventListener('click', () => {
+      if (!account?.username) {
+        alert('Belum ada akun tersimpan. Buat akun dulu.');
+        return;
+      }
+      loginScreen.classList.add('hidden');
+      fsState.cwd = fsState.cwd || (account.isRoot ? '/root' : `/home/${account.username}`);
+      updatePrompt();
+      log(`masuk sebagai ${account.username}`);
+      log('ketik help untuk daftar perintah');
+      inputEl.focus();
+    });
+    btnLoginRoot.addEventListener('click', () => {
+      const rootPass = passWordEl.value || 'root';
+      enterAccount('root', rootPass, true);
+    });
+
+    userNameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') passWordEl.focus();
+    });
+    passWordEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') enterAccount(userNameEl.value, passWordEl.value, false);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nanoView.classList.contains('active')) openTerminalView();
+      if (e.key === 'Escape' && previewView.classList.contains('active')) openTerminalView();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!fsState.dirs.includes('/')) fsState.dirs.unshift('/');
+      DEFAULT_DIRS.forEach(d => { if (!fsState.dirs.includes(d)) fsState.dirs.push(d); });
+      if (!fsState.cwd) fsState.cwd = account?.isRoot ? '/root' : (account?.username ? `/home/${account.username}` : '/');
+      if (!fsState.files['/etc/apt/sources.list']) fsState.files['/etc/apt/sources.list'] = makeDefaultSourcesList();
+      ensureDir('/etc/apt');
+      ensureDir('/root');
+      if (account?.username && !account.isRoot) ensureDir(`/home/${account.username}`);
+      saveFs();
+      updatePrompt();
+
+      if (account?.username) {
+        loginScreen.classList.add('hidden');
+        log(`selamat datang kembali, ${account.username}`);
+        log('ketik help untuk daftar perintah');
+      } else {
+        loginScreen.classList.remove('hidden');
+        setTimeout(() => userNameEl.focus(), 30);
+      }
+    });
+  </script>
+</body>
+</html>
