@@ -994,9 +994,14 @@ a:hover {
             border-radius: 12px;
         }
 
-        .popup-actions .win7-btn i{
+        .popup-actions .win7-btn i,
+        .popup-actions .win7-btn img.lain-icon{
             width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
             text-align: center;
+            object-fit: contain;
+            display: inline-block;
         }
 
 
@@ -2369,6 +2374,35 @@ a:hover {
         function closeSidebar() { mobileMenu.classList.remove("active"); overlay.classList.remove("active"); mobileMenu.setAttribute("aria-hidden", "true"); }
 
 
+        function renderLainIcon(iconValue, label) {
+            const raw = String(iconValue ?? "").trim();
+            const safeLabel = String(label ?? "").trim() || "ikon";
+
+            const looksLikeImage = /^(https?:)?\/\//i.test(raw)
+                || /^data:image\//i.test(raw)
+                || /^blob:/i.test(raw)
+                || /^\.{1,2}\//.test(raw)
+                || /^\//.test(raw)
+                || /\.(png|jpe?g|gif|webp|svg|ico|bmp)(\?.*)?$/i.test(raw);
+
+            const looksLikeFa = /fa[srldb]?/i.test(raw) || /^fa[srldb]?-/.test(raw);
+
+            if (looksLikeImage && raw) {
+                return `<img class="lain-icon" src="${raw}" alt="${safeLabel}">`;
+            }
+
+            const faClass = raw || "fa fa-circle";
+            if (looksLikeFa || /\s/.test(faClass) || /^fa-/.test(faClass)) {
+                return `<i class="${faClass}" aria-hidden="true"></i>`;
+            }
+
+            if (raw) {
+                return `<i class="${raw}" aria-hidden="true"></i>`;
+            }
+
+            return `<i class="fa fa-circle" aria-hidden="true"></i>`;
+        }
+
         function renderLainMenu() {
             const container = document.getElementById("lainMenuContainer");
             if (!container) return;
@@ -2398,7 +2432,6 @@ a:hover {
                 <div class="source-panel" style="margin-top:0;">
                     <div class="source-summary">
                         <b>Lainnya</b>
-                        <span>Isi menu ini dibaca dari <b>lain.js</b> dan bisa ditambah sesuka kamu.</span>
                     </div>
                     <div class="popup-actions" id="lainMenuList"></div>
                 </div>`;
@@ -2409,7 +2442,7 @@ a:hover {
             normalizedItems.forEach(item => {
                 const btn = document.createElement("div");
                 btn.className = "win7-btn";
-                btn.innerHTML = `<i class="${item.icon}"></i><span>${item.nama}</span>`;
+                btn.innerHTML = `${renderLainIcon(item.icon, item.nama)}<span>${item.nama}</span>`;
                 btn.addEventListener("click", () => handleLainItem(item));
                 list.appendChild(btn);
             });
